@@ -1,2 +1,2 @@
-# DishFood
-FrontEnd của hệ thống DishFood
+**DishHub**: Website Nhà hàng tích hợp AI
+Biến trải nghiệm ẩm thực tại nhà hàng trở nên dễ dàng và thú vị hơn với ứng dụng AI thông minh. Chỉ cần nhập sở thích hoặc nguyên liệu yêu thích, AI sẽ gợi ý những món ăn hoàn hảo, giúp bạn lựa chọn nhanh chóng mà vẫn đảm bảo sự tinh tế và cá nhân hóa. Không cần phải băn khoăn trước thực đơn dài, trợ lý AI của chúng tôi sẽ đưa ra những gợi ý phù hợp nhất, mang đến một hành trình ẩm thực hiện đại và đáng nhớ.

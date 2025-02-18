@@ -5,6 +5,9 @@ import Loader from './components/Loader/Loader';
 import AdminLayout from './layouts/AdminLayout';
 
 import { BASE_URL } from './config/constant';
+import { path } from 'd3';
+import UserLayout from './layouts/UserLayout/UserLayout';
+import { parseHTML } from 'jquery';
 
 export const renderRoutes = (routes = []) => (
   <Suspense fallback={<Loader />}>
@@ -45,6 +48,22 @@ const routes = [
     exact: 'true',
     path: '/auth/signup-1',
     element: lazy(() => import('./views/auth/signup/SignUp1'))
+  },
+  {
+    path: '/user/*',
+    layout: UserLayout,
+    routes: [
+      {
+        exact: 'true',
+        path: '/a',
+        element: lazy(()=> import('./views/user/test'))
+      },
+      {
+        exact: 'true',
+        path: '/b',
+        element: lazy(()=> import('./views/user/test2'))
+      }
+    ]
   },
   {
     path: '*',

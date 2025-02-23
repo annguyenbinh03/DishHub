@@ -55,13 +55,23 @@ const routes = [
     routes: [
       {
         exact: 'true',
-        path: '/a',
-        element: lazy(()=> import('./views/user/test'))
+        path: '',
+        element: () => <Navigate to="/user/home" replace />
       },
       {
         exact: 'true',
-        path: '/b',
-        element: lazy(()=> import('./views/user/test2'))
+        path: '/home',
+        element: lazy(()=> import('./views/user/home/Home'))
+      },
+      {
+        exact: 'true',
+        path: '/menu',
+        element: lazy(()=> import('./views/user/menu/Menu'))
+      },
+      {
+        exact: 'true',
+        path: 'menu/:id',
+        element: lazy(()=> import('./views/user/foodDetail/FoodDetail'))
       }
     ]
   },

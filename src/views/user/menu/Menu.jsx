@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Nav, Form, InputGroup } from 'react-bootstrap';
 import { BsCartPlusFill, BsSearch } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { useCart } from '../../../contexts/CartContext';
+import ToastNotification from '../../../components/Toast/ToastNotification'; 
 import './Menu.css';
+import { getDishes } from 'services/dishService';
+import Loader from '../../../components/Loader/Loader';
 
 const categories = [
   { label: 'Tất cả', value: 'all' },
@@ -17,17 +20,36 @@ const Menu = () => {
   const [dishes, setDishes] = useState([]);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const { addToCart } = useCart();
+  const [loading, setLoading] = useState(true);
+
+  // State cho Toast Notification
+  const [toast, setToast] = useState({ show: false, message: '' });
+
+  const fetchDishes = async () => {
+    try {
+      const response = await getDishes();
+      setDishes(response.data);
+    } catch (error) {
+      console.error('Error fetching dishes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    axios
-      .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/dishes')
-      .then((res) => {
-        setDishes(res.data.data);
-      })
-      .catch((error) => {
-        console.error('Lỗi khi fetch dữ liệu:', error);
-      });
+    fetchDishes();
   }, []);
+
+  const handleAddToCart = (dish, e) => {
+    e.preventDefault();
+    try {
+      addToCart(dish);
+      setToast({ show: true, message: `Đã thêm ${dish.name} vào giỏ hàng!`, variant: 'success' });
+    } catch (error) {
+      setToast({ show: true, message: 'Lỗi khi thêm vào giỏ hàng!', variant: 'error' });
+    }
+  };
 
   const filteredDishes = dishes.filter((dish) => {
     const matchesCategory = filter === 'all' || dish.categoryId === Number(filter);
@@ -35,11 +57,14 @@ const Menu = () => {
     return matchesCategory && matchesSearch;
   });
 
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <Container className="my-5">
       <h2 className="text-center mb-4">🍽️ Thực đơn nhà hàng 🍽️</h2>
 
-      {/* Ô tìm kiếm */}
       <Form className="mb-4">
         <InputGroup>
           <InputGroup.Text className="bg-light border-dark">
@@ -55,16 +80,21 @@ const Menu = () => {
         </InputGroup>
       </Form>
 
-      {/* Tabs danh mục */}
-      <Nav variant="pills" activeKey={filter} onSelect={(selectedKey) => setFilter(selectedKey === 'all' ? 'all' : Number(selectedKey))} className="justify-content-center mb-4">
+      <Nav
+        variant="pills"
+        activeKey={filter}
+        onSelect={(selectedKey) => setFilter(selectedKey === 'all' ? 'all' : Number(selectedKey))}
+        className="justify-content-center mb-4"
+      >
         {categories.map((cat) => (
           <Nav.Item key={cat.value}>
-            <Nav.Link eventKey={cat.value} className="category-tab">{cat.label}</Nav.Link>
-          </Nav.Item>   
+            <Nav.Link eventKey={cat.value} className="category-tab">
+              {cat.label}
+            </Nav.Link>
+          </Nav.Item>
         ))}
       </Nav>
 
-      {/* Danh sách món ăn */}
       <Row>
         {filteredDishes.length > 0 ? (
           filteredDishes.map((dish) => (
@@ -80,7 +110,11 @@ const Menu = () => {
                       <Link to={`/user/menu/${dish.id}`} className="btn btn-warning w-75">
                         Xem chi tiết
                       </Link>
-                      <Button variant="outline-danger" className="d-flex align-items-center justify-content-center">
+                      <Button
+                        variant="outline-danger"
+                        className="d-flex align-items-center justify-content-center"
+                        onClick={(e) => handleAddToCart(dish, e)}
+                      >
                         <BsCartPlusFill />
                       </Button>
                     </div>
@@ -93,6 +127,9 @@ const Menu = () => {
           <p className="text-center">Không tìm thấy món ăn phù hợp.</p>
         )}
       </Row>
+
+      {/* Hiển thị Toast Notification */}
+      <ToastNotification show={toast.show} message={toast.message} onClose={() => setToast({ show: false, message: '' })} />
     </Container>
   );
 };

@@ -1,0 +1,12 @@
+.fixed-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.2rem; /* Adjust the font size as needed */
+    font-weight: 500; /* Adjust the font weight as needed */
+}

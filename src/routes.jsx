@@ -72,7 +72,8 @@ const routes = [
         exact: 'true',
         path: 'menu/:id',
         element: lazy(()=> import('./views/user/foodDetail/FoodDetail'))
-      }
+      },
+      
     ]
   },
   {

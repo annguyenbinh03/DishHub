@@ -3,10 +3,11 @@ import { Container, Row, Col, Card, Button, Nav, Form, InputGroup } from 'react-
 import { BsCartPlusFill, BsSearch } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../../contexts/CartContext';
-import ToastNotification from '../../../components/Toast/ToastNotification'; 
 import './Menu.css';
 import { getDishes } from 'services/dishService';
-import Loader from '../../../components/Loader/Loader';
+import Spinner from 'components/Loader/Spinner';
+import { formatPrice } from 'utils/formatPrice';
+import { toast } from 'react-toastify';
 
 const categories = [
   { label: 'Tất cả', value: 'all' },
@@ -22,9 +23,6 @@ const Menu = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { addToCart } = useCart();
   const [loading, setLoading] = useState(true);
-
-  // State cho Toast Notification
-  const [toast, setToast] = useState({ show: false, message: '' });
 
   const fetchDishes = async () => {
     try {
@@ -45,9 +43,9 @@ const Menu = () => {
     e.preventDefault();
     try {
       addToCart(dish);
-      setToast({ show: true, message: `Đã thêm ${dish.name} vào giỏ hàng!`, variant: 'success' });
+      toast.success(`Đã thêm ${dish.name} vào giỏ hàng!`);
     } catch (error) {
-      setToast({ show: true, message: 'Lỗi khi thêm vào giỏ hàng!', variant: 'error' });
+      toast.error('Lỗi khi thêm vào giỏ hàng!');
     }
   };
 
@@ -58,7 +56,7 @@ const Menu = () => {
   });
 
   if (loading) {
-    return <Loader />;
+    return <Spinner />;
   }
 
   return (
@@ -105,7 +103,7 @@ const Menu = () => {
                   <Card.Body className="d-flex flex-column">
                     <Card.Title className="text-left text-dark">{dish.name}</Card.Title>
                     <Card.Text className="text-muted text-truncate">{dish.description}</Card.Text>
-                    <h5 className="text-danger text-left mt-auto">{dish.price} VND</h5>
+                    <h5 className="text-danger text-left mt-auto">{formatPrice(dish.price)}</h5>
                     <div className="d-flex justify-content-between mt-2">
                       <Link to={`/user/menu/${dish.id}`} className="btn btn-warning w-75">
                         Xem chi tiết
@@ -127,9 +125,6 @@ const Menu = () => {
           <p className="text-center">Không tìm thấy món ăn phù hợp.</p>
         )}
       </Row>
-
-      {/* Hiển thị Toast Notification */}
-      <ToastNotification show={toast.show} message={toast.message} onClose={() => setToast({ show: false, message: '' })} />
     </Container>
   );
 };

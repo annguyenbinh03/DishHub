@@ -6,7 +6,7 @@ const END_POINTS = {
   CREATE_DISH: "admin/dishes",
   UPDATE_DISH: (id) => `admin/dishes/${id}`,
   DELETE_DISH: (id) => `admin/dishes/${id}`,
-
+  GET_DISH_DETAIL: "dishes",
 };
 
 export const getAdminDishes = () => {
@@ -35,3 +35,9 @@ export const updateDish = (id, dishData) => {
 export const deleteDish = (id) => {
   return axiosClient.delete(END_POINTS.DELETE_DISH(id));
 };
+
+export const getDishDetail = (id) => {
+  const url = `${END_POINTS.GET_DISH_DETAIL}/${id}`;
+  return axiosClient.get(url);
+};
+

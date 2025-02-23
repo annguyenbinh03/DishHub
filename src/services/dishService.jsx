@@ -5,6 +5,6 @@ const END_POINTS = {
 };
 
 export const getAdminDishes = () => {
-    const url = `${END_POINTS.GET_DISHES}`;
-    return axiosClient.get(url);
+  const url = `${END_POINTS.GET_DISHES}`;
+  return axiosClient.get(url);
 };

@@ -61,17 +61,17 @@ const routes = [
       {
         exact: 'true',
         path: '/home',
-        element: lazy(()=> import('./views/user/home/Home'))
+        element: lazy(() => import('./views/user/home/Home'))
       },
       {
         exact: 'true',
         path: '/menu',
-        element: lazy(()=> import('./views/user/menu/Menu'))
+        element: lazy(() => import('./views/user/menu/Menu'))
       },
       {
         exact: 'true',
         path: 'menu/:id',
-        element: lazy(()=> import('./views/user/foodDetail/FoodDetail'))
+        element: lazy(() => import('./views/user/foodDetail/FoodDetail'))
       }
     ]
   },
@@ -138,6 +138,17 @@ const routes = [
         exact: 'true',
         path: '/sample-page',
         element: lazy(() => import('./views/extra/SamplePage'))
+      },
+
+      {
+        exact: 'true',
+        path: '/food-management/food',
+        element: lazy(() => import('./views/food&Ingredients/foodManagement/foodManagement'))
+      },
+      {
+        exact: 'true',
+        path: '/food-management/ingredients',
+        element: lazy(() => import('./views/food&Ingredients/ingredients/Ingredients'))
       },
       {
         path: '*',

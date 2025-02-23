@@ -218,6 +218,34 @@ const menuItems = {
           icon: 'feather icon-power'
         }
       ]
+    },
+    {
+      id: 'food-management',
+      title: 'Food & Ingredients',
+      type: 'group',
+      icon: 'icon-food',
+      children: [
+        {
+          id: 'food',
+          title: 'Food Management',
+          type: 'collapse',
+          icon: 'feather icon-archive',
+          children: [
+            {
+              id: 'food',
+              title: 'Food',
+              type: 'item',
+              url: '/food-management/food'
+            },
+            {
+              id: 'ingredients',
+              title: 'Ingredients',
+              type: 'item',
+              url: '/food-management/ingredients'
+            }
+          ]
+        }
+      ]
     }
   ]
 };

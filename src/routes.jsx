@@ -72,6 +72,16 @@ const routes = [
         exact: 'true',
         path: 'menu/:id',
         element: lazy(() => import('./views/user/foodDetail/FoodDetail'))
+      },
+      {
+        exact: 'true',
+        path: 'support',
+        element: lazy(() => import('./views/user/support/Support'))
+      },
+      {
+        exact: 'true',
+        path: 'checkout',
+        element: lazy(() => import('./views/user/checkout/Checkout'))
       }
     ]
   },

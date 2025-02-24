@@ -97,7 +97,6 @@ const Menu = () => {
         {filteredDishes.length > 0 ? (
           filteredDishes.map((dish) => (
             <Col key={dish.id} sm={2} md={4} lg={3} className="mb-4">
-              <Link to={`/user/menu/${dish.id}`} style={{ textDecoration: 'none' }}>
                 <Card className="menu-card">
                   <Card.Img variant="top" src={dish.image} alt={dish.name} className="menu-card-img" />
                   <Card.Body className="d-flex flex-column">
@@ -118,7 +117,6 @@ const Menu = () => {
                     </div>
                   </Card.Body>
                 </Card>
-              </Link>
             </Col>
           ))
         ) : (

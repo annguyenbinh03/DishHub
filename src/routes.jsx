@@ -36,6 +36,11 @@ export const renderRoutes = (routes = []) => (
 const routes = [
   {
     exact: 'true',
+    path: '/test',
+    element: lazy(() => import('./views/user/test2'))
+  },
+  {
+    exact: 'true',
     path: '/login',
     element: lazy(() => import('./views/auth/signin/SignIn1'))
   },
@@ -61,17 +66,27 @@ const routes = [
       {
         exact: 'true',
         path: '/home',
-        element: lazy(()=> import('./views/user/home/Home'))
+        element: lazy(() => import('./views/user/home/Home'))
       },
       {
         exact: 'true',
         path: '/menu',
-        element: lazy(()=> import('./views/user/menu/Menu'))
+        element: lazy(() => import('./views/user/menu/Menu'))
       },
       {
         exact: 'true',
         path: 'menu/:id',
-        element: lazy(()=> import('./views/user/foodDetail/FoodDetail'))
+        element: lazy(() => import('./views/user/foodDetail/FoodDetail'))
+      },
+      {
+        exact: 'true',
+        path: 'support',
+        element: lazy(() => import('./views/user/support/Support'))
+      },
+      {
+        exact: 'true',
+        path: 'checkout',
+        element: lazy(() => import('./views/user/checkout/Checkout'))
       }
     ]
   },
@@ -138,6 +153,17 @@ const routes = [
         exact: 'true',
         path: '/sample-page',
         element: lazy(() => import('./views/extra/SamplePage'))
+      },
+
+      {
+        exact: 'true',
+        path: '/food-management/food',
+        element: lazy(() => import('./views/admin/foodAndIngredients/foodManagement/foodManagement'))
+      },
+      {
+        exact: 'true',
+        path: '/food-management/ingredients',
+        element: lazy(() => import('./views/admin/foodAndIngredients/ingredients/Ingredients'))
       },
       {
         exact: true,

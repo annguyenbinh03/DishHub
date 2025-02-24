@@ -10,7 +10,7 @@ const Home = () => {
   return (
     <Container className="text-center my-5">
       <h2 className="fw-bold">Đặc sản bốn phương – Đến là mê, ăn là ghiền!</h2>
-      <p className="text-muted">Menu mới ra mắt – Đừng bỏ lỡ cơ hội thưởng thức những hương vị độc đáo chỉ có tại đây</p>
+      <h4 className="fw-bold">Menu mới ra mắt – Đừng bỏ lỡ cơ hội thưởng thức những hương vị độc đáo chỉ có tại đây</h4>
 
       <Button as={Link} to="/user/menu" variant="warning" size="lg" className="fw-bold px-4 my-3">
         Xem thực đơn →

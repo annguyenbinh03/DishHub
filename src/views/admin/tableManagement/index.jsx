@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Badge, Container, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
-import './TableManagement.css'; 
+import './tableManagement.css'; 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

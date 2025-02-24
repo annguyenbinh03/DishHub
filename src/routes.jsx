@@ -168,7 +168,7 @@ const routes = [
       {
         exact: true,
         path: '/table-management',
-        element: lazy(() => import('./views/managementTable'))
+        element: lazy(() => import('./views//admin/tableManagement'))
       },
       {
         path: '*',

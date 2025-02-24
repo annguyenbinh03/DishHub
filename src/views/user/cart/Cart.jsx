@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 
 const Cart = () => {
   const [show, setShow] = useState(false);
-  const { cartItems, removeFromCart, updateQuantity } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, cleanCart } = useCart();
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -18,38 +18,41 @@ const Cart = () => {
 
   const handleOrder = async () => {
     try {
-      // Gửi yêu cầu tạo đơn hàng
-      const orderResponse = await axios.post(
-        'https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders',
-        { tableId: 1 }
-      );
+      let orderId = localStorage.getItem('orderId');
   
-      const orderId = orderResponse.data?.data?.orderId;
+      // Nếu chưa có orderId, tạo mới
       if (!orderId) {
-        throw new Error('Không lấy được orderId từ phản hồi API');
+        const orderResponse = await axios.post(
+          'https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders',
+          { tableId: 1 }
+        );
+  
+        orderId = orderResponse.data?.data?.orderId;
+        if (!orderId) {
+          throw new Error('Không lấy được orderId từ API');
+        }
+  
+        // Lưu orderId vào localStorage để dùng lại
+        localStorage.setItem('orderId', orderId);
       }
   
-      // Chuẩn bị payload
+      // Chuẩn bị payload danh sách món
       const orderDetails = cartItems.map(item => ({
         dishId: item.id,
         quantity: item.quantity
       }));
   
-      console.log("Order ID gửi lên:", orderId);
-      console.log("Payload gửi lên:", JSON.stringify(orderDetails, null, 2));
-  
-      // Gửi danh sách món ăn
-      await axios.post(
-        `https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/${orderId}/details`,
+      // Gửi danh sách món ăn vào orderId hiện có
+      const res = await axios.post(
+        `https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders/${orderId}/details`,
         orderDetails
       );
+      cleanCart();
   
+      console.log("Phản hồi từ API:", res.data);
       toast.success('Đặt món thành công!');
-    }
-      catch (error) {
-        if (error.response) {
-          console.error('Lỗi đặt món:', error.response.status, error.response.data);
-      }
+    } catch (error) {
+      console.error('Lỗi đặt món:', error.response?.status, error.response?.data);
     }
   };
   

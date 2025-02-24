@@ -21,8 +21,8 @@ const Header = () => {
           <Nav>
             <Nav.Link as={Link} to="/user/home">Trang chủ</Nav.Link>
             <Nav.Link as={Link} to="/user/menu">Thực đơn</Nav.Link>
-            <Nav.Link as={Link} to="/user/pay">Thanh toán</Nav.Link>
-            <Nav.Link as={Link} to="/user/help">Hỗ trợ</Nav.Link>
+            <Nav.Link as={Link} to="/user/checkout">Thanh toán</Nav.Link>
+            <Nav.Link as={Link} to="/user/support">Hỗ trợ</Nav.Link>
           </Nav>
 
           {/* Menu bên phải */}

@@ -32,8 +32,13 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  //Xóa toàn bộ món ăn trong giỏ hàng
+  const cleanCart = () =>{
+    setCartItems([]);
+  };
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, cleanCart }}>
       {children}
     </CartContext.Provider>
   );

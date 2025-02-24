@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Badge, Container, Dropdown, Form, Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { getAdminDishes, createDish, updateDish, deleteDish } from 'services/dishService';
+import { formatPrice } from 'utils/formatPrice';
 
 const FoodManagement = () => {
     const [dishes, setDishes] = useState([]);
@@ -42,19 +43,27 @@ const FoodManagement = () => {
     }, [searchTerm, statusFilter, dishes]);
 
     const handleInputChange = (e) => {
-        setDishForm({ ...dishForm, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+
+        if (name === "price") {
+            // Chỉ cho phép nhập số
+            const numericValue = value.replace(/\D/g, "");
+            setDishForm({ ...dishForm, [name]: numericValue });
+        } else {
+            setDishForm({ ...dishForm, [name]: value });
+        }
     };
 
     const handleSaveDish = async () => {
         const dishData = {
             name: dishForm.name,
             description: dishForm.description,
-            categoryId: Number(dishForm.categoryId), // Chuyển đổi categoryId thành số
-            price: Number(dishForm.price), // Chuyển đổi price thành số
-            image: dishForm.image, // Giữ nguyên URL hình ảnh
+            categoryId: Number(dishForm.categoryId),
+            price: Number(dishForm.price.replace(/\D/g, "")), // Chuyển đổi về số
+            image: dishForm.image,
             status: dishForm.status,
-            restaurantId: 1, // 🔹 Cập nhật ID nhà hàng hợp lệ (hoặc lấy từ state)
-            ingredients: [], // 🔹 Cập nhật danh sách nguyên liệu (nếu có)
+            restaurantId: 1,
+            ingredients: [],
         };
 
         try {
@@ -66,12 +75,13 @@ const FoodManagement = () => {
             setShowModal(false);
             setEditingDish(null);
             fetchData();
-            toast.success(`Đã ${editingDish ? 'cập nhật' : 'thêm'} ${dishData.name} thành công!`);
+            toast.success(`Đã ${editingDish ? "cập nhật" : "thêm"} ${dishData.name} thành công!`);
         } catch (error) {
             console.error("Lỗi khi lưu món ăn:", error);
-            toast.error(`Có lỗi xảy ra khi ${editingDish ? 'cập nhật' : 'thêm'} ${dishData.name}!`);
+            toast.error(`Có lỗi xảy ra khi ${editingDish ? "cập nhật" : "thêm"} ${dishData.name}!`);
         }
     };
+
 
     const handleEdit = (dish) => {
         setEditingDish(dish);
@@ -148,7 +158,7 @@ const FoodManagement = () => {
                                 <td>{dish.name}</td>
                                 <td>{dish.description}</td>
                                 <td>{dish.categoryId}</td>
-                                <td>{dish.price} đ</td>
+                                <td>{formatPrice(dish.price)} </td>
                                 <td>{dish.soldCount}</td>
                                 <td>
                                     <Badge bg={dish.status === 'onsale' ? 'success' : 'secondary'}>
@@ -197,7 +207,14 @@ const FoodManagement = () => {
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Giá</Form.Label>
-                            <Form.Control type="number" name="price" value={dishForm.price} onChange={handleInputChange} />
+                            <Form.Control
+                                type="text"
+                                name="price"
+                                value={dishForm.price ? formatPrice(dishForm.price) : ""}
+                                onChange={handleInputChange}
+                                onFocus={() => setDishForm({ ...dishForm, price: dishForm.price.replace(/\D/g, "") })} // Xóa format khi focus
+                                onBlur={() => setDishForm({ ...dishForm, price: formatPrice(dishForm.price) })} // Định dạng lại khi mất focus
+                            />
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Trạng thái</Form.Label>

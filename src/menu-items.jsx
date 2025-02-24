@@ -216,6 +216,13 @@ const menuItems = {
           url: '#',
           classes: 'nav-item disabled',
           icon: 'feather icon-power'
+        },
+        {
+          id: 'table-management',
+          title: 'Quản lý bàn',
+          type: 'item',
+          url: '/table-management',
+          icon: 'feather icon-grid'
         }
       ]
     }

@@ -140,6 +140,11 @@ const routes = [
         element: lazy(() => import('./views/extra/SamplePage'))
       },
       {
+        exact: true,
+        path: '/table-management',
+        element: lazy(() => import('./views/managementTable'))
+      },
+      {
         path: '*',
         exact: 'true',
         element: () => <Navigate to={BASE_URL} />

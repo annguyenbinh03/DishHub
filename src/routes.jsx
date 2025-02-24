@@ -36,6 +36,11 @@ export const renderRoutes = (routes = []) => (
 const routes = [
   {
     exact: 'true',
+    path: '/test',
+    element: lazy(() => import('./views/user/test2'))
+  },
+  {
+    exact: 'true',
     path: '/login',
     element: lazy(() => import('./views/auth/signin/SignIn1'))
   },

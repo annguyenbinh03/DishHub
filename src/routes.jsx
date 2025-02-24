@@ -143,12 +143,12 @@ const routes = [
       {
         exact: 'true',
         path: '/food-management/food',
-        element: lazy(() => import('./views/food&Ingredients/foodManagement/foodManagement'))
+        element: lazy(() => import('./views/admin/foodAndIngredients/foodManagement/foodManagement'))
       },
       {
         exact: 'true',
         path: '/food-management/ingredients',
-        element: lazy(() => import('./views/food&Ingredients/ingredients/Ingredients'))
+        element: lazy(() => import('./views/admin/foodAndIngredients/ingredients/Ingredients'))
       },
       {
         path: '*',

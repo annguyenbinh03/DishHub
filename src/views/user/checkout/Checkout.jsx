@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Table, Navbar, Nav, Badge, Button, Spinner } from 'react-bootstrap';
-import { BsCart, BsChat } from 'react-icons/bs';
+import { Container, Table, Badge, Button, Spinner, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import { formatPrice } from 'utils/formatPrice';
-import { toast } from 'react-toastify';
 
 const Checkout = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const orderId = localStorage.getItem('orderId');
     if (!orderId) return;
-  
+
     axios
       .get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/details?orderId=${orderId}`)
       .then(response => {
@@ -23,16 +22,15 @@ const Checkout = () => {
       .catch(error => console.error('Lỗi lấy thông tin đơn hàng:', error))
       .finally(() => setLoading(false));
   }, []);
-  
 
-  const handleCheckout = async () => {
-    toast.success('Thanh toán thành công!');
+  const handleCheckout = () => {
+    setShowModal(true);
     localStorage.removeItem('orderId');
   };
 
   return (
     <Container className="mt-5">
-      <Container className="mt-4 text-center ">
+      <Container className="mt-4 text-center">
         <h2>Hoàn thành đơn đặt hàng của bạn</h2>
         <p>Xem lại các món của bạn và xác nhận đơn đặt hàng của bạn</p>
 
@@ -61,31 +59,31 @@ const Checkout = () => {
                         {item.name}
                       </td>
                       <td>{item.quantity}</td>
-                      <td>{formatPrice(item.price).toLocaleString()} </td>
-                      <td>{formatPrice(item.quantity * item.price).toLocaleString()} </td>
+                      <td>{formatPrice(item.price).toLocaleString()}</td>
+                      <td>{formatPrice(item.quantity * item.price).toLocaleString()}</td>
                       <td>
                         <Badge
                           bg={
                             item.status === 'pending'
                               ? 'warning'
                               : item.status === 'confirmed'
-                                ? 'primary'
-                                : item.status === 'preparing'
-                                  ? 'info'
-                                  : item.status === 'delivered'
-                                    ? 'success'
-                                    : 'danger'
+                              ? 'primary'
+                              : item.status === 'preparing'
+                              ? 'info'
+                              : item.status === 'delivered'
+                              ? 'success'
+                              : 'danger'
                           }
                         >
                           {item.status === 'pending'
                             ? 'Chờ duyệt'
                             : item.status === 'confirmed'
-                              ? 'Đã xác nhận'
-                              : item.status === 'preparing'
-                                ? 'Đang chuẩn bị'
-                                : item.status === 'delivered'
-                                  ? 'Đã giao'
-                                  : 'Đã hủy'}
+                            ? 'Đã xác nhận'
+                            : item.status === 'preparing'
+                            ? 'Đang chuẩn bị'
+                            : item.status === 'delivered'
+                            ? 'Đã giao'
+                            : 'Đã hủy'}
                         </Badge>
                       </td>
                     </tr>
@@ -100,6 +98,20 @@ const Checkout = () => {
           )
         )}
       </Container>
+
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Thông báo</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Vui lòng đợi trong giây lát, nhân viên sẽ đến và thanh toán cho bạn.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Đóng
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

@@ -8,36 +8,54 @@ import { getDishes } from 'services/dishService';
 import Spinner from 'components/Loader/Spinner';
 import { formatPrice } from 'utils/formatPrice';
 import { toast } from 'react-toastify';
-
-const categories = [
-  { label: 'Tất cả', value: 'all' },
-  { label: 'Món chính', value: 1 },
-  { label: 'Món khai vị', value: 2 },
-  { label: 'Món tráng miệng', value: 3 },
-  { label: 'Đồ uống', value: 7 }
-];
+import axios from 'axios';
 
 const Menu = () => {
   const [dishes, setDishes] = useState([]);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const { addToCart } = useCart();
   const [loading, setLoading] = useState(true);
-
-  const fetchDishes = async () => {
-    try {
-      const response = await getDishes();
-      setDishes(response.data);
-    } catch (error) {
-      console.error('Error fetching dishes:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [categories, setCategories] = useState([]); 
+  const { addToCart } = useCart();
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/categories');
+        setCategories(Array.isArray(response.data?.data) ? response.data.data : []); 
+      } catch (error) {
+        console.error('Lỗi lấy danh mục món ăn:', error);
+        setCategories([]); 
+      }
+    };
+    
+    fetchCategories();
+  }, []);
+  
+
+  useEffect(() => {
+    const fetchDishes = async () => {
+      try {
+        const response = await getDishes();
+        setDishes(response.data);
+      } catch (error) {
+        console.error('Lỗi lấy danh sách món ăn:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchDishes();
   }, []);
+
+  const categoriesTab = [
+    { label: 'Tất cả', value: 'all' },
+    ...categories.map((cat) => ({
+      label: cat.name,
+      value: cat.id
+    }))
+  ];
+  
 
   const handleAddToCart = (dish, e) => {
     e.preventDefault();
@@ -50,14 +68,12 @@ const Menu = () => {
   };
 
   const filteredDishes = dishes.filter((dish) => {
-    const matchesCategory = filter === 'all' || dish.categoryId === Number(filter);
+    const matchesCategory = filter === 'all' || dish.categoryId == filter;
     const matchesSearch = dish.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  if (loading) {
-    return <Spinner />;
-  }
+  if (loading) return <Spinner />;
 
   return (
     <Container className="my-5">
@@ -78,13 +94,8 @@ const Menu = () => {
         </InputGroup>
       </Form>
 
-      <Nav
-        variant="pills"
-        activeKey={filter}
-        onSelect={(selectedKey) => setFilter(selectedKey === 'all' ? 'all' : Number(selectedKey))}
-        className="justify-content-center mb-4"
-      >
-        {categories.map((cat) => (
+      <Nav variant="pills" activeKey={filter} onSelect={(selectedKey) => setFilter(selectedKey)} className="justify-content-center mb-4">
+        {categoriesTab.map((cat) => (
           <Nav.Item key={cat.value}>
             <Nav.Link eventKey={cat.value} className="category-tab">
               {cat.label}
@@ -96,27 +107,23 @@ const Menu = () => {
       <Row>
         {filteredDishes.length > 0 ? (
           filteredDishes.map((dish) => (
-            <Col key={dish.id} sm={2} md={4} lg={3} className="mb-4">
-                <Card className="menu-card">
-                  <Card.Img variant="top" src={dish.image} alt={dish.name} className="menu-card-img" />
-                  <Card.Body className="d-flex flex-column">
-                    <Card.Title className="text-left text-dark">{dish.name}</Card.Title>
-                    <Card.Text className="text-muted text-truncate">{dish.description}</Card.Text>
-                    <h5 className="text-danger text-left mt-auto">{formatPrice(dish.price)}</h5>
-                    <div className="d-flex justify-content-between mt-2">
-                      <Link to={`/user/menu/${dish.id}`} className="btn btn-warning w-75">
-                        Xem chi tiết
-                      </Link>
-                      <Button
-                        variant="outline-danger"
-                        className="d-flex align-items-center justify-content-center"
-                        onClick={(e) => handleAddToCart(dish, e)}
-                      >
-                        <BsCartPlusFill />
-                      </Button>
-                    </div>
-                  </Card.Body>
-                </Card>
+            <Col key={dish.id} sm={6} md={4} lg={3} className="mb-4">
+              <Card className="menu-card">
+                <Card.Img variant="top" src={dish.image} alt={dish.name} className="menu-card-img" />
+                <Card.Body className="d-flex flex-column">
+                  <Card.Title className="text-left text-dark">{dish.name}</Card.Title>
+                  <Card.Text className="text-muted text-truncate">{dish.description}</Card.Text>
+                  <h5 className="text-danger text-left mt-auto">{formatPrice(dish.price)}</h5>
+                  <div className="d-flex justify-content-between mt-2">
+                    <Link to={`/user/menu/${dish.id}`} className="btn btn-warning w-75">
+                      Xem chi tiết
+                    </Link>
+                    <Button variant="outline-danger" className="d-flex align-items-center justify-content-center" onClick={(e) => handleAddToCart(dish, e)}>
+                      <BsCartPlusFill />
+                    </Button>
+                  </div>
+                </Card.Body>
+              </Card>
             </Col>
           ))
         ) : (

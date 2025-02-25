@@ -83,6 +83,12 @@ const routes = [
         path: 'checkout',
         element: lazy(() => import('./views/user/checkout/Checkout'))
       }
+      ,
+      {
+        exact: 'true',
+        path: 'chatbot',
+        element: lazy(() => import('./views/user/chat/Chatbot'))
+      }
     ]
   },
   {

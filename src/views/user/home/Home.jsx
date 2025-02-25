@@ -1,9 +1,11 @@
 import React from 'react';
 import { Container, Row, Col, Button, Image } from 'react-bootstrap';
 import { BsRobot, BsClock, BsStickyFill } from 'react-icons/bs';
-import menuImage from '../../../assets/images/LogoDishHub.png';
-import aiImage from '../../../assets/images/LogoDishHub.png';
-import orderImage from '../../../assets/images/LogoDishHub.png';
+import menuImage from '../../../assets/images/menuTinhTe.webp';
+import aiImage from '../../../assets/images/troLyAi.webp';
+import orderImage from '../../../assets/images/goiMonNhanh.webp';
+
+
 import { Link } from 'react-router-dom';
 
 const Home = () => {

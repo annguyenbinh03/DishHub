@@ -1,12 +1,26 @@
-.fixed-top {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000; /* Ensure it's above other content */
-}
-
-.navbar-nav .nav-link {
-    font-size: 1.2rem; /* Adjust the font size as needed */
-    font-weight: 500; /* Adjust the font weight as needed */
+/*  */
+.user-header {
+    .fixed-top {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000; /* Ensure it's above other content */
+    }
+    .navbar-nav .nav-link {
+        font-size: 1.2rem; /* Adjust the font size as needed */
+        font-weight: 500; /* Adjust the font weight as needed */
+    }
+    .navbar-nav {
+        .nav-link{
+            /* color: rgb(167, 165, 165); */
+            
+        }
+        .active{
+            color: black;
+            background-color: rgba(255, 166, 0, 0.8);
+            opacity: inherit;
+            border-radius: 10px;
+        }
+    }
 }

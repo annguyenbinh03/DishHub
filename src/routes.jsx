@@ -36,6 +36,11 @@ export const renderRoutes = (routes = []) => (
 const routes = [
   {
     exact: 'true',
+    path: '/test',
+    element: lazy(() => import('./views/user/test2'))
+  },
+  {
+    exact: 'true',
     path: '/login',
     element: lazy(() => import('./views/auth/signin/SignIn1'))
   },
@@ -159,12 +164,17 @@ const routes = [
       {
         exact: 'true',
         path: '/food-management/food',
-        element: lazy(() => import('./views/food&Ingredients/foodManagement/foodManagement'))
+        element: lazy(() => import('./views/admin/foodAndIngredients/foodManagement/foodManagement'))
       },
       {
         exact: 'true',
         path: '/food-management/ingredients',
-        element: lazy(() => import('./views/food&Ingredients/ingredients/Ingredients'))
+        element: lazy(() => import('./views/admin/foodAndIngredients/ingredients/Ingredients'))
+      },
+      {
+        exact: true,
+        path: '/table-management',
+        element: lazy(() => import('./views//admin/tableManagement'))
       },
       {
         path: '*',

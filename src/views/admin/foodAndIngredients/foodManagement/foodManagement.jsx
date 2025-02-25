@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Badge, Container, Dropdown, Form, Modal } from 'react-bootstrap';
+import { Table, Button, Badge, Container, Dropdown, Form, Modal, Pagination } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { getAdminDishes, createDish, updateDish, deleteDish } from 'services/dishService';
 import { formatPrice } from 'utils/formatPrice';
@@ -23,6 +23,8 @@ const FoodManagement = () => {
         image: '',
         ingredients: [],
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [dishesPerPage] = useState(10);
 
     const ImagePicker = ({ onFileUpload }) => {
         const [file, setFile] = useState(null);
@@ -66,6 +68,14 @@ const FoodManagement = () => {
         setFilteredDishes(filtered);
     }, [searchTerm, statusFilter, dishes]);
 
+    // Get current dishes
+    const indexOfLastDish = currentPage * dishesPerPage;
+    const indexOfFirstDish = indexOfLastDish - dishesPerPage;
+    const currentDishes = filteredDishes.slice(indexOfFirstDish, indexOfLastDish);
+
+    // Change page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     // Handle form input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -96,14 +106,14 @@ const FoodManagement = () => {
     // Save dish (new or update)
     const handleSaveDish = async () => {
         const dishData = {
-            name: dishForm.name,
-            description: dishForm.description,
-            categoryId: Number(dishForm.categoryId),
-            price: Number(dishForm.price.replace(/\D/g, "")),
+            name: dishForm.name.trim(),
+            description: dishForm.description.trim(),
+            categoryId: Number(dishForm.categoryId) || null,
+            price: Number(dishForm.price.replace(/\D/g, "")) || null,
             status: dishForm.status,
-            restaurantId: Number(dishForm.restaurantId), // Ensure restaurantId is included and converted to number
-            ingredients: dishForm.ingredients,
-            image: dishForm.image,
+            restaurantId: Number(dishForm.restaurantId) || null,
+            ingredients: dishForm.ingredients.length ? dishForm.ingredients : [],
+            image: dishForm.image || null,
         };
 
         console.log("Dish data to be saved:", dishData); // Log the dish data to be saved
@@ -126,6 +136,7 @@ const FoodManagement = () => {
                 } else if (response?.data?.dish) {
                     newDish = response.data.dish; // Fallback to 'dish' field if 'data' is not present
                 } else {
+                    console.error("Response data:", response.data); // Log the response data
                     throw new Error("Dish data is missing in the response");
                 }
 
@@ -138,8 +149,9 @@ const FoodManagement = () => {
         } catch (error) {
             console.error("Lỗi khi lưu món ăn:", error);
             if (error.response) {
+                console.error("Response status:", error.response.status);
                 console.error("Response data:", error.response.data); // Log the response data
-                toast.error(`Có lỗi xảy ra: ${error.response.data.message}`);
+                toast.error(`Lỗi: ${error.response.data.message || "Đã có lỗi xảy ra"}`);
             } else {
                 toast.error(`Có lỗi xảy ra: ${error.message}`);
             }
@@ -216,10 +228,10 @@ const FoodManagement = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredDishes.length > 0 ? (
-                        filteredDishes.map((dish, index) => (
+                    {currentDishes.length > 0 ? (
+                        currentDishes.map((dish, index) => (
                             <tr key={dish.id}>
-                                <td>{index + 1}</td>
+                                <td>{indexOfFirstDish + index + 1}</td>
                                 <td>{dish.image ? <img src={dish.image} alt={dish.name} className="food-img rounded" /> : "No Image"}</td>
                                 <td>{dish.name}</td>
                                 <td>{dish.description}</td>
@@ -251,6 +263,14 @@ const FoodManagement = () => {
                     )}
                 </tbody>
             </Table>
+
+            <Pagination className="justify-content-center">
+                {Array.from({ length: Math.ceil(filteredDishes.length / dishesPerPage) }, (_, index) => (
+                    <Pagination.Item key={index + 1} active={index + 1 === currentPage} onClick={() => paginate(index + 1)}>
+                        {index + 1}
+                    </Pagination.Item>
+                ))}
+            </Pagination>
 
             {/* Modal thêm/sửa món ăn */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>

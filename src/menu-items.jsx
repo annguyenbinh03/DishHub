@@ -260,6 +260,21 @@ const menuItems = {
           ]
         }
       ]
+    },
+    {
+      id: 'order-management',
+      title: 'Order Management',
+      type: 'group',
+      icon: 'icon-order',
+      children: [
+        {
+          id: 'order',
+          title: 'Order',
+          type: 'item',
+          icon: 'feather icon-shopping-cart',
+          url: '/order-management/order'
+        }
+      ]
     }
   ]
 };

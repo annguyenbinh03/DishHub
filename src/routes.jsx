@@ -63,6 +63,12 @@ const routes = [
         path: '',
         element: () => <Navigate to="/user/home" replace />
       },
+      ,
+      {
+        exact: 'true',
+        path: '/table-setting',
+        element: lazy(() => import('./views/user/tableSetting/TableSetting'))
+      },
       {
         exact: 'true',
         path: '/home',
@@ -93,6 +99,12 @@ const routes = [
         exact: 'true',
         path: 'chatbot',
         element: lazy(() => import('./views/user/chat/Chatbot'))
+      }
+      ,
+      {
+        exact: 'true',
+        path: 'testTSS',
+        element: lazy(() => import('./views/user/testTTS'))
       }
     ]
   },

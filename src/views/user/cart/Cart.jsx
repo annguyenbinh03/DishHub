@@ -18,13 +18,22 @@ const Cart = () => {
 
   const handleOrder = async () => {
     try {
+      let tableId = localStorage.getItem('tableId');
+  
+      if (!tableId) {
+        toast.error('Chưa chọn bàn, vui lòng chọn bàn trước khi đặt món.');
+        return;
+      }
+  
+      console.log('Mã bàn:', tableId);
+  
       let orderId = localStorage.getItem('orderId');
   
       // Nếu chưa có orderId, tạo mới
       if (!orderId) {
         const orderResponse = await axios.post(
           'https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders',
-          { tableId: 1 }
+          { tableId: tableId }
         );
   
         orderId = orderResponse.data?.data?.orderId;
@@ -47,14 +56,16 @@ const Cart = () => {
         `https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders/${orderId}/details`,
         orderDetails
       );
-      cleanCart();
   
+      cleanCart();
       console.log("Phản hồi từ API:", res.data);
       toast.success('Đặt món thành công!');
     } catch (error) {
       console.error('Lỗi đặt món:', error.response?.status, error.response?.data);
+      toast.error('Đặt món thất bại, vui lòng thử lại!');
     }
   };
+  
   
 
   return (

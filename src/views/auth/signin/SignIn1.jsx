@@ -26,7 +26,7 @@ const Signin1 = () => {
                 <i className="feather icon-unlock auth-icon" />
               </div>
               <AuthLogin />
-              <p className="mb-2 text-muted">
+              {/* <p className="mb-2 text-muted">
                 Forgot password?{' '}
                 <NavLink to={'#'} className="f-w-400">
                   Reset
@@ -37,22 +37,7 @@ const Signin1 = () => {
                 <NavLink to="/auth/signup-1" className="f-w-400">
                   Signup
                 </NavLink>
-              </p>
-              <Alert variant="primary" className="text-start mt-3">
-                User:
-                <CopyToClipboard text="info@codedthemes.com">
-                  <Button variant="outline-primary" as={Link} to="#" className="badge mx-2 mb-2" size="sm">
-                    <i className="fa fa-user" /> info@codedthemes.com
-                  </Button>
-                </CopyToClipboard>
-                <br />
-                Password:
-                <CopyToClipboard text="123456">
-                  <Button variant="outline-primary" as={Link} to="#" className="badge mx-2" size="sm">
-                    <i className="fa fa-lock" /> 123456
-                  </Button>
-                </CopyToClipboard>
-              </Alert>
+              </p> */}
             </Card.Body>
           </Card>
         </div>

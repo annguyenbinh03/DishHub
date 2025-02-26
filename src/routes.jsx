@@ -186,7 +186,17 @@ const routes = [
       {
         exact: true,
         path: '/table-management',
-        element: lazy(() => import('./views//admin/tableManagement'))
+        element: lazy(() => import('./views/admin/tableManagement'))
+      },
+      {
+        exact: true,
+        path: '/category-management',
+        element: lazy(() => import('./views/admin/categoryManagement/categoryManagement'))
+      },
+      {
+        exact: true,
+        path: '/order-management/order',
+        element: lazy(() => import('./views/admin/orderManagement/orderManagement'))
       },
       {
         path: '*',

@@ -223,6 +223,13 @@ const menuItems = {
           type: 'item',
           url: '/table-management',
           icon: 'feather icon-grid'
+        },
+        {
+          id: 'category-management',
+          title: 'Quản lý loại món ăn',
+          type: 'item',
+          url: '/category-management',
+          icon: 'feather icon-menu'
         }
       ]
     },
@@ -251,6 +258,21 @@ const menuItems = {
               url: '/food-management/ingredients'
             }
           ]
+        }
+      ]
+    },
+    {
+      id: 'order-management',
+      title: 'Order Management',
+      type: 'group',
+      icon: 'icon-order',
+      children: [
+        {
+          id: 'order',
+          title: 'Order',
+          type: 'item',
+          icon: 'feather icon-shopping-cart',
+          url: '/order-management/order'
         }
       ]
     }

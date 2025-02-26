@@ -134,9 +134,10 @@ const FoodManagement = () => {
     };
 
     const handleSubmit = async () => {
+        setLoading(true);
         const uploadedUrl = await uploadImage();
 
-        if (!uploadedUrl) {
+        if (!uploadedUrl && !currentFood) {
             setLoading(false);
             return;
         }
@@ -146,7 +147,7 @@ const FoodManagement = () => {
             description: formData.description,
             categoryId: formData.categoryId,
             price: formData.price,
-            image: uploadedUrl,
+            image: uploadedUrl || formData.image,
             status: formData.status,
             restaurantId: formData.restaurantId,
             ingredients: formData.ingredients

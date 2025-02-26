@@ -230,6 +230,13 @@ const menuItems = {
           type: 'item',
           url: '/category-management',
           icon: 'feather icon-menu'
+        },
+        {
+          id: 'restaurant-management',
+          title: 'Quản lý nhà hàng',
+          type: 'item',
+          url: '/restaurant-management',
+          icon: 'feather icon-home'
         }
       ]
     },

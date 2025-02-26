@@ -3,8 +3,7 @@ import { Table, Button, Badge, Container, Dropdown, Form, Modal, Pagination } fr
 import { toast } from 'react-toastify';
 import { getAdminDishes, createDish, updateDish, deleteDish } from 'services/dishService';
 import { formatPrice } from 'utils/formatPrice';
-import ImagePicker from 'components/ImagePicker';
-import useCloudinaryUpload from 'hooks/useCloudinaryUpload';
+import axios from 'axios';
 
 const FoodManagement = () => {
     const [dishes, setDishes] = useState([]);
@@ -25,25 +24,18 @@ const FoodManagement = () => {
     });
     const [currentPage, setCurrentPage] = useState(1);
     const [dishesPerPage] = useState(10);
+    const [restaurants, setRestaurants] = useState([]);
+    const [selectedRestaurant, setSelectedRestaurant] = useState(''); // New state for restaurant selection
 
-    const ImagePicker = ({ onFileUpload }) => {
-        const [file, setFile] = useState(null);
-
-        const handleFileChange = (event) => {
-            const selectedFile = event.target.files[0];
-            if (selectedFile) {
-                setFile(selectedFile);
-                onFileUpload(selectedFile); // Gọi callback để xử lý upload ảnh
-            }
-        };
-
-        return (
-            <div>
-                <input type="file" onChange={handleFileChange} />
-                {file && <span>{file.name}</span>}
-            </div>
-        );
-    };
+    useEffect(() => {
+        axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants')
+            .then(response => {
+                setRestaurants(response.data.data);
+            })
+            .catch(error => {
+                console.error("Error fetching restaurants:", error);
+            });
+    }, []);
 
     // Fetch all dishes
     const fetchData = async () => {
@@ -89,20 +81,6 @@ const FoodManagement = () => {
         setDishForm({ ...dishForm, ingredients: ingredientsArray });
     };
 
-    // Upload image to Cloudinary
-    const handleUploadImage = async (file) => {
-        try {
-            const uploadedUrl = await useCloudinaryUpload(file);
-            setDishForm({ ...dishForm, image: uploadedUrl });
-        } catch (err) {
-            toast.error('Có lỗi khi upload ảnh!', {
-                position: 'top-right',
-                autoClose: 5000,
-                theme: 'light',
-            });
-        }
-    };
-
     // Save dish (new or update)
     const handleSaveDish = async () => {
         const dishData = {
@@ -111,12 +89,10 @@ const FoodManagement = () => {
             categoryId: Number(dishForm.categoryId) || null,
             price: Number(dishForm.price.replace(/\D/g, "")) || null,
             status: dishForm.status,
-            restaurantId: Number(dishForm.restaurantId) || null,
+            restaurantId: Number(dishForm.restaurantId) || null, // Use the restaurantId from the form
             ingredients: dishForm.ingredients.length ? dishForm.ingredients : [],
             image: dishForm.image || null,
         };
-
-        console.log("Dish data to be saved:", dishData); // Log the dish data to be saved
 
         try {
             let newDish;
@@ -124,37 +100,21 @@ const FoodManagement = () => {
                 // Update dish if editing
                 await updateDish(editingDish.id, dishData);
                 newDish = { ...dishData, id: editingDish.id };
-                toast.success(`Đã cập nhật ${dishData.name} thành công!`);
+                toast.success(`Updated ${dishData.name} successfully!`);
             } else {
                 // Create new dish
                 const response = await createDish(dishData);
-                console.log("Create dish response:", response); // Log the full response to check the structure
-
-                // Check for different response structures
-                if (response?.data?.data) {
-                    newDish = response.data.data; // Get the dish data from the 'data' field
-                } else if (response?.data?.dish) {
-                    newDish = response.data.dish; // Fallback to 'dish' field if 'data' is not present
-                } else {
-                    console.error("Response data:", response.data); // Log the response data
-                    throw new Error("Dish data is missing in the response");
-                }
-
+                newDish = response.data.data; // Assuming the response structure has the dish data
                 setDishes(prevDishes => [...prevDishes, newDish]);
-                toast.success(`Đã thêm ${dishData.name} thành công!`);
+                toast.success(`Added ${dishData.name} successfully!`);
             }
 
             setShowModal(false);
             setEditingDish(null);
+            setSelectedRestaurant(''); // Reset selected restaurant after saving
         } catch (error) {
-            console.error("Lỗi khi lưu món ăn:", error);
-            if (error.response) {
-                console.error("Response status:", error.response.status);
-                console.error("Response data:", error.response.data); // Log the response data
-                toast.error(`Lỗi: ${error.response.data.message || "Đã có lỗi xảy ra"}`);
-            } else {
-                toast.error(`Có lỗi xảy ra: ${error.message}`);
-            }
+            console.error("Error saving dish:", error);
+            toast.error(`Error: ${error.message}`);
         }
     };
 
@@ -162,12 +122,13 @@ const FoodManagement = () => {
     const handleEdit = (dish) => {
         setEditingDish(dish);
         setDishForm(dish);
+        setSelectedRestaurant(dish.restaurantId); // Set the restaurant for editing
         setShowModal(true);
     };
 
     // Delete dish
     const handleDelete = async (id) => {
-        if (window.confirm("Bạn có chắc chắn muốn xóa món ăn này không?")) {
+        if (window.confirm("Are you sure you want to delete this dish?")) {
             await deleteDish(id);
             fetchData();
         }
@@ -186,30 +147,31 @@ const FoodManagement = () => {
             restaurantId: '',
             ingredients: [],
         });
+        setSelectedRestaurant(''); // Reset restaurant selection
         setShowModal(true);
     };
 
     return (
         <Container className="my-5 food-management">
-            <h2 className="text-center mb-4">🍽️ Quản lý đồ ăn 🍽️</h2>
+            <h2 className="text-center mb-4">🍽️ Food Management 🍽️</h2>
 
             <Form className="mb-3 d-flex gap-3">
                 <Form.Control
                     type="text"
-                    placeholder="Tìm kiếm món ăn..."
+                    placeholder="Search dishes..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <Form.Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                    <option value="all">Tất cả trạng thái</option>
-                    <option value="onsale">Đang bán</option>
-                    <option value="soldout">Hết hàng</option>
+                    <option value="all">All statuses</option>
+                    <option value="onsale">On sale</option>
+                    <option value="soldout">Sold out</option>
                 </Form.Select>
             </Form>
 
             <div className="mb-3 text-end">
                 <Button variant="success" size="sm" onClick={handleAddDish}>
-                    Thêm món ăn
+                    Add Dish
                 </Button>
             </div>
 
@@ -217,14 +179,14 @@ const FoodManagement = () => {
                 <thead className="table-dark">
                     <tr>
                         <th>#</th>
-                        <th>Hình ảnh</th>
-                        <th>Tên món</th>
-                        <th>Mô tả</th>
-                        <th>Loại</th>
-                        <th>Giá</th>
-                        <th>Đã bán</th>
-                        <th>Trạng thái</th>
-                        <th>Hành động</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Sold</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -232,24 +194,24 @@ const FoodManagement = () => {
                         currentDishes.map((dish, index) => (
                             <tr key={dish.id}>
                                 <td>{indexOfFirstDish + index + 1}</td>
-                                <td>{dish.image ? <img src={dish.image} alt={dish.name} className={`food-img rounded`} /> : "No Image"}</td>
+                                <td>{dish.image ? <img src={dish.image} alt={dish.name} className="food-img rounded" /> : "No Image"}</td>
                                 <td>{dish.name}</td>
                                 <td className='text-truncate'>{dish.description}</td>
                                 <td>{dish.categoryId}</td>
                                 <td>{formatPrice(dish.price)}</td>
                                 <td>{dish.soldCount}</td>
                                 <td>
-                                    <Badge bg={dish.status === 'onsale' ? 'success' : 'secondary'}>{dish.status === 'onsale' ? 'Đang bán' : 'Hết hàng'}</Badge>
+                                    <Badge bg={dish.status === 'onsale' ? 'success' : 'secondary'}>{dish.status === 'onsale' ? 'On Sale' : 'Sold Out'}</Badge>
                                 </td>
                                 <td>
                                     <Dropdown>
                                         <Dropdown.Toggle variant="light" id="dropdown-basic"></Dropdown.Toggle>
                                         <Dropdown.Menu>
                                             <Dropdown.Item onClick={() => handleEdit(dish)}>
-                                                <Button variant="primary" size="sm">Cập nhật</Button>
+                                                <Button variant="primary" size="sm">Update</Button>
                                             </Dropdown.Item>
                                             <Dropdown.Item onClick={() => handleDelete(dish.id)}>
-                                                <Button variant="danger" size="sm">Xóa</Button>
+                                                <Button variant="danger" size="sm">Delete</Button>
                                             </Dropdown.Item>
                                         </Dropdown.Menu>
                                     </Dropdown>
@@ -258,7 +220,7 @@ const FoodManagement = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="9" className="text-center">Không tìm thấy dữ liệu</td>
+                            <td colSpan="9" className="text-center">No data found</td>
                         </tr>
                     )}
                 </tbody>
@@ -272,23 +234,23 @@ const FoodManagement = () => {
                 ))}
             </Pagination>
 
-            {/* Modal thêm/sửa món ăn */}
+            {/* Modal for adding/updating dish */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{editingDish ? "Cập nhật món ăn" : "Thêm món ăn mới"}</Modal.Title>
+                    <Modal.Title>{editingDish ? "Update Dish" : "Add New Dish"}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
                         <Form.Group>
-                            <Form.Label>Tên món</Form.Label>
+                            <Form.Label>Dish Name</Form.Label>
                             <Form.Control type="text" name="name" value={dishForm.name} onChange={handleInputChange} />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>Mô tả</Form.Label>
+                            <Form.Label>Description</Form.Label>
                             <Form.Control as="textarea" name="description" value={dishForm.description} onChange={handleInputChange} />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>Giá</Form.Label>
+                            <Form.Label>Price</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="price"
@@ -297,7 +259,7 @@ const FoodManagement = () => {
                             />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>Loại</Form.Label>
+                            <Form.Label>Category</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="categoryId"
@@ -305,17 +267,24 @@ const FoodManagement = () => {
                                 onChange={handleInputChange}
                             />
                         </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Nhà hàng</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="restaurantId"
-                                value={dishForm.restaurantId}
-                                onChange={handleInputChange}
-                            />
+                        <Form.Group className="d-flex justify-content-between align-items-center">
+                            <Form.Label className="mb-0 me-2">Select Restaurant:</Form.Label>
+                            <Form.Select
+                                className="w-50"
+                                value={selectedRestaurant}
+                                onChange={(e) => {
+                                    setSelectedRestaurant(e.target.value);
+                                    setDishForm({ ...dishForm, restaurantId: e.target.value });
+                                }}
+                            >
+                                <option value="">-- Select Restaurant --</option>
+                                {restaurants.map((restaurant) => (
+                                    <option key={restaurant.id} value={restaurant.id}>{restaurant.name}</option>
+                                ))}
+                            </Form.Select>
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>Nguyên liệu (cách nhau bằng dấu phẩy)</Form.Label>
+                            <Form.Label>Ingredients (comma-separated)</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="ingredients"
@@ -324,19 +293,17 @@ const FoodManagement = () => {
                             />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Label>Trạng thái</Form.Label>
+                            <Form.Label>Status</Form.Label>
                             <Form.Select name="status" value={dishForm.status} onChange={handleInputChange}>
-                                <option value="onsale">Đang bán</option>
-                                <option value="soldout">Hết hàng</option>
+                                <option value="onsale">On sale</option>
+                                <option value="soldout">Sold out</option>
                             </Form.Select>
                         </Form.Group>
-                        {/* Image Picker */}
-                        <ImagePicker onFileUpload={handleUploadImage} />
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>Hủy</Button>
-                    <Button variant="primary" onClick={handleSaveDish}>Lưu</Button>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
+                    <Button variant="primary" onClick={handleSaveDish}>Save</Button>
                 </Modal.Footer>
             </Modal>
         </Container>

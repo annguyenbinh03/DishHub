@@ -14,12 +14,12 @@ const Checkout = () => {
 
     axios
       .get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/details?orderId=${orderId}`)
-      .then(response => {
+      .then((response) => {
         if (response.data.isSucess) {
           setOrder(response.data.data.order);
         }
       })
-      .catch(error => console.error('Lỗi lấy thông tin đơn hàng:', error))
+      .catch((error) => console.error('Lỗi lấy thông tin đơn hàng:', error))
       .finally(() => setLoading(false));
   }, []);
 
@@ -35,7 +35,9 @@ const Checkout = () => {
         <p>Xem lại các món của bạn và xác nhận đơn đặt hàng của bạn</p>
 
         {loading ? (
-          <Spinner animation="border" />
+          <Spinner animation="border" role="status" variant="warning">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
         ) : (
           order && (
             <>
@@ -67,23 +69,23 @@ const Checkout = () => {
                             item.status === 'pending'
                               ? 'warning'
                               : item.status === 'confirmed'
-                              ? 'primary'
-                              : item.status === 'preparing'
-                              ? 'info'
-                              : item.status === 'delivered'
-                              ? 'success'
-                              : 'danger'
+                                ? 'primary'
+                                : item.status === 'preparing'
+                                  ? 'info'
+                                  : item.status === 'delivered'
+                                    ? 'success'
+                                    : 'danger'
                           }
                         >
                           {item.status === 'pending'
                             ? 'Chờ duyệt'
                             : item.status === 'confirmed'
-                            ? 'Đã xác nhận'
-                            : item.status === 'preparing'
-                            ? 'Đang chuẩn bị'
-                            : item.status === 'delivered'
-                            ? 'Đã giao'
-                            : 'Đã hủy'}
+                              ? 'Đã xác nhận'
+                              : item.status === 'preparing'
+                                ? 'Đang chuẩn bị'
+                                : item.status === 'delivered'
+                                  ? 'Đã giao'
+                                  : 'Đã hủy'}
                         </Badge>
                       </td>
                     </tr>
@@ -103,9 +105,7 @@ const Checkout = () => {
         <Modal.Header closeButton>
           <Modal.Title>Thông báo</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Vui lòng đợi trong giây lát, nhân viên sẽ đến và thanh toán cho bạn.
-        </Modal.Body>
+        <Modal.Body>Vui lòng đợi trong giây lát, nhân viên sẽ đến và thanh toán cho bạn.</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Đóng

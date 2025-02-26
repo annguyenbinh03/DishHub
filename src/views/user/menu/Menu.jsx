@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Nav, Form, InputGroup } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Nav, Form, InputGroup, Spinner } from 'react-bootstrap';
 import { BsCartPlusFill, BsSearch } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../../contexts/CartContext';
 import './Menu.css';
 import { getDishes } from 'services/dishService';
-import Spinner from 'components/Loader/Spinner';
 import { formatPrice } from 'utils/formatPrice';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -15,23 +14,22 @@ const Menu = () => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]); 
+  const [categories, setCategories] = useState([]);
   const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/categories');
-        setCategories(Array.isArray(response.data?.data) ? response.data.data : []); 
+        setCategories(Array.isArray(response.data?.data) ? response.data.data : []);
       } catch (error) {
         console.error('Lỗi lấy danh mục món ăn:', error);
-        setCategories([]); 
+        setCategories([]);
       }
     };
-    
+
     fetchCategories();
   }, []);
-  
 
   useEffect(() => {
     const fetchDishes = async () => {
@@ -55,7 +53,6 @@ const Menu = () => {
       value: cat.id
     }))
   ];
-  
 
   const handleAddToCart = (dish, e) => {
     e.preventDefault();
@@ -73,8 +70,15 @@ const Menu = () => {
     return matchesCategory && matchesSearch;
   });
 
-  if (loading) return <Spinner />;
-
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+        <Spinner animation="border" role="status" variant="warning">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
+  }
   return (
     <Container className="my-5">
       <h2 className="text-center mb-4">🍽️ Thực đơn nhà hàng 🍽️</h2>
@@ -118,7 +122,11 @@ const Menu = () => {
                     <Link to={`/user/menu/${dish.id}`} className="btn btn-warning w-75">
                       Xem chi tiết
                     </Link>
-                    <Button variant="outline-danger" className="d-flex align-items-center justify-content-center" onClick={(e) => handleAddToCart(dish, e)}>
+                    <Button
+                      variant="outline-danger"
+                      className="d-flex align-items-center justify-content-center"
+                      onClick={(e) => handleAddToCart(dish, e)}
+                    >
                       <BsCartPlusFill />
                     </Button>
                   </div>

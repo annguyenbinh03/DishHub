@@ -190,7 +190,7 @@ const FoodManagement = () => {
     };
 
     return (
-        <Container className="my-5">
+        <Container className="my-5 food-management">
             <h2 className="text-center mb-4">🍽️ Quản lý đồ ăn 🍽️</h2>
 
             <Form className="mb-3 d-flex gap-3">
@@ -232,9 +232,9 @@ const FoodManagement = () => {
                         currentDishes.map((dish, index) => (
                             <tr key={dish.id}>
                                 <td>{indexOfFirstDish + index + 1}</td>
-                                <td>{dish.image ? <img src={dish.image} alt={dish.name} className="food-img rounded" /> : "No Image"}</td>
+                                <td>{dish.image ? <img src={dish.image} alt={dish.name} className={`food-img rounded`} /> : "No Image"}</td>
                                 <td>{dish.name}</td>
-                                <td>{dish.description}</td>
+                                <td className='text-truncate'>{dish.description}</td>
                                 <td>{dish.categoryId}</td>
                                 <td>{formatPrice(dish.price)}</td>
                                 <td>{dish.soldCount}</td>
@@ -243,7 +243,7 @@ const FoodManagement = () => {
                                 </td>
                                 <td>
                                     <Dropdown>
-                                        <Dropdown.Toggle variant="light" id="dropdown-basic">...</Dropdown.Toggle>
+                                        <Dropdown.Toggle variant="light" id="dropdown-basic"></Dropdown.Toggle>
                                         <Dropdown.Menu>
                                             <Dropdown.Item onClick={() => handleEdit(dish)}>
                                                 <Button variant="primary" size="sm">Cập nhật</Button>

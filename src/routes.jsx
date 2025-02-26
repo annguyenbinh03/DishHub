@@ -100,12 +100,12 @@ const routes = [
         path: 'chatbot',
         element: lazy(() => import('./views/user/chat/Chatbot'))
       }
-      ,
-      {
-        exact: 'true',
-        path: 'testTSS',
-        element: lazy(() => import('./views/user/testTTS'))
-      }
+      // ,
+      // {
+      //   exact: 'true',
+      //   path: 'testTSS',
+      //   element: lazy(() => import('./views/user/testTTS'))
+      // }
     ]
   },
   {

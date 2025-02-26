@@ -14,7 +14,7 @@ const useCloudinaryUpload = async (file) => {
       body: data
     });
     const result = await response.json();
-    return result;
+    return result.secure_url;
   } catch (error) {
     setError('Upload failed!');
   }

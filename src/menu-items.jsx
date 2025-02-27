@@ -237,6 +237,13 @@ const menuItems = {
           type: 'item',
           url: '/restaurant-management',
           icon: 'feather icon-home'
+        },
+        {
+          id: 'request-management',
+          title: 'Quản lý yêu cầu',
+          type: 'item',
+          url: '/request-management',
+          icon: 'feather icon-message-square'
         }
       ]
     },

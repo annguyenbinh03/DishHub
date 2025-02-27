@@ -204,6 +204,12 @@ const routes = [
         element: lazy(() => import('./views/admin/restaurantManagement/restaurantManagement'))
       },
       {
+        exact: true,
+        path: '/request-management',
+        element: lazy(() => import('./views/admin/requestManagement/requestManagement'))
+
+      },
+      {
         path: '*',
         exact: 'true',
         element: () => <Navigate to={BASE_URL} />

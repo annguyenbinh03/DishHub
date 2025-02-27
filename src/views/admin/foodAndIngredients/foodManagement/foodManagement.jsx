@@ -5,7 +5,7 @@ import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ImagePicker from 'components/ImagePicker';
 import useCloudinaryUpload from 'hooks/useCloudinaryUpload';
-
+import { formatPrice } from 'utils/formatPrice';
 const FoodManagement = () => {
     const [foods, setFoods] = useState([]);
     const [categories, setCategories] = useState([]); // Store categories
@@ -188,7 +188,7 @@ const FoodManagement = () => {
         <Container className="my-5 food-management">
             <ToastContainer />
             <h2 className="text-center mb-4">Quản lý món ăn</h2>
-            <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Add Food</Button>
+            <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Tạo món mới</Button>
             <Table striped bordered hover responsive className="text-center">
                 <thead className="table-dark">
                     <tr>
@@ -213,7 +213,7 @@ const FoodManagement = () => {
                                 <td>{food.name}</td>
                                 <td>{food.description}</td>
                                 <td>{food.categoryId}</td>
-                                <td>{food.price}</td>
+                                <td>{formatPrice(food.price)}</td>
                                 <td>
                                     <Badge bg={food.status === 'onsale' ? 'success' : 'danger'}>
                                         {food.status === 'onsale' ? 'On Sale' : 'Off Sale'}
@@ -222,8 +222,8 @@ const FoodManagement = () => {
                                 <td>{food.restaurantId}</td>
                                 <td>{food.ingredients.map(ingredient => ingredient.name).join(', ')}</td>
                                 <td>
-                                    <Button variant="warning" size="sm" onClick={() => handleShowModal(food)}>Edit</Button>
-                                    <Button variant="danger" size="sm" onClick={() => handleDelete(food.id)}>Delete</Button>
+                                    <Button variant="warning" size="sm" onClick={() => handleShowModal(food)}>Cập nhật</Button>
+                                    <Button variant="danger" size="sm" onClick={() => handleDelete(food.id)}>Xóa</Button>
                                 </td>
                             </tr>
                         ))
@@ -237,7 +237,7 @@ const FoodManagement = () => {
 
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{currentFood ? 'Update Food' : 'Add Food'}</Modal.Title>
+                    <Modal.Title>{currentFood ? 'Cập nhật món ăn' : 'Tạo món mới'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
@@ -316,16 +316,20 @@ const FoodManagement = () => {
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Nguyên liệu</Form.Label>
-                            {ingredientsList.map(ingredient => (
-                                <Form.Check
-                                    key={ingredient.id}
-                                    type="checkbox"
-                                    label={ingredient.name}
-                                    checked={formData.ingredients.includes(ingredient.id)}
-                                    onChange={() => handleIngredientChange(ingredient.id)}
-                                />
-                            ))}
+                            {/* Create a container with fixed height and scrolling */}
+                            <div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid #ccc', padding: '10px' }}>
+                                {ingredientsList.map(ingredient => (
+                                    <Form.Check
+                                        key={ingredient.id}
+                                        type="checkbox"
+                                        label={ingredient.name}
+                                        checked={formData.ingredients.includes(ingredient.id)}
+                                        onChange={() => handleIngredientChange(ingredient.id)}
+                                    />
+                                ))}
+                            </div>
                         </Form.Group>
+
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>

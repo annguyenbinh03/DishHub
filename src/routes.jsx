@@ -61,7 +61,7 @@ const routes = [
       {
         exact: 'true',
         path: '',
-        element: () => <Navigate to="/user/home" replace />
+        element: () => <Navigate to="/user/about-me" replace />
       },
       ,
       {
@@ -71,17 +71,17 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/about-me',
+        element: lazy(() => import('./views/user/aboutMe/AboutMe'))
+      },
+      {
+        exact: 'true',
         path: '/home',
         element: lazy(() => import('./views/user/home/Home'))
       },
       {
         exact: 'true',
-        path: '/menu',
-        element: lazy(() => import('./views/user/menu/Menu'))
-      },
-      {
-        exact: 'true',
-        path: 'menu/:id',
+        path: 'dish/:id',
         element: lazy(() => import('./views/user/foodDetail/FoodDetail'))
       },
       {

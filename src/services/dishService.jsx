@@ -19,9 +19,23 @@ export const getDishes = () => {
   return axiosClient.get(url);
 };
 export const createDish = (dishData) => {
-  return axiosClient.post(END_POINTS.CREATE_DISH, dishData, {
+  const formData = new FormData();
+  formData.append("name", dishData.name);
+  formData.append("description", dishData.description);
+  formData.append("categoryId", dishData.categoryId);
+  formData.append("price", dishData.price);
+  formData.append("status", dishData.status);
+  formData.append("restaurantId", dishData.restaurantId);
+  formData.append("ingredients", JSON.stringify(dishData.ingredients));
+
+  // Only append image if it's available
+  if (dishData.image) {
+    formData.append("image", dishData.image);
+  }
+
+  return axiosClient.post(END_POINTS.CREATE_DISH, formData, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'multipart/form-data',
     }
   });
 };

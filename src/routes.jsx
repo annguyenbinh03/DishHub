@@ -100,12 +100,12 @@ const routes = [
         path: 'chatbot',
         element: lazy(() => import('./views/user/chat/Chatbot'))
       }
-      ,
-      {
-        exact: 'true',
-        path: 'testTSS',
-        element: lazy(() => import('./views/user/testTTS'))
-      }
+      // ,
+      // {
+      //   exact: 'true',
+      //   path: 'testTSS',
+      //   element: lazy(() => import('./views/user/testTTS'))
+      // }
     ]
   },
   {
@@ -197,6 +197,11 @@ const routes = [
         exact: true,
         path: '/order-management/order',
         element: lazy(() => import('./views/admin/orderManagement/orderManagement'))
+      },
+      {
+        exact: true,
+        path: '/restaurant-management',
+        element: lazy(() => import('./views/admin/restaurantManagement/restaurantManagement'))
       },
       {
         path: '*',

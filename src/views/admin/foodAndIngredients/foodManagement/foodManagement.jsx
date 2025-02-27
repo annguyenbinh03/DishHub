@@ -187,20 +187,20 @@ const FoodManagement = () => {
     return (
         <Container className="my-5 food-management">
             <ToastContainer />
-            <h2 className="text-center mb-4">Food Management</h2>
+            <h2 className="text-center mb-4">Quản lý món ăn</h2>
             <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Add Food</Button>
             <Table striped bordered hover responsive className="text-center">
                 <thead className="table-dark">
                     <tr>
                         <th>Id</th>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                        <th>Restaurant</th>
-                        <th>Ingredients</th>
+                        <th>Ảnh</th>
+                        <th>Tên món ăn</th>
+                        <th>Mô tả</th>
+                        <th>Loại</th>
+                        <th>Giá</th>
+                        <th>Trạng thái</th>
+                        <th>Nhà hàng</th>
+                        <th>Nguyên liệu</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -242,7 +242,7 @@ const FoodManagement = () => {
                 <Modal.Body>
                     <Form>
                         <Form.Group className="mb-3">
-                            <Form.Label>Name</Form.Label>
+                            <Form.Label>Tên</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="name"
@@ -251,7 +251,7 @@ const FoodManagement = () => {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Description</Form.Label>
+                            <Form.Label>Mô tả</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="description"
@@ -260,7 +260,7 @@ const FoodManagement = () => {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Category</Form.Label>
+                            <Form.Label>Loại</Form.Label>
                             <Form.Control
                                 as="select"
                                 name="categoryId"
@@ -275,7 +275,7 @@ const FoodManagement = () => {
                             </Form.Control>
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Price</Form.Label>
+                            <Form.Label>Giá</Form.Label>
                             <Form.Control
                                 type="number"
                                 name="price"
@@ -284,11 +284,11 @@ const FoodManagement = () => {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Image</Form.Label>
+                            <Form.Label>Ảnh</Form.Label>
                             <ImagePicker setFile={setFile} />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Status</Form.Label>
+                            <Form.Label>Trạng thái</Form.Label>
                             <Form.Control
                                 as="select"
                                 name="status"
@@ -300,7 +300,7 @@ const FoodManagement = () => {
                             </Form.Control>
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Restaurant</Form.Label>
+                            <Form.Label>Nhà hàng</Form.Label>
                             <Form.Control
                                 as="select"
                                 name="restaurantId"
@@ -315,7 +315,7 @@ const FoodManagement = () => {
                             </Form.Control>
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Ingredients</Form.Label>
+                            <Form.Label>Nguyên liệu</Form.Label>
                             {ingredientsList.map(ingredient => (
                                 <Form.Check
                                     key={ingredient.id}

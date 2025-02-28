@@ -174,15 +174,20 @@ const FoodManagement = () => {
     };
 
     const handleDelete = (id) => {
-        axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/foods/${id}`)
-            .then(() => {
-                fetchFoods();
-                toast.success('Successfully deleted!');
-            })
-            .catch((error) => {
-                toast.error('Error deleting data!');
-            });
+        if (window.confirm("Bạn có chắc chắn muốn xóa món ăn này?")) {
+            axios
+                .delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes/${id}`)
+                .then(() => {
+                    fetchFoods(); // Tải lại danh sách món ăn sau khi xóa
+                    toast.success('Món ăn đã được xóa thành công!');
+                })
+                .catch((error) => {
+                    console.error('Lỗi khi xóa món ăn:', error);
+                    toast.error('Không thể xóa món ăn!');
+                });
+        }
     };
+
 
     return (
         <Container className="my-5 food-management">
@@ -211,7 +216,20 @@ const FoodManagement = () => {
                                 <td>{index + 1}</td>
                                 <td><img src={food.image} alt={food.name} className="food-img rounded" /></td>
                                 <td>{food.name}</td>
-                                <td>{food.description}</td>
+                                <td
+                                    title={food.description}
+                                    className="text-start"
+                                    style={{
+                                        maxWidth: '200px',
+                                        overflow: 'hidden',
+                                        whiteSpace: 'nowrap',
+                                        textOverflow: 'ellipsis',
+                                    }}
+                                >
+                                    {food.description}
+                                </td>
+
+
                                 <td>{food.categoryId}</td>
                                 <td>{formatPrice(food.price)}</td>
                                 <td>
@@ -220,7 +238,20 @@ const FoodManagement = () => {
                                     </Badge>
                                 </td>
                                 <td>{food.restaurantId}</td>
-                                <td>{food.ingredients.map(ingredient => ingredient.name).join(', ')}</td>
+                                <td
+                                    title={food.ingredients.map(ingredient => ingredient.name).join(', ')}
+                                    className="text-start"
+                                    style={{
+                                        maxWidth: '200px',
+                                        overflow: 'hidden',
+                                        whiteSpace: 'nowrap',
+                                        textOverflow: 'ellipsis',
+                                    }}
+                                >
+                                    {food.ingredients.map(ingredient => ingredient.name).join(', ')}
+                                </td>
+
+
                                 <td>
                                     <Button variant="warning" size="sm" onClick={() => handleShowModal(food)}>Cập nhật</Button>
                                     <Button variant="danger" size="sm" onClick={() => handleDelete(food.id)}>Xóa</Button>

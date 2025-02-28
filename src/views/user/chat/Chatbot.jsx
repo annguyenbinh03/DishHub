@@ -134,7 +134,7 @@ const Chatbot = () => {
         <Col md={8} lg={6}>
           <div className="text-center mb-3 mt-4 mb-1">
             <Image src={botGif} alt="Bot Animation" fluid style={{ width: '300px', height: '180px' }} />
-          </div>  
+          </div>
           <div className="d-flex justify-content-end gap-2 mb-1">
             <Button variant="light" onClick={toggleSound}>
               {isSoundOn ? <FaVolumeUp /> : <FaVolumeMute />}

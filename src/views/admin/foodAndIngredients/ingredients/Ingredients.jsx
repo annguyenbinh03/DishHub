@@ -38,9 +38,20 @@ const Ingredients = () => {
     };
 
     const handleDelete = (id) => {
-        // Handle delete action here
-        console.log('Delete ingredient with ID:', id);
+        if (window.confirm("Bạn có chắc chắn muốn xóa nguyên liệu này?")) {
+            axios
+                .delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/ingredients/${id}`)
+                .then(() => {
+                    fetchIngredients(); // Tải lại danh sách nguyên liệu sau khi xóa
+                    toast.success('Nguyên liệu đã được xóa thành công!');
+                })
+                .catch((error) => {
+                    console.error('Lỗi khi xóa nguyên liệu:', error);
+                    toast.error('Không thể xóa nguyên liệu!');
+                });
+        }
     };
+
 
     const handleShowModal = (ingredient = null) => {
         if (ingredient) {

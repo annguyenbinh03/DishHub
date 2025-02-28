@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 const TableSetting = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -39,14 +40,14 @@ const TableSetting = () => {
   const handleConfirm = () => {
     if (!selectedTable) return;
     const today = new Date().toISOString().split('T')[0];
-  
+
     // Lưu cả ID bàn vào localStorage với key "tableId"
     localStorage.setItem('selectedTable', JSON.stringify({ id: selectedTable, date: today }));
     localStorage.setItem('tableId', selectedTable);  // Thêm dòng này để đảm bảo key tableId có giá trị
-  
-    alert('Bàn đã được lưu thành công!');
+
+    toast.success('Bàn đã được lưu thành công!');
   };
-  
+
 
   return (
     <Container fluid className="text-center my-5">
@@ -63,7 +64,7 @@ const TableSetting = () => {
               ))}
             </Form.Select>
           </Form.Group>
-          
+
           {/* Chọn bàn */}
           <Form.Group className="d-flex justify-content-between align-items-center">
             <Form.Label className="mb-0 me-2">Chọn bàn:</Form.Label>

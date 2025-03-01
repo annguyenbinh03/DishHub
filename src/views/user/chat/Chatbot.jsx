@@ -129,12 +129,12 @@ const Chatbot = () => {
   }, [messages]);
 
   return (
-    <Container fluid className="bg-dark text-white vh-100 d-flex flex-column position-fixed top-0 start-0 w-100 py-5">
+    <Container fluid className="bg-dark text-white vh-100 d-flex flex-column position-fixed top-0 start-0 w-100 py-5 ">
       <Row className="justify-content-center">
         <Col md={8} lg={6}>
           <div className="text-center mb-3 mt-4 mb-1">
             <Image src={botGif} alt="Bot Animation" fluid style={{ width: '300px', height: '180px' }} />
-          </div>  
+          </div>
           <div className="d-flex justify-content-end gap-2 mb-1">
             <Button variant="light" onClick={toggleSound}>
               {isSoundOn ? <FaVolumeUp /> : <FaVolumeMute />}

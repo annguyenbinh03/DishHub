@@ -237,37 +237,46 @@ const menuItems = {
           type: 'item',
           url: '/restaurant-management',
           icon: 'feather icon-home'
+        },
+        {
+          id: 'staff-management',
+          title: 'Quản lý nhân viên',
+          type: 'item',
+          url: '/staff-management',
+          icon: 'feather icon-home'
+        },
+        {
+          id: 'request-management',
+          title: 'Quản lý yêu cầu',
+          type: 'item',
+          url: '/request-management',
+          icon: 'feather icon-message-square'
         }
       ]
     },
     {
       id: 'food-management',
-      title: 'Food & Ingredients',
+      title: 'Quản lý món ăn và nguyên liệu',
       type: 'group',
-      icon: 'icon-food',
+      icon: 'feather icon-archive',
       children: [
         {
           id: 'food',
-          title: 'Food Management',
-          type: 'collapse',
-          icon: 'feather icon-archive',
-          children: [
-            {
-              id: 'food',
-              title: 'Food',
-              type: 'item',
-              url: '/food-management/food'
-            },
-            {
-              id: 'ingredients',
-              title: 'Ingredients',
-              type: 'item',
-              url: '/food-management/ingredients'
-            }
-          ]
+          title: 'Món ăn',
+          type: 'item',
+          icon: 'feather icon-box', // Thêm biểu tượng cho Món ăn
+          url: '/food-management/food'
+        },
+        {
+          id: 'ingredients',
+          title: 'Nguyên liệu',
+          type: 'item',
+          icon: 'feather icon-list', // Thêm biểu tượng cho Nguyên liệu
+          url: '/food-management/ingredients'
         }
       ]
     },
+
     {
       id: 'order-management',
       title: 'Order Management',

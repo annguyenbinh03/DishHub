@@ -1,0 +1,40 @@
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px; /* Rounded corners */
+}
+.table-cell-truncate {
+    max-width: 150px; /* Giới hạn chiều rộng */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    cursor: pointer; /* Hiển thị con trỏ tay khi di chuột */
+}
+
+.table-cell-truncate::after {
+    content: attr(data-fulltext);
+    position: absolute;
+    left: 0;
+    bottom: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    white-space: normal;
+    max-width: 300px;
+    z-index: 1;
+    font-size: 12px;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.table-cell-truncate:hover::after {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+

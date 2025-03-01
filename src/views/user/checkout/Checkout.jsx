@@ -7,10 +7,13 @@ const Checkout = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [orderId, setOrderId] = useState(localStorage.getItem('orderId'));
 
   useEffect(() => {
-    const orderId = localStorage.getItem('orderId');
-    if (!orderId) return;
+    if (!orderId) {
+      setLoading(false);
+      return;
+    }
 
     axios
       .get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/details?orderId=${orderId}`)
@@ -21,15 +24,16 @@ const Checkout = () => {
       })
       .catch((error) => console.error('Lỗi lấy thông tin đơn hàng:', error))
       .finally(() => setLoading(false));
-  }, []);
+  }, [orderId]);
 
   const handleCheckout = () => {
     setShowModal(true);
     localStorage.removeItem('orderId');
+    setOrderId(null);
   };
 
   return (
-    <Container className="mt-5">
+    <Container className="mt-5 py-5">
       <Container className="mt-4 text-center">
         <h2>Hoàn thành đơn đặt hàng của bạn</h2>
         <p>Xem lại các món của bạn và xác nhận đơn đặt hàng của bạn</p>
@@ -38,6 +42,8 @@ const Checkout = () => {
           <Spinner animation="border" role="status" variant="warning">
             <span className="visually-hidden">Loading...</span>
           </Spinner>
+        ) : !orderId ? (
+          <h5 className="text-danger mt-4">Bạn chưa có đơn đặt món ăn nào</h5>
         ) : (
           order && (
             <>

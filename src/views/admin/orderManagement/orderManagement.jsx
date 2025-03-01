@@ -1,63 +1,166 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Container, Badge } from 'react-bootstrap';
-import { getAdminOrders } from 'services/orderService';
+import { Table, Container, Button, Modal, Badge, Form } from 'react-bootstrap';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { formatPrice } from 'utils/formatPrice';
 
 const OrderManagement = () => {
     const [orders, setOrders] = useState([]);
-
-    // Fetch all orders
-    const fetchOrders = async () => {
-        const response = await getAdminOrders();
-        setOrders(response?.data || []); // Set empty array if data is undefined or not available
-    };
+    const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [statusFilter, setStatusFilter] = useState('');
 
     useEffect(() => {
         fetchOrders();
     }, []);
 
+    const fetchOrders = () => {
+        setLoading(true);
+        axios
+            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/orders')
+            .then((res) => {
+                if (res.data.isSucess) {
+                    const sortedOrders = res.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    setOrders(sortedOrders);
+                } else {
+                    toast.error('Lỗi tải danh sách đơn hàng!');
+                }
+            })
+            .catch((error) => {
+                console.error('Lỗi khi lấy dữ liệu:', error);
+                toast.error('Không thể tải danh sách đơn hàng!');
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
+
+    const handleShowModal = (order) => {
+        setSelectedOrder(order);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setSelectedOrder(null);
+    };
+
+    const handleStatusFilterChange = (e) => {
+        setStatusFilter(e.target.value);
+    };
+
+    const filteredOrders = orders.filter(order =>
+        statusFilter === '' || order.status === statusFilter
+    );
+
     return (
         <Container className="my-5">
-            <h2 className="text-center mb-4">📋 Quản lý đơn hàng 📋</h2>
-
+            <ToastContainer />
+            <h2 className="text-center mb-4">Quản lý Đơn Hàng</h2>
+            <Form.Group controlId="statusFilter" className="mb-3">
+                <Form.Label>Lọc theo trạng thái</Form.Label>
+                <Form.Control as="select" value={statusFilter} onChange={handleStatusFilterChange}>
+                    <option value="">Tất cả</option>
+                    <option value="confirmed">Đã xác nhận</option>
+                    <option value="preparing">Đang chuẩn bị</option>
+                    <option value="completed">Hoàn thành</option>
+                    <option value="cancelled">Đã hủy</option>
+                </Form.Control>
+            </Form.Group>
             <Table striped bordered hover responsive className="text-center">
                 <thead className="table-dark">
                     <tr>
-                        <th>Id</th>
-                        <th>Table Id</th>
-                        <th>Table Name</th>
-                        <th>Total Amount</th>
-                        <th>Payment Status</th>
-                        <th>Status</th>
+                        <th>ID</th>
+                        <th>Bàn</th>
+                        <th>Tổng tiền</th>
+                        <th>Thanh toán</th>
+                        <th>Trạng thái</th>
+                        <th>Thời gian tạo</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {orders.length > 0 ? (
-                        orders.map((order) => (
+                    {loading ? (
+                        <tr>
+                            <td colSpan="7" className="text-center">Đang tải...</td>
+                        </tr>
+                    ) : filteredOrders.length > 0 ? (
+                        filteredOrders.map((order) => (
                             <tr key={order.id}>
                                 <td>{order.id}</td>
-                                <td>{order.tableId}</td>
-                                <td>{order.tableName || 'N/A'}</td> {/* Handle null or empty tableName */}
+                                <td>{order.tableName || `Bàn ${order.tableId}`}</td>
                                 <td>{formatPrice(order.totalAmount)}</td>
                                 <td>
-                                    <Badge bg={order.paymentStatus ? 'success' : 'secondary'}>
-                                        {order.paymentStatus ? 'Paid' : 'Unpaid'}
+                                    <Badge bg={order.paymentStatus ? 'success' : 'warning'}>
+                                        {order.paymentStatus ? 'Đã thanh toán' : 'Chưa thanh toán'}
                                     </Badge>
                                 </td>
                                 <td>
-                                    <Badge bg={order.status === 'completed' ? 'success' : 'secondary'}>
-                                        {order.status === 'completed' ? 'Completed' : 'Pending'}
+                                    <Badge bg={
+                                        order.status === 'confirmed' ? 'info' :
+                                            order.status === 'preparing' ? 'primary' :
+                                                order.status === 'completed' ? 'success' :
+                                                    'danger'
+                                    }>
+                                        {order.status}
                                     </Badge>
+                                </td>
+                                <td>{new Date(order.createdAt).toLocaleString()}</td>
+                                <td>
+                                    <Button variant="info" size="sm" onClick={() => handleShowModal(order)}>
+                                        Xem
+                                    </Button>
                                 </td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="6" className="text-center">Không tìm thấy dữ liệu</td>
+                            <td colSpan="7" className="text-center">Không có đơn hàng nào.</td>
                         </tr>
                     )}
                 </tbody>
             </Table>
+
+            {/* Modal Chi Tiết Đơn Hàng */}
+            <Modal show={showModal} onHide={handleCloseModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Chi tiết đơn hàng</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {selectedOrder ? (
+                        <div>
+                            <p><strong>ID:</strong> {selectedOrder.id}</p>
+                            <p><strong>Bàn:</strong> {selectedOrder.tableName || `Bàn ${selectedOrder.tableId}`}</p>
+                            <p><strong>Tổng tiền:</strong> {formatPrice(selectedOrder.totalAmount)}</p>
+                            <p><strong>Thanh toán:</strong> {selectedOrder.paymentStatus ? 'Đã thanh toán' : 'Chưa thanh toán'}</p>
+                            <p><strong>Trạng thái:</strong> {selectedOrder.status}</p>
+                            <p><strong>Thời gian tạo:</strong> {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+
+                            <h5 className="mt-3">Món ăn trong đơn hàng:</h5>
+                            {selectedOrder.dishes.length > 0 ? (
+                                <ul>
+                                    {selectedOrder.dishes.map((dish, index) => (
+                                        <li key={index}>
+                                            {dish.name} - {formatPrice(dish.price)} x {dish.quantity}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>Không có món ăn nào trong đơn hàng này.</p>
+                            )}
+                        </div>
+                    ) : (
+                        <p>Không có thông tin đơn hàng.</p>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseModal}>
+                        Đóng
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 };

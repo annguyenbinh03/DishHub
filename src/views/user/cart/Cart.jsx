@@ -5,6 +5,7 @@ import { useCart } from '../../../contexts/CartContext';
 import { formatPrice } from 'utils/formatPrice';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 const Cart = () => {
   const [show, setShow] = useState(false);
@@ -138,7 +139,7 @@ const Cart = () => {
             <Button variant="warning" onClick={handleOrder} style={{ fontSize: '1.3rem', padding: '0.75rem' }}>
               Đặt hàng
             </Button>
-            <Button variant="success" onClick={handleClose} style={{ fontSize: '1.3rem', padding: '0.75rem' }}>
+            <Button variant="success" as={Link} to="/user/home" onClick={handleClose} style={{ fontSize: '1.3rem', padding: '0.75rem' }}>
               Tiếp tục đặt món
             </Button>
           </div>

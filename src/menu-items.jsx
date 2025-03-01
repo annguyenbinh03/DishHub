@@ -237,6 +237,13 @@ const menuItems = {
           type: 'item',
           url: '/restaurant-management',
           icon: 'feather icon-home'
+        },
+        {
+          id: 'user-management',
+          title: 'Quản lý nhân viên',
+          type: 'item',
+          url: '/user-management',
+          icon: 'feather icon-home'
         }
       ]
     },

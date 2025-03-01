@@ -239,10 +239,10 @@ const menuItems = {
           icon: 'feather icon-home'
         },
         {
-          id: 'user-management',
+          id: 'staff-management',
           title: 'Quản lý nhân viên',
           type: 'item',
-          url: '/user-management',
+          url: '/staff-management',
           icon: 'feather icon-home'
         },
         {

@@ -20,8 +20,8 @@ const Header = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           {/* Menu chính */}
           <Nav >
-            <NavLink className= "nav-link "  to="/user/home">Trang chủ</NavLink>
-            <NavLink className= "nav-link"  to="/user/menu">Thực đơn</NavLink>
+            <NavLink className= "nav-link "  to="/user/about-me">Giới thiệu</NavLink>
+            <NavLink className= "nav-link"  to="/user/home">Trang chủ</NavLink>
             <NavLink className= "nav-link"  to="/user/checkout">Thanh toán</NavLink>
             <NavLink className= "nav-link"  to="/user/support">Hỗ trợ</NavLink>
           </Nav>

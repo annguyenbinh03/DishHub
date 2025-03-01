@@ -4,7 +4,6 @@ import { Container, Card, Button, Row, Col } from 'react-bootstrap';
 import { getDishDetail } from 'services/dishService';
 import { formatPrice } from 'utils/formatPrice';
 import ToastNotification from '../../../components/Toast/ToastNotification';
-import './FoodDetail.css';
 import { useCart } from 'contexts/CartContext';
 
 const FoodDetail = () => {
@@ -14,7 +13,7 @@ const FoodDetail = () => {
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
-  
+
   const [toast, setToast] = useState({ show: false, message: '' });
 
   useEffect(() => {
@@ -52,7 +51,7 @@ const FoodDetail = () => {
   }
 
   return (
-    <Container className="my-5 food-detail-container">
+    <Container className="my-5 food-detail-container py-5 food-detail">
       <Row className="align-items-center">
         <Col md={3} className="text-center">
           <Card.Img
@@ -86,26 +85,25 @@ const FoodDetail = () => {
         {dish?.ingredients?.length > 0 ? (
           <Row className="menu-items">
             {dish.ingredients.map((ingredient) => (
-              <Col key={ingredient.id} xs={12} sm={4} md={2} className="menu-item mb-3">
-                <Card className="ingredient-list border-0 shadow-none">
-                  <Row className="ingredient-card align-items-center">
-                    <Col xs={4} className="text-left">
-                      <Card.Img variant="top" src={ingredient.image} alt={ingredient.name} className="ingredient-image" />
-                    </Col>
-                    <Col xs={8}>
-                      <Card.Body>
-                        <Card.Title className="ingredient-name">{ingredient.name}</Card.Title>
-                      </Card.Body>
-                    </Col>
-                  </Row>
+              <Col key={ingredient.id} xs={12} sm={6} md={4} lg={2} className="menu-item mb-3">
+                <Card className="ingredient-list border-0 shadow-sm d-flex flex-row align-items-center p-2">
+                  <Card.Img
+                    src={ingredient.image}
+                    alt={ingredient.name}
+                    className="ingredient-image"
+                    style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: '8px' }}
+                  />
+                  <Card.Body className="p-2">
+                    <Card.Title className="ingredient-name mb-0">{ingredient.name}</Card.Title>
+                  </Card.Body>
                 </Card>
               </Col>
             ))}
           </Row>
-        ) : (
-          <p>Không có thông tin thành phần.</p>
-        )}
+        ) : 
+        <p>Không có thành phần nào</p>}
       </Row>
+
       <ToastNotification show={toast.show} message={toast.message} onClose={() => setToast({ show: false, message: '' })} />
     </Container>
   );

@@ -25,12 +25,16 @@ export const CartProvider = ({ children }) => {
 
   // Cập nhật số lượng món
   const updateQuantity = (id, quantity) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(0, quantity) } : item
-      )
-    );
+    setCartItems((prevItems) => {
+      if (quantity <= 0) {
+        return prevItems.filter((item) => item.id !== id); 
+      }
+      return prevItems.map((item) =>
+        item.id === id ? { ...item, quantity } : item
+      );
+    });
   };
+  
 
   //Xóa toàn bộ món ăn trong giỏ hàng
   const cleanCart = () =>{

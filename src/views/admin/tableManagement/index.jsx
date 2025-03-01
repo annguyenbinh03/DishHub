@@ -120,8 +120,11 @@ const TableManagement = () => {
         <Container className="my-5">
             <ToastContainer />
             <h2 className="text-center mb-4"> Quản lý bàn </h2>
+            <div className='d-flex justify-content-end'>
             <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Thêm bàn</Button>
-            <Table striped bordered hover responsive className="text-center">
+
+            </div>
+            <Table striped bordered hover responsive className="text-center">   
                 <thead className="table-dark">
                     <tr>
                         <th>Id</th>

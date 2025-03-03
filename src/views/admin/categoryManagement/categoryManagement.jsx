@@ -91,7 +91,7 @@ const CategoryManagement = () => {
     };
 
     return (
-        <Container className="my-5">
+        <Container >
             <ToastContainer />
             <h2 className="text-center mb-4"> Quản lý danh mục </h2>
             <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Thêm danh mục</Button>

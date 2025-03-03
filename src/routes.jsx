@@ -205,6 +205,11 @@ const routes = [
       },
       {
         exact: true,
+        path: '/staff-management',
+        element: lazy(() => import('./views/admin/staffManagement/staffManagement'))
+      },
+      {
+        exact: true,
         path: '/request-management',
         element: lazy(() => import('./views/admin/requestManagement/requestManagement'))
 

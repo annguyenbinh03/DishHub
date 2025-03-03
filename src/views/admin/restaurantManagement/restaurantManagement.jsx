@@ -69,11 +69,11 @@ const RestaurantManagement = () => {
                 // Upload file lên Cloudinary
                 const uploadResult = await useCloudinaryUpload(file);
     
-                if (!uploadResult || !uploadResult.secure_url) {
+                if (!uploadResult || !uploadResult) {
                     throw new Error('Upload thất bại!');
                 }
     
-                uploadedUrl = uploadResult.secure_url;
+                uploadedUrl = uploadResult;
     
                 // Hiển thị thông báo thành công
                 toast.success(`Upload thành công!`, {
@@ -209,7 +209,7 @@ const RestaurantManagement = () => {
                         <Form.Group className="mb-3">
                             <Form.Label>Số điện thoại</Form.Label>
                             <Form.Control
-                                type="text"
+                                type="number"
                                 name="phoneNumber"
                                 value={formData.phoneNumber}
                                 onChange={handleChange}

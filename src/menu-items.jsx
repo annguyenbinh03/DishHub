@@ -239,6 +239,13 @@ const menuItems = {
           icon: 'feather icon-home'
         },
         {
+          id: 'staff-management',
+          title: 'Quản lý nhân viên',
+          type: 'item',
+          url: '/staff-management',
+          icon: 'feather icon-home'
+        },
+        {
           id: 'request-management',
           title: 'Quản lý yêu cầu',
           type: 'item',

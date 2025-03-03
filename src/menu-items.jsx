@@ -244,6 +244,13 @@ const menuItems = {
           type: 'item',
           url: '/request-management',
           icon: 'feather icon-message-square'
+        },
+        {
+          id: 'request-type-management',
+          title: 'Quản lý loại yêu cầu',
+          type: 'item',
+          url: '/request-type-management',
+          icon: 'feather icon-message-circle'
         }
       ]
     },

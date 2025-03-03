@@ -210,6 +210,11 @@ const routes = [
 
       },
       {
+        exact: true,
+        path: '/request-type-management',
+        element: lazy(() => import('./views/admin/requestTypeManagement/requestTypeManagement'))
+      },
+      {
         path: '*',
         exact: 'true',
         element: () => <Navigate to={BASE_URL} />

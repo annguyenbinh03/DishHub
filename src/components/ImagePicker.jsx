@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BsCloudUploadFill } from "react-icons/bs";
 
-const ImagePicker = ({ setFile }) => {
+const ImagePicker = ({ setFile, exsitedUrl = null }) => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const limitFileSize = 5 * 1024 * 1024;
 
@@ -31,10 +31,14 @@ const ImagePicker = ({ setFile }) => {
     <div className="image-picker">
         <label htmlFor="image-input" > <BsCloudUploadFill/> Chọn ảnh</label>
         <input id="image-input" type="file" className="image-input" accept="image/png, image/jpeg" onChange={handleFileChange} />
-        {previewUrl && (
+        {previewUrl ? (
           <div className="mt-1">
             <img src={previewUrl} alt="Preview" width="100%" style={{maxWidth:'300px', maxHeight:'300px'}}/>
           </div>
+        ) : (
+          <div className="mt-1">
+          <img src={exsitedUrl} alt="Preview" width="100%" style={{maxWidth:'300px', maxHeight:'300px'}}/>
+        </div>
         )}
     </div>
   );

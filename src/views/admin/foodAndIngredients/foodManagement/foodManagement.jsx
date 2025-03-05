@@ -25,6 +25,10 @@ const FoodManagement = () => {
     });
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState(''); // State for search term
+    const [selectedCategory, setSelectedCategory] = useState(''); // State for selected category
+    const [selectedStatus, setSelectedStatus] = useState(''); // State for selected status
+    const [orderId, setOrderId] = useState(''); // State for order ID
 
     useEffect(() => {
         fetchFoods();
@@ -115,6 +119,29 @@ const FoodManagement = () => {
         });
     };
 
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleCategoryChange = (e) => {
+        setSelectedCategory(e.target.value);
+    };
+
+    const handleStatusChange = (e) => {
+        setSelectedStatus(e.target.value);
+    };
+
+    const handleOrderIdChange = (e) => {
+        setOrderId(e.target.value);
+    };
+
+    const filteredFoods = foods.filter(food =>
+        food.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (selectedCategory === '' || food.categoryId === parseInt(selectedCategory)) &&
+        (selectedStatus === '' || food.status === selectedStatus) &&
+        (orderId === '' || food.id.toString() === orderId)
+    );
+
     const uploadImage = async () => {
         if (file) {
             try {
@@ -134,6 +161,10 @@ const FoodManagement = () => {
     };
 
     const handleSubmit = async () => {
+        if (formData.price < 0) {
+            toast.error('Price cannot be less than 0!');
+            return;
+        }
         setLoading(true);
         const uploadedUrl = await uploadImage();
 
@@ -155,12 +186,12 @@ const FoodManagement = () => {
 
         try {
             if (currentFood) {
-                const response = await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes/${currentFood.id}`, createDishDTO);
+                await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes/${currentFood.id}`, createDishDTO);
                 fetchFoods();
                 handleCloseModal();
                 toast.success(`Successfully updated ${createDishDTO.name}!`);
             } else {
-                const response = await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes', createDishDTO);
+                await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes', createDishDTO);
                 fetchFoods();
                 handleCloseModal();
                 toast.success(`Successfully added ${createDishDTO.name}!`);
@@ -193,6 +224,43 @@ const FoodManagement = () => {
         <Container className="my-5 food-management">
             <ToastContainer />
             <h2 className="text-center mb-4">Quản lý món ăn</h2>
+            <Form.Control
+                type="text"
+                placeholder="Search by name"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="mb-3"
+            />
+            <Form.Control
+                as="select"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                className="mb-3"
+            >
+                <option value="">All Categories</option>
+                {categories.map(category => (
+                    <option key={category.id} value={category.id}>
+                        {category.name}
+                    </option>
+                ))}
+            </Form.Control>
+            <Form.Control
+                as="select"
+                value={selectedStatus}
+                onChange={handleStatusChange}
+                className="mb-3"
+            >
+                <option value="">All Status</option>
+                <option value="onsale">On Sale</option>
+                <option value="deleted">Off Sale</option>
+            </Form.Control>
+            <Form.Control
+                type="text"
+                placeholder="Filter by Order ID"
+                value={orderId}
+                onChange={handleOrderIdChange}
+                className="mb-3"
+            />
             <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Tạo món mới</Button>
             <Table striped bordered hover responsive className="text-center">
                 <thead className="table-dark">
@@ -210,8 +278,8 @@ const FoodManagement = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {foods.length > 0 ? (
-                        foods.map((food, index) => (
+                    {filteredFoods.length > 0 ? (
+                        filteredFoods.map((food, index) => (
                             <tr key={food.id}>
                                 <td>{index + 1}</td>
                                 <td><img src={food.image} alt={food.name} className="food-img rounded" /></td>
@@ -260,7 +328,7 @@ const FoodManagement = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="10" className="text-center">Loading data...</td>
+                            <td colSpan="10" className="text-center">No matching data found...</td>
                         </tr>
                     )}
                 </tbody>

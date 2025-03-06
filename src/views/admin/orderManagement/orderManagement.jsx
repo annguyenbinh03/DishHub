@@ -11,6 +11,7 @@ const OrderManagement = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [statusFilter, setStatusFilter] = useState('');
+    const [newStatus, setNewStatus] = useState('');
 
     useEffect(() => {
         fetchOrders();
@@ -39,12 +40,45 @@ const OrderManagement = () => {
 
     const handleShowModal = (order) => {
         setSelectedOrder(order);
+        setNewStatus(order.status); // Đặt trạng thái ban đầu khi mở modal
         setShowModal(true);
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
         setSelectedOrder(null);
+    };
+
+    const handleStatusChange = (e) => {
+        setNewStatus(e.target.value);
+    };
+
+    const handleUpdateOrder = () => {
+        if (!newStatus) {
+            toast.error('Vui lòng chọn trạng thái mới.');
+            return;
+        }
+
+        const updatedOrder = {
+            ...selectedOrder,
+            status: newStatus
+        };
+
+        axios
+            .put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/orders?orderId=${selectedOrder.id}`, updatedOrder)
+            .then((response) => {
+                if (response.data.isSucess) {
+                    toast.success('Cập nhật đơn hàng thành công!');
+                    fetchOrders(); // Cập nhật lại danh sách đơn hàng
+                    handleCloseModal();
+                } else {
+                    toast.error('Cập nhật đơn hàng thất bại!');
+                }
+            })
+            .catch((error) => {
+                console.error('Lỗi khi cập nhật:', error);
+                toast.error('Có lỗi xảy ra khi cập nhật đơn hàng!');
+            });
     };
 
     const handleStatusFilterChange = (e) => {
@@ -98,12 +132,7 @@ const OrderManagement = () => {
                                     </Badge>
                                 </td>
                                 <td>
-                                    <Badge bg={
-                                        order.status === 'confirmed' ? 'info' :
-                                            order.status === 'preparing' ? 'primary' :
-                                                order.status === 'completed' ? 'success' :
-                                                    'danger'
-                                    }>
+                                    <Badge bg={order.status === 'confirmed' ? 'info' : order.status === 'preparing' ? 'primary' : order.status === 'completed' ? 'success' : 'danger'}>
                                         {order.status}
                                     </Badge>
                                 </td>
@@ -135,7 +164,14 @@ const OrderManagement = () => {
                             <p><strong>Bàn:</strong> {selectedOrder.tableName || `Bàn ${selectedOrder.tableId}`}</p>
                             <p><strong>Tổng tiền:</strong> {formatPrice(selectedOrder.totalAmount)}</p>
                             <p><strong>Thanh toán:</strong> {selectedOrder.paymentStatus ? 'Đã thanh toán' : 'Chưa thanh toán'}</p>
-                            <p><strong>Trạng thái:</strong> {selectedOrder.status}</p>
+                            <p><strong>Trạng thái:</strong>
+                                <Form.Control as="select" value={newStatus} onChange={handleStatusChange}>
+                                    <option value="confirmed">Đã xác nhận</option>
+                                    <option value="preparing">Đang chuẩn bị</option>
+                                    <option value="completed">Hoàn thành</option>
+                                    <option value="cancelled">Đã hủy</option>
+                                </Form.Control>
+                            </p>
                             <p><strong>Thời gian tạo:</strong> {new Date(selectedOrder.createdAt).toLocaleString()}</p>
 
                             <h5 className="mt-3">Món ăn trong đơn hàng:</h5>
@@ -158,6 +194,9 @@ const OrderManagement = () => {
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseModal}>
                         Đóng
+                    </Button>
+                    <Button variant="primary" onClick={handleUpdateOrder}>
+                        Cập nhật
                     </Button>
                 </Modal.Footer>
             </Modal>

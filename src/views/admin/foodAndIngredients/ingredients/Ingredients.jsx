@@ -16,6 +16,7 @@ const Ingredients = () => {
         image: '' // Image will be updated after uploading
     });
     const [file, setFile] = useState(null); // Store file selected from ImagePicker
+    const [searchTerm, setSearchTerm] = useState(''); // State for search term
 
     useEffect(() => {
         fetchIngredients();
@@ -136,10 +137,25 @@ const Ingredients = () => {
             });
     };
 
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const filteredIngredients = ingredients.filter(ingredient =>
+        ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <Container className="my-5">
             <ToastContainer />
             <h2 className="text-center mb-4">Quản lý nguyên liệu</h2>
+            <Form.Control
+                type="text"
+                placeholder="Tìm kiếm nguyên liệu..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="mb-3"
+            />
             <Button variant="primary" onClick={() => handleShowModal()} className="mb-3">
                 Thêm nguyên liệu
             </Button>
@@ -158,8 +174,8 @@ const Ingredients = () => {
                             <td colSpan="4" className="text-center">Loading...</td>
                         </tr>
                     ) : (
-                        ingredients.length > 0 ? (
-                            ingredients.map((ingredient) => (
+                        filteredIngredients.length > 0 ? (
+                            filteredIngredients.map((ingredient) => (
                                 <tr key={ingredient.id}>
                                     <td>{ingredient.id}</td>
                                     <td>

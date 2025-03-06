@@ -19,45 +19,51 @@ const Cart = () => {
 
   const handleOrder = async () => {
     try {
+      // Kiểm tra giỏ hàng trống
+      if (!cartItems || cartItems.length === 0) {
+        toast.error('Bạn chưa thêm món ăn vào giỏ hàng!');
+        return;
+      }
+
       let tableId = localStorage.getItem('tableId');
-  
+
       if (!tableId) {
         toast.error('Chưa chọn bàn, vui lòng chọn bàn trước khi đặt món.');
         return;
       }
-  
+
       console.log('Mã bàn:', tableId);
-  
+
       let orderId = localStorage.getItem('orderId');
-  
+
       // Nếu chưa có orderId, tạo mới
       if (!orderId) {
         const orderResponse = await axios.post(
           'https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders',
           { tableId: tableId }
         );
-  
+
         orderId = orderResponse.data?.data?.orderId;
         if (!orderId) {
           throw new Error('Không lấy được orderId từ API');
         }
-  
+
         // Lưu orderId vào localStorage để dùng lại
         localStorage.setItem('orderId', orderId);
       }
-  
+
       // Chuẩn bị payload danh sách món
       const orderDetails = cartItems.map(item => ({
         dishId: item.id,
         quantity: item.quantity
       }));
-  
+
       // Gửi danh sách món ăn vào orderId hiện có
       const res = await axios.post(
         `https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders/${orderId}/details`,
         orderDetails
       );
-  
+
       cleanCart();
       console.log("Phản hồi từ API:", res.data);
       toast.success('Đặt món thành công!');
@@ -66,8 +72,6 @@ const Cart = () => {
       toast.error('Đặt món thất bại, vui lòng thử lại!');
     }
   };
-  
-  
 
   return (
     <>
@@ -76,7 +80,7 @@ const Cart = () => {
         <span style={{ fontSize: '1.2rem' }}>Giỏ hàng ({cartItems.length})</span>
       </Button>
 
-      <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: '800px' }}>
+      <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: '600px' }}>
         <Offcanvas.Header closeButton>
           <Offcanvas.Title className="fw-bold text-dark" style={{ fontSize: '1.5rem' }}>
             Giỏ hàng của bạn
@@ -136,7 +140,12 @@ const Cart = () => {
             </Row>
           </div>
           <div className="d-grid gap-2 mt-3">
-            <Button variant="warning" onClick={handleOrder} style={{ fontSize: '1.3rem', padding: '0.75rem' }}>
+            <Button
+              variant="warning"
+              onClick={handleOrder}
+              style={{ fontSize: '1.3rem', padding: '0.75rem' }}
+              disabled={!cartItems || cartItems.length === 0} // Vô hiệu hóa nút nếu giỏ hàng trống
+            >
               Đặt hàng
             </Button>
             <Button variant="success" as={Link} to="/user/home" onClick={handleClose} style={{ fontSize: '1.3rem', padding: '0.75rem' }}>

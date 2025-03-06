@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
 
 const TableSetting = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState('');
   const [selectedTable, setSelectedTable] = useState('');
   const [tables, setTables] = useState([]);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetch('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/restaurants/tables')
@@ -16,18 +20,23 @@ const TableSetting = () => {
           setRestaurants(data.data);
         }
       });
-
-    // Kiểm tra dữ liệu trong localStorage
-    const storedTable = JSON.parse(localStorage.getItem('selectedTable'));
-    if (storedTable) {
+  
+    // Kiểm tra và xóa dữ liệu cũ
+    const storedTableData = JSON.parse(localStorage.getItem('selectedTable'));
+    if (storedTableData) {
       const today = new Date().toISOString().split('T')[0];
-      if (storedTable.date !== today) {
+      if (storedTableData.date !== today) {
+        // Xóa cả hai key liên quan nếu hết hạn
         localStorage.removeItem('selectedTable');
+        localStorage.removeItem('tableId');
       } else {
-        setSelectedTable(storedTable.id);
+        // Đảm bảo đồng bộ cả hai key
+        setSelectedTable(storedTableData.id); 
+        localStorage.setItem('tableId', storedTableData.id);
       }
     }
   }, []);
+
 
   const handleRestaurantChange = (e) => {
     const restaurantId = e.target.value;
@@ -39,13 +48,13 @@ const TableSetting = () => {
 
   const handleConfirm = () => {
     if (!selectedTable) return;
-    const today = new Date().toISOString().split('T')[0];
 
-    // Lưu cả ID bàn vào localStorage với key "tableId"
+    const today = new Date().toISOString().split('T')[0];
     localStorage.setItem('selectedTable', JSON.stringify({ id: selectedTable, date: today }));
-    localStorage.setItem('tableId', selectedTable);  // Thêm dòng này để đảm bảo key tableId có giá trị
+    localStorage.setItem('tableId', selectedTable);
 
     toast.success('Bàn đã được lưu thành công!');
+    navigate('/user/about-me');   
   };
 
 

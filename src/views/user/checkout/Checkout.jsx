@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Table, Badge, Button, Spinner, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import { formatPrice } from 'utils/formatPrice';
+import { toast } from 'react-toastify';
 
 const Checkout = () => {
   const [order, setOrder] = useState(null);
@@ -16,27 +17,52 @@ const Checkout = () => {
     }
 
     axios
-      .get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/details?orderId=${orderId}`)
+      .get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders/${orderId}`)
       .then((response) => {
         if (response.data.isSucess) {
-          setOrder(response.data.data.order);
+          setOrder(response.data.data); // Dữ liệu API mới không có `order`, mà trả về trực tiếp trong `data`
         }
       })
       .catch((error) => console.error('Lỗi lấy thông tin đơn hàng:', error))
       .finally(() => setLoading(false));
   }, [orderId]);
 
-  const handleCheckout = () => {
-    setShowModal(true);
-    localStorage.removeItem('orderId');
-    setOrderId(null);
+  const handleCheckout = async () => {
+    try {
+      // Gọi API yêu cầu nhân viên đến thanh toán
+      const response = await axios.post(
+        'https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/requests',
+        {
+          orderId: parseInt(orderId, 10), // Chuyển orderId sang số nguyên
+          typeId: 7, // typeId = 7 là yêu cầu thanh toán
+          note: 'Thanh toán', // Ghi chú
+        }
+      );
+
+      if (response.data.isSucess) {
+        // Hiển thị modal thông báo
+        setShowModal(true);
+
+        // Xóa orderId khỏi localStorage và state
+        localStorage.removeItem('orderId');
+        setOrderId(null);
+
+        // Thông báo thành công
+        toast.success('Yêu cầu thanh toán đã được gửi thành công!');
+      } else {
+        toast.error('Gửi yêu cầu thanh toán thất bại!');
+      }
+    } catch (error) {
+      console.error('Lỗi khi gửi yêu cầu thanh toán:', error);
+      toast.error('Có lỗi xảy ra, vui lòng thử lại!');
+    }
   };
 
   return (
     <Container className="mt-5 py-5">
       <Container className="mt-4 text-center">
         <h2>Hoàn thành đơn đặt hàng của bạn</h2>
-        <p>Xem lại các món của bạn và xác nhận đơn đặt hàng của bạn</p>
+        <p>Xem lại các món của bạn và xác nhận đơn đặt hàng</p>
 
         {loading ? (
           <Spinner animation="border" role="status" variant="warning">
@@ -59,7 +85,7 @@ const Checkout = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {order.orderDetails.map((item, index) => (
+                  {order.dishes.map((item, index) => (
                     <tr key={item.id}>
                       <td>{index + 1}</td>
                       <td className="d-flex align-items-center">
@@ -67,39 +93,25 @@ const Checkout = () => {
                         {item.name}
                       </td>
                       <td>{item.quantity}</td>
-                      <td>{formatPrice(item.price).toLocaleString()}</td>
-                      <td>{formatPrice(item.quantity * item.price).toLocaleString()}</td>
+                      <td>{formatPrice(item.price)}</td>
+                      <td>{formatPrice(item.quantity * item.price)}</td>
                       <td>
-                        <Badge
-                          bg={
-                            item.status === 'pending'
-                              ? 'warning'
-                              : item.status === 'confirmed'
-                                ? 'primary'
-                                : item.status === 'preparing'
-                                  ? 'info'
-                                  : item.status === 'delivered'
-                                    ? 'success'
-                                    : 'danger'
-                          }
-                        >
-                          {item.status === 'pending'
-                            ? 'Chờ duyệt'
-                            : item.status === 'confirmed'
-                              ? 'Đã xác nhận'
-                              : item.status === 'preparing'
-                                ? 'Đang chuẩn bị'
-                                : item.status === 'delivered'
-                                  ? 'Đã giao'
-                                  : 'Đã hủy'}
+                        <Badge bg={item.status === 'pending' ? 'warning' : 'success'}>
+                          {item.status === 'pending' ? 'Chờ duyệt' : 'Hoàn thành'}
                         </Badge>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </Table>
-              <h4 className="mt-3 text-end text-bold text-danger">Tổng tiền: {formatPrice(order.totalAmount).toLocaleString()}</h4>
-              <Button className="mt-3" style={{ backgroundColor: 'orange', border: 'none', padding: '10px 20px' }} onClick={handleCheckout}>
+              <h4 className="mt-3 text-end text-bold text-danger">
+                Tổng tiền: {formatPrice(order.totalAmount)}
+              </h4>
+              <Button
+                className="mt-3"
+                style={{ backgroundColor: 'orange', border: 'none', padding: '10px 20px' }}
+                onClick={handleCheckout}
+              >
                 Tiến hành thanh toán
               </Button>
             </>

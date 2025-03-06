@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Row, Col, Table, Form, Button, Badge, Card } from 'react-bootstrap';
+import { Container, Row, Col, Table, Form, Button, Badge, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
 const Support = () => {
@@ -19,24 +19,17 @@ const Support = () => {
   }, [orderId]);
 
   useEffect(() => {
-    const cachedRequestTypes = localStorage.getItem('requestTypes');
-    if (cachedRequestTypes) {
-      setRequestOptions(JSON.parse(cachedRequestTypes));
-    } else {
-      axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/requests')
-        .then((response) => {
-          if (response.data.isSucess) {
-            const uniqueTypes = Array.from(new Set(response.data.data.map((req) => req.typeId)))
-              .map((typeId) => {
-                const type = response.data.data.find((req) => req.typeId === typeId);
-                return { value: typeId, name: type.typeName };
-              });
-            setRequestOptions(uniqueTypes);
-            localStorage.setItem('requestTypes', JSON.stringify(uniqueTypes)); // Lưu cache
-          }
-        })
-        .catch((error) => console.error('Error fetching request types:', error));
-    }
+    axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/request-types')
+      .then((response) => {
+        if (response.data.isSucess) {
+          const options = response.data.data.map(item => ({
+            value: item.id,
+            name: item.name
+          }));
+          setRequestOptions(options);
+        }
+      })
+      .catch((error) => console.error('Error fetching request types:', error));
   }, []);
 
   const fetchRequestHistory = async (orderId) => {
@@ -57,7 +50,7 @@ const Support = () => {
     }
 
     let currentOrderId = orderId;
-    let tableId = localStorage.getItem('tableId');
+    const tableId = localStorage.getItem('tableId');
 
     try {
       if (!currentOrderId) {
@@ -95,7 +88,7 @@ const Support = () => {
         toast.success('Yêu cầu đã được gửi thành công!');
         setRequestType('');
         setNote('');
-        setRequests((prevRequests) => [...prevRequests, response.data.data]); // Cập nhật trực tiếp danh sách
+        setRequests(prev => [...prev, response.data.data]);
       } else {
         toast.error('Gửi yêu cầu thất bại!');
       }
@@ -110,7 +103,7 @@ const Support = () => {
       <Row className="d-flex flex-wrap">
         <Col md={6} xs={12} className="mb-4">
           <Card className="shadow-sm">
-            <Card.Header className="bg-primary">
+            <Card.Header className="bg-primary text-white">
               <h3 className="mb-0">Lịch sử yêu cầu</h3>
             </Card.Header>
             <Card.Body>
@@ -130,7 +123,18 @@ const Support = () => {
                         <tr key={req.id}>
                           <td>{orderId}</td>
                           <td>{requestOptions.find(option => option.value === req.typeId)?.name || 'N/A'}</td>
-                          <td>{req.note}</td>
+                          <td className="text-truncate" style={{ maxWidth: '200px' }}>
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id={`tooltip-${req.id}`}>
+                                  {req.note || 'Không có ghi chú'}
+                                </Tooltip>
+                              }
+                            >
+                              <span>{req.note || 'Không có ghi chú'}</span>
+                            </OverlayTrigger>
+                          </td>
                           <td>
                             <Badge bg={req.status === 'pending' ? 'warning' : 'success'}>
                               {req.status === 'pending' ? 'Đang xử lý' : 'Hoàn thành'}
@@ -159,7 +163,11 @@ const Support = () => {
               <Form>
                 <Form.Group className="mb-3">
                   <Form.Label>Chọn loại yêu cầu:</Form.Label>
-                  <Form.Select value={requestType} onChange={(e) => setRequestType(e.target.value)}>
+                  <Form.Select 
+                    value={requestType} 
+                    onChange={(e) => setRequestType(e.target.value)}
+                    aria-label="Chọn loại yêu cầu"
+                  >
                     <option value="">-- Chọn yêu cầu --</option>
                     {requestOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -171,10 +179,20 @@ const Support = () => {
 
                 <Form.Group className="mb-3">
                   <Form.Label>Ghi chú:</Form.Label>
-                  <Form.Control type="text" value={note} onChange={(e) => setNote(e.target.value)} />
+                  <Form.Control 
+                    as="textarea"
+                    rows={3}
+                    value={note} 
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder="Nhập ghi chú (nếu có)"
+                  />
                 </Form.Group>
 
-                <Button variant="warning" className="w-100" onClick={handleSubmit}>
+                <Button 
+                  variant="warning" 
+                  className="w-100 fw-bold"
+                  onClick={handleSubmit}
+                >
                   Gửi yêu cầu
                 </Button>
               </Form>

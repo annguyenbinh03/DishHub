@@ -13,7 +13,7 @@ const UserManagement = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const [formData, setFormData] = useState({
         username: '', fullName: '', email: '', dob: '', phoneNumber: '',
-        address: '', avatar: '', status: 'true'
+        address: '', avatar: '', isDeleted: 'false'
     });
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -34,9 +34,9 @@ const UserManagement = () => {
 
     const handleShowModal = (user) => {
         setCurrentUser(user);
-        setFormData(user ? { ...user, dob: user.dob?.split('T')[0], status: user.status.toString() } : {
+        setFormData(user ? { ...user, dob: user.dob?.split('T')[0], isDeleted: user.isDeleted } : {
             username: '', fullName: '', email: '', dob: '', phoneNumber: '',
-            address: '', avatar: '', status: 'true'
+            address: '', avatar: '', isDeleted: 'false'
         });
         setShowModal(true);
     };
@@ -66,7 +66,7 @@ const UserManagement = () => {
                 dob: formData.dob, 
                 phoneNumber: formData.phoneNumber, 
                 address: formData.address, 
-                status: formData.status === 'true', 
+                isDeleted: formData.isDeleted === 'false', 
                 avatar: uploadedUrl 
             };
             if (currentUser) {
@@ -116,7 +116,7 @@ const UserManagement = () => {
                             <td className="table-cell-truncate" data-fulltext={user.phoneNumber}>{user.phoneNumber}</td>
                             <td>{user.roleId}</td>
                             <td className="table-cell-truncate" data-fulltext={user.address}>{user.address}</td>
-                            <td><Badge bg={user.status ? 'success' : 'danger'}>{user.status ? 'Hoạt động' : 'Không hoạt động'}</Badge></td>
+                            <td><Badge bg={user.isDeleted ? 'danger' : 'success'}>{user.isDeleted ? 'Không hoạt động' : 'Hoạt động'}</Badge></td>
                             <td>{user.createAt ? new Date(user.createAt).toLocaleDateString() : 'N/A'}</td>
                             <td>
                                 <Button variant="warning" size="sm" onClick={() => handleShowModal(user)}>Sửa</Button>
@@ -139,14 +139,14 @@ const UserManagement = () => {
                             { key: 'dob', label: 'Ngày sinh' },
                             { key: 'phoneNumber', label: 'Số điện thoại' },
                             { key: 'address', label: 'Địa chỉ' },
-                            { key: 'status', label: 'Trạng thái' }
+                            { key: 'isDeleted', label: 'Trạng thái' }
                         ].map(({ key, label }) => (
                             <Form.Group className="mb-3" key={key}>
                                 <Form.Label>{label}</Form.Label>
-                                {key === 'status' ? (
+                                {key === 'isDeleted' ? (
                                     <Form.Control as="select" name={key} value={formData[key]} onChange={handleChange}>
-                                        <option value="true">Hoạt động</option>
-                                        <option value="false">Không hoạt động</option>
+                                        <option value="false">Hoạt động</option>
+                                        <option value="true">Không hoạt động</option>
                                     </Form.Control>
                                 ) : (
                                     <Form.Control type={key === 'dob' ? 'date' : 'text'} name={key} value={formData[key]} onChange={handleChange} />

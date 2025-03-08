@@ -18,6 +18,8 @@ const CategoryManagement = () => {
     });
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState('');
 
     useEffect(() => {
         fetchCategories();
@@ -129,36 +131,67 @@ const CategoryManagement = () => {
             });
     };
 
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleStatusChange = (e) => {
+        setSelectedStatus(e.target.value);
+    };
+
+    const filteredCategories = categories.filter((category) => {
+        return (
+            category.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            (selectedStatus === '' || (selectedStatus === 'true' ? category.isDeleted : !category.isDeleted))
+        );
+    });
+
     return (
         <Container >
             <ToastContainer />
             <h2 className="text-center mb-4"> Quản lý danh mục </h2>
-            <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Thêm danh mục</Button>
-            <Table striped bordered hover responsive className="text-center">
+            <div className="d-flex justify-content-between mb-3">
+                <div className="d-flex">
+                    <Form.Control
+                        type="text"
+                        placeholder="Tìm kiếm theo tên danh mục"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className="me-2"
+                    />
+                    <Form.Select value={selectedStatus} onChange={handleStatusChange}>
+                        <option value="">Lọc theo trạng thái</option>
+                        <option value="true">Không hoạt động</option>
+                        <option value="false">Hoạt động</option>
+                    </Form.Select>
+                </div>
+                <Button variant="success" onClick={() => handleShowModal()}>Thêm danh mục</Button>
+            </div>
+            <Table striped bordered hover responsive className="text-center fixed-table">
                 <thead className="table-dark">
                     <tr>
-                        <th>Id</th>
-                        <th>Hình ảnh</th>
-                        <th>Tên danh mục</th>
-                        <th>Trạng thái</th>
-                        <th>Hành động</th>
+                        <th className="fixed-column-id">Id</th>
+                        <th className="fixed-column">Hình ảnh</th>
+                        <th className="fixed-column">Tên danh mục</th>
+                        <th className="fixed-column">Trạng thái</th>
+                        <th className="fixed-column">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {categories.length > 0 ? (
-                        categories.map((category, index) => (
+                    {filteredCategories.length > 0 ? (
+                        filteredCategories.map((category, index) => (
                             <tr key={category.id}>
-                                <td>{index + 1}</td>
-                                <td>
+                                <td className="fixed-column-id">{index + 1}</td>
+                                <td className="fixed-column">
                                     <img src={category.image} alt={category.name} className="category-img rounded" />
                                 </td>
-                                <td>{category.name}</td>
-                                <td>
+                                <td className="fixed-column">{category.name}</td>
+                                <td className="fixed-column">
                                     <Badge bg={category.isDeleted ? 'danger' : 'success'}>
                                         {category.isDeleted ? 'Không hoạt động' : 'Hoạt động'}
                                     </Badge>
                                 </td>
-                                <td>
+                                <td className="fixed-column">
                                     <Button variant="warning" size="sm" onClick={() => handleShowModal(category)}>Sửa</Button>
                                     <Button variant="danger" size="sm" onClick={() => handleDelete(category.id)}>Xóa</Button>
                                 </td>

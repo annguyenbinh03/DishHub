@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Badge, Container, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 import './categoryManagement.css'; 
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ImagePicker from 'components/ImagePicker';
+import useCloudinaryUpload from 'hooks/useCloudinaryUpload';
 
 const CategoryManagement = () => {
     const [categories, setCategories] = useState([]);
@@ -11,9 +13,13 @@ const CategoryManagement = () => {
     const [currentCategory, setCurrentCategory] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
-        status: false,
+        isDeleted: false,
         image: ''
     });
+    const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState('');
 
     useEffect(() => {
         fetchCategories();
@@ -35,7 +41,7 @@ const CategoryManagement = () => {
         setCurrentCategory(category);
         setFormData(category ? { ...category } : {
             name: '',
-            status: false,
+            isDeleted: false,
             image: ''
         });
         setShowModal(true);
@@ -50,36 +56,71 @@ const CategoryManagement = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = () => {
-        if (currentCategory) {
-            // Update category
-            axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/categories/${currentCategory.id}`, formData)
-                .then(() => {
-                    fetchCategories();
-                    handleCloseModal();
-                    toast.success(`Đã cập nhật ${formData.name} thành công!`);
-                })
-                .catch((error) => {
-                    console.error('Lỗi khi cập nhật dữ liệu:', error);
-                    toast.error('Lỗi khi cập nhật dữ liệu!');
+    const handleSubmit = async () => {
+        setLoading(true);
+
+        try {
+            let uploadedUrl = formData.image; // Use existing image URL if no new file is selected
+    
+            // Kiểm tra xem file có tồn tại không
+            if (file) {
+                // Upload file lên Cloudinary
+                const uploadResult = await useCloudinaryUpload(file);
+    
+                if (!uploadResult || !uploadResult) {
+                    throw new Error('Upload thất bại!');
+                }
+    
+                uploadedUrl = uploadResult;
+    
+                // Hiển thị thông báo thành công
+                toast.success(`Upload thành công!`, {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    theme: 'light',
+                    transition: Bounce
                 });
-        } else {
-            // Create category
-            axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/categories', formData)
-                .then(() => {
-                    fetchCategories();
-                    handleCloseModal();
-                    toast.success(`Đã thêm ${formData.name} thành công!`);
-                })
-                .catch((error) => {
-                    console.error('Lỗi khi tạo dữ liệu:', error);
-                    toast.error('Lỗi khi tạo dữ liệu!');
-                });
+            }
+
+            // Gán ảnh vào formData
+            const updatedFormData = {
+                ...formData,
+                image: uploadedUrl,
+                isDeleted: formData.isDeleted
+            };
+
+            console.log('Sending data:', updatedFormData); // Log dữ liệu gửi lên
+            if (currentCategory) {
+                // Update category
+                const response = await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories/${currentCategory.id}`, updatedFormData);
+                console.log('Update response:', response);
+                fetchCategories();
+                handleCloseModal();
+                toast.success(`Đã cập nhật ${formData.name} thành công!`);
+            } else {
+                // Create category
+                const response = await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories', updatedFormData);
+                console.log('Create response:', response);
+                fetchCategories();
+                handleCloseModal();
+                toast.success(`Đã thêm ${formData.name} thành công!`);
+            }
+        } catch (err) {
+            // Hiển thị lỗi nếu có
+            toast.error(err.message || 'Lỗi khi upload ảnh!', {
+                position: 'top-right',
+                autoClose: 5000,
+                theme: 'light',
+                transition: Bounce
+            });
+        } finally {
+            // Luôn tắt loading
+            setLoading(false);
         }
     };
 
     const handleDelete = (id) => {
-        axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/categories/${id}`)
+        axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories/${id}`)
             .then(() => {
                 fetchCategories();
                 toast.success('Đã xóa thành công!');
@@ -90,36 +131,67 @@ const CategoryManagement = () => {
             });
     };
 
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleStatusChange = (e) => {
+        setSelectedStatus(e.target.value);
+    };
+
+    const filteredCategories = categories.filter((category) => {
+        return (
+            category.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            (selectedStatus === '' || (selectedStatus === 'true' ? category.isDeleted : !category.isDeleted))
+        );
+    });
+
     return (
         <Container >
             <ToastContainer />
             <h2 className="text-center mb-4"> Quản lý danh mục </h2>
-            <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Thêm danh mục</Button>
-            <Table striped bordered hover responsive className="text-center">
+            <div className="d-flex justify-content-between mb-3">
+                <div className="d-flex">
+                    <Form.Control
+                        type="text"
+                        placeholder="Tìm kiếm theo tên danh mục"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className="me-2"
+                    />
+                    <Form.Select value={selectedStatus} onChange={handleStatusChange}>
+                        <option value="">Lọc theo trạng thái</option>
+                        <option value="true">Không hoạt động</option>
+                        <option value="false">Hoạt động</option>
+                    </Form.Select>
+                </div>
+                <Button variant="success" onClick={() => handleShowModal()}>Thêm danh mục</Button>
+            </div>
+            <Table striped bordered hover responsive className="text-center fixed-table">
                 <thead className="table-dark">
                     <tr>
-                        <th>Id</th>
-                        <th>Hình ảnh</th>
-                        <th>Tên danh mục</th>
-                        <th>Trạng thái</th>
-                        <th>Hành động</th>
+                        <th className="fixed-column-id">Id</th>
+                        <th className="fixed-column">Hình ảnh</th>
+                        <th className="fixed-column">Tên danh mục</th>
+                        <th className="fixed-column">Trạng thái</th>
+                        <th className="fixed-column">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {categories.length > 0 ? (
-                        categories.map((category, index) => (
+                    {filteredCategories.length > 0 ? (
+                        filteredCategories.map((category, index) => (
                             <tr key={category.id}>
-                                <td>{index + 1}</td>
-                                <td>
+                                <td className="fixed-column-id">{index + 1}</td>
+                                <td className="fixed-column">
                                     <img src={category.image} alt={category.name} className="category-img rounded" />
                                 </td>
-                                <td>{category.name}</td>
-                                <td>
-                                    <Badge bg={category.status ? 'success' : 'danger'}>
-                                        {category.status ? 'Hoạt động' : 'Không hoạt động'}
+                                <td className="fixed-column">{category.name}</td>
+                                <td className="fixed-column">
+                                    <Badge bg={category.isDeleted ? 'danger' : 'success'}>
+                                        {category.isDeleted ? 'Không hoạt động' : 'Hoạt động'}
                                     </Badge>
                                 </td>
-                                <td>
+                                <td className="fixed-column">
                                     <Button variant="warning" size="sm" onClick={() => handleShowModal(category)}>Sửa</Button>
                                     <Button variant="danger" size="sm" onClick={() => handleDelete(category.id)}>Xóa</Button>
                                 </td>
@@ -148,26 +220,23 @@ const CategoryManagement = () => {
                                 onChange={handleChange}
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Trạng thái</Form.Label>
-                            <Form.Control
-                                as="select"
-                                name="status"
-                                value={formData.status ? 'true' : 'false'}
-                                onChange={(e) => setFormData({ ...formData, status: e.target.value === 'true' })}
-                            >
-                                <option value="true">Hoạt động</option>
-                                <option value="false">Không hoạt động</option>
-                            </Form.Control>
-                        </Form.Group>
+                        {currentCategory && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>Trạng thái</Form.Label>
+                                <Form.Control
+                                    as="select"
+                                    name="isDeleted"
+                                    value={formData.isDeleted.toString()}
+                                    onChange={(e) => setFormData({ ...formData, isDeleted: e.target.value === 'true' })}
+                                >
+                                    <option value="false">Hoạt động</option>
+                                    <option value="true">Không hoạt động</option>
+                                </Form.Control>
+                            </Form.Group>
+                        )}
                         <Form.Group className="mb-3">
                             <Form.Label>Hình ảnh</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="image"
-                                value={formData.image}
-                                onChange={handleChange}
-                            />
+                            <ImagePicker setFile={setFile} />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -175,8 +244,8 @@ const CategoryManagement = () => {
                     <Button variant="secondary" onClick={handleCloseModal}>
                         Đóng
                     </Button>
-                    <Button variant="primary" onClick={handleSubmit}>
-                        {currentCategory ? 'Cập nhật' : 'Thêm'}
+                    <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+                        {loading ? 'Uploading...' : (currentCategory ? 'Cập nhật' : 'Thêm')}
                     </Button>
                 </Modal.Footer>
             </Modal>

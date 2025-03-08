@@ -56,33 +56,63 @@ const CategoryManagement = () => {
 
     const handleSubmit = async () => {
         setLoading(true);
+
         try {
-            let uploadedUrl = formData.image;
+            let uploadedUrl = formData.image; // Use existing image URL if no new file is selected
+    
+            // Kiểm tra xem file có tồn tại không
             if (file) {
+                // Upload file lên Cloudinary
                 const uploadResult = await useCloudinaryUpload(file);
-                console.log('Upload Result:', uploadResult); // Add this line to log the upload result
-                if (!uploadResult?.secure_url) throw new Error('Upload thất bại!');
-                uploadedUrl = uploadResult.secure_url;
-                toast.success('Upload thành công!', { autoClose: 3000, transition: Bounce });
+    
+                if (!uploadResult || !uploadResult) {
+                    throw new Error('Upload thất bại!');
+                }
+    
+                uploadedUrl = uploadResult;
+    
+                // Hiển thị thông báo thành công
+                toast.success(`Upload thành công!`, {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    theme: 'light',
+                    transition: Bounce
+                });
             }
 
-            const updatedFormData = { 
-                name: formData.name, 
-                isDeleted: currentCategory ? formData.isDeleted : false, 
-                image: uploadedUrl 
+            // Gán ảnh vào formData
+            const updatedFormData = {
+                ...formData,
+                image: uploadedUrl,
+                isDeleted: formData.isDeleted
             };
+
+            console.log('Sending data:', updatedFormData); // Log dữ liệu gửi lên
             if (currentCategory) {
-                await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories/${currentCategory.id}`, updatedFormData);
+                // Update category
+                const response = await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories/${currentCategory.id}`, updatedFormData);
+                console.log('Update response:', response);
+                fetchCategories();
+                handleCloseModal();
                 toast.success(`Đã cập nhật ${formData.name} thành công!`);
             } else {
-                await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories', updatedFormData);
+                // Create category
+                const response = await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories', updatedFormData);
+                console.log('Create response:', response);
+                fetchCategories();
+                handleCloseModal();
                 toast.success(`Đã thêm ${formData.name} thành công!`);
             }
-            fetchCategories();
-            handleCloseModal();
         } catch (err) {
-            toast.error(err.message || 'Lỗi khi upload ảnh!', { autoClose: 5000, transition: Bounce });
+            // Hiển thị lỗi nếu có
+            toast.error(err.message || 'Lỗi khi upload ảnh!', {
+                position: 'top-right',
+                autoClose: 5000,
+                theme: 'light',
+                transition: Bounce
+            });
         } finally {
+            // Luôn tắt loading
             setLoading(false);
         }
     };
@@ -163,8 +193,8 @@ const CategoryManagement = () => {
                                 <Form.Control
                                     as="select"
                                     name="isDeleted"
-                                    value={formData.isDeleted ? 'true' : 'false'}
-                                    onChange={(e) => setFormData({ ...formData, isDeleted: e.target.value === 'false' })}
+                                    value={formData.isDeleted.toString()}
+                                    onChange={(e) => setFormData({ ...formData, isDeleted: e.target.value === 'true' })}
                                 >
                                     <option value="false">Hoạt động</option>
                                     <option value="true">Không hoạt động</option>

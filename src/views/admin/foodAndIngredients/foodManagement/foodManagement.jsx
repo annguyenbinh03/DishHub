@@ -41,7 +41,8 @@ const FoodManagement = () => {
         axios
             .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes?page=1&size=100')
             .then((res) => {
-                setFoods(res.data.data.dishes);
+                const sortedFoods = res.data.data.dishes.sort((a, b) => b.id - a.id); // Sort by ID in descending order
+                setFoods(sortedFoods);
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
@@ -183,7 +184,6 @@ const FoodManagement = () => {
             restaurantId: formData.restaurantId,
             ingredients: formData.ingredients
         };
-
         try {
             if (currentFood) {
                 await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes/${currentFood.id}`, createDishDTO);
@@ -274,6 +274,7 @@ const FoodManagement = () => {
                         <th>Trạng thái</th>
                         <th>Nhà hàng</th>
                         <th>Nguyên liệu</th>
+                        <th>Sold Count</th> {/* Add this line */}
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -302,10 +303,10 @@ const FoodManagement = () => {
                                 <td>{formatPrice(food.price)}</td>
                                 <td>
                                     <Badge bg={food.status === 'onsale' ? 'success' : 'danger'}>
-                                        {food.status === 'onsale' ? 'On Sale' : 'Off Sale'}
+                                        {food.status === 'onsale' ? 'On Sale' : 'Deleted'}
                                     </Badge>
                                 </td>
-                                <td>{food.restaurantId}</td>
+                                <td>{food.restaurantName}</td> {/* Change this line */}
                                 <td
                                     title={food.ingredients.map(ingredient => ingredient.name).join(', ')}
                                     className="text-start"
@@ -318,8 +319,7 @@ const FoodManagement = () => {
                                 >
                                     {food.ingredients.map(ingredient => ingredient.name).join(', ')}
                                 </td>
-
-
+                                <td>{food.soldCount}</td> {/* Add this line */}
                                 <td>
                                     <Button variant="warning" size="sm" onClick={() => handleShowModal(food)}>Cập nhật</Button>
                                     <Button variant="danger" size="sm" onClick={() => handleDelete(food.id)}>Xóa</Button>
@@ -328,7 +328,7 @@ const FoodManagement = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="10" className="text-center">No matching data found...</td>
+                            <td colSpan="11" className="text-center">No matching data found...</td> {/* Change colSpan to 11 */}
                         </tr>
                     )}
                 </tbody>
@@ -395,7 +395,7 @@ const FoodManagement = () => {
                                 onChange={handleChange}
                             >
                                 <option value="onsale">On Sale</option>
-                                <option value="offsale">Off Sale</option>
+                                <option value="deleted">Deleted</option>
                             </Form.Control>
                         </Form.Group>
                         <Form.Group className="mb-3">

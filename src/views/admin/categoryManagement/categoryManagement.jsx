@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Badge, Container, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 import './categoryManagement.css'; 
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ImagePicker from 'components/ImagePicker';
+import useCloudinaryUpload from 'hooks/useCloudinaryUpload';
 
 const CategoryManagement = () => {
     const [categories, setCategories] = useState([]);
@@ -11,9 +13,11 @@ const CategoryManagement = () => {
     const [currentCategory, setCurrentCategory] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
-        status: false,
+        isDeleted: false,
         image: ''
     });
+    const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchCategories();
@@ -35,7 +39,7 @@ const CategoryManagement = () => {
         setCurrentCategory(category);
         setFormData(category ? { ...category } : {
             name: '',
-            status: false,
+            isDeleted: false,
             image: ''
         });
         setShowModal(true);
@@ -50,36 +54,41 @@ const CategoryManagement = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = () => {
-        if (currentCategory) {
-            // Update category
-            axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/categories/${currentCategory.id}`, formData)
-                .then(() => {
-                    fetchCategories();
-                    handleCloseModal();
-                    toast.success(`Đã cập nhật ${formData.name} thành công!`);
-                })
-                .catch((error) => {
-                    console.error('Lỗi khi cập nhật dữ liệu:', error);
-                    toast.error('Lỗi khi cập nhật dữ liệu!');
-                });
-        } else {
-            // Create category
-            axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/categories', formData)
-                .then(() => {
-                    fetchCategories();
-                    handleCloseModal();
-                    toast.success(`Đã thêm ${formData.name} thành công!`);
-                })
-                .catch((error) => {
-                    console.error('Lỗi khi tạo dữ liệu:', error);
-                    toast.error('Lỗi khi tạo dữ liệu!');
-                });
+    const handleSubmit = async () => {
+        setLoading(true);
+        try {
+            let uploadedUrl = formData.image;
+            if (file) {
+                const uploadResult = await useCloudinaryUpload(file);
+                console.log('Upload Result:', uploadResult); // Add this line to log the upload result
+                if (!uploadResult?.secure_url) throw new Error('Upload thất bại!');
+                uploadedUrl = uploadResult.secure_url;
+                toast.success('Upload thành công!', { autoClose: 3000, transition: Bounce });
+            }
+
+            const updatedFormData = { 
+                name: formData.name, 
+                isDeleted: currentCategory ? formData.isDeleted : false, 
+                image: uploadedUrl 
+            };
+            if (currentCategory) {
+                await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories/${currentCategory.id}`, updatedFormData);
+                toast.success(`Đã cập nhật ${formData.name} thành công!`);
+            } else {
+                await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories', updatedFormData);
+                toast.success(`Đã thêm ${formData.name} thành công!`);
+            }
+            fetchCategories();
+            handleCloseModal();
+        } catch (err) {
+            toast.error(err.message || 'Lỗi khi upload ảnh!', { autoClose: 5000, transition: Bounce });
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDelete = (id) => {
-        axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/categories/${id}`)
+        axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories/${id}`)
             .then(() => {
                 fetchCategories();
                 toast.success('Đã xóa thành công!');
@@ -115,8 +124,8 @@ const CategoryManagement = () => {
                                 </td>
                                 <td>{category.name}</td>
                                 <td>
-                                    <Badge bg={category.status ? 'success' : 'danger'}>
-                                        {category.status ? 'Hoạt động' : 'Không hoạt động'}
+                                    <Badge bg={category.isDeleted ? 'danger' : 'success'}>
+                                        {category.isDeleted ? 'Không hoạt động' : 'Hoạt động'}
                                     </Badge>
                                 </td>
                                 <td>
@@ -148,26 +157,23 @@ const CategoryManagement = () => {
                                 onChange={handleChange}
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Trạng thái</Form.Label>
-                            <Form.Control
-                                as="select"
-                                name="status"
-                                value={formData.status ? 'true' : 'false'}
-                                onChange={(e) => setFormData({ ...formData, status: e.target.value === 'true' })}
-                            >
-                                <option value="true">Hoạt động</option>
-                                <option value="false">Không hoạt động</option>
-                            </Form.Control>
-                        </Form.Group>
+                        {currentCategory && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>Trạng thái</Form.Label>
+                                <Form.Control
+                                    as="select"
+                                    name="isDeleted"
+                                    value={formData.isDeleted ? 'true' : 'false'}
+                                    onChange={(e) => setFormData({ ...formData, isDeleted: e.target.value === 'false' })}
+                                >
+                                    <option value="false">Hoạt động</option>
+                                    <option value="true">Không hoạt động</option>
+                                </Form.Control>
+                            </Form.Group>
+                        )}
                         <Form.Group className="mb-3">
                             <Form.Label>Hình ảnh</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="image"
-                                value={formData.image}
-                                onChange={handleChange}
-                            />
+                            <ImagePicker setFile={setFile} />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -175,8 +181,8 @@ const CategoryManagement = () => {
                     <Button variant="secondary" onClick={handleCloseModal}>
                         Đóng
                     </Button>
-                    <Button variant="primary" onClick={handleSubmit}>
-                        {currentCategory ? 'Cập nhật' : 'Thêm'}
+                    <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+                        {loading ? 'Uploading...' : (currentCategory ? 'Cập nhật' : 'Thêm')}
                     </Button>
                 </Modal.Footer>
             </Modal>

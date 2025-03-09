@@ -28,7 +28,6 @@ const FoodManagement = () => {
     const [searchTerm, setSearchTerm] = useState(''); // State for search term
     const [selectedCategory, setSelectedCategory] = useState(''); // State for selected category
     const [selectedStatus, setSelectedStatus] = useState(''); // State for selected status
-    const [orderId, setOrderId] = useState(''); // State for order ID
 
     useEffect(() => {
         fetchFoods();
@@ -132,15 +131,10 @@ const FoodManagement = () => {
         setSelectedStatus(e.target.value);
     };
 
-    const handleOrderIdChange = (e) => {
-        setOrderId(e.target.value);
-    };
-
     const filteredFoods = foods.filter(food =>
         food.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
         (selectedCategory === '' || food.categoryId === parseInt(selectedCategory)) &&
-        (selectedStatus === '' || food.status === selectedStatus) &&
-        (orderId === '' || food.id.toString() === orderId)
+        (selectedStatus === '' || food.status === selectedStatus)
     );
 
     const uploadImage = async () => {
@@ -230,12 +224,14 @@ const FoodManagement = () => {
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="mb-3"
+                style={{ width: '300px' }} // Add this line to set a custom width
             />
             <Form.Control
                 as="select"
                 value={selectedCategory}
                 onChange={handleCategoryChange}
                 className="mb-3"
+                style={{ width: '300px' }} // Add this line to set a custom width
             >
                 <option value="">All Categories</option>
                 {categories.map(category => (
@@ -249,18 +245,12 @@ const FoodManagement = () => {
                 value={selectedStatus}
                 onChange={handleStatusChange}
                 className="mb-3"
+                style={{ width: '300px' }} // Add this line to set a custom width
             >
                 <option value="">All Status</option>
                 <option value="onsale">On Sale</option>
                 <option value="deleted">Off Sale</option>
             </Form.Control>
-            <Form.Control
-                type="text"
-                placeholder="Filter by Order ID"
-                value={orderId}
-                onChange={handleOrderIdChange}
-                className="mb-3"
-            />
             <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Tạo món mới</Button>
             <Table striped bordered hover responsive className="text-center">
                 <thead className="table-dark">

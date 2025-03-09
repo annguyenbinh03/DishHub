@@ -155,6 +155,7 @@ const Ingredients = () => {
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="mb-3"
+                style={{ maxWidth: '300px', marginLeft: '0' }} // Adjust inline style to move search bar to the right
             />
             <Button variant="primary" onClick={() => handleShowModal()} className="mb-3">
                 Thêm nguyên liệu
@@ -165,13 +166,14 @@ const Ingredients = () => {
                         <th>Id</th>
                         <th>Ảnh</th>
                         <th>Tên nguyên liệu</th>
+                        <th>Trạng thái</th> {/* New column for isDeleted status */}
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {loading ? (
                         <tr>
-                            <td colSpan="4" className="text-center">Loading...</td>
+                            <td colSpan="5" className="text-center">Loading...</td> {/* Update colspan to 5 */}
                         </tr>
                     ) : (
                         filteredIngredients.length > 0 ? (
@@ -187,6 +189,7 @@ const Ingredients = () => {
                                         />
                                     </td>
                                     <td>{ingredient.name}</td>
+                                    <td>{ingredient.isDeleted ? 'Đã xóa' : 'Còn sử dụng'}</td> {/* Display isDeleted status */}
                                     <td>
                                         <Button
                                             variant="warning"
@@ -207,7 +210,7 @@ const Ingredients = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="4" className="text-center">Không có nguyên liệu có sẵn</td>
+                                <td colSpan="5" className="text-center">Không có nguyên liệu có sẵn</td> {/* Update colspan to 5 */}
                             </tr>
                         )
                     )}

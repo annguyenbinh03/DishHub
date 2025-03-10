@@ -215,7 +215,7 @@ const FoodManagement = () => {
 
 
     return (
-        <Container className="my-5 food-management">
+        <Container className="food-management">
             <ToastContainer />
             <h2 className="text-center mb-4">Quản lý món ăn</h2>
             <Form.Control

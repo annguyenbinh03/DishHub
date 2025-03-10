@@ -5,24 +5,27 @@
   align-items: center;
 
   .b-bg {
-    background: $theme-color;
     border-radius: 10px;
-    width: 35px;
-    height: 35px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    i {
-      color: #fff;
-    }
+    transition: all 0.5s ease-in-out;
   }
 
   .b-title {
     margin-left: 10px;
-    font-weight: 100;
-    color: #fff;
+    font-weight: bold;
     font-size: 18px;
+    padding: 0;
+    border-radius: 10px;
+    .b-title-main{
+      background-color: black;
+      color: white;
+    }
+    .b-title-sub{
+      background-color: orange;
+      color: black;
+    }
   }
 }
 
@@ -504,7 +507,8 @@
 }
 
 .navbar-brand {
-  background: $menu-dark-background;
+  //background: $menu-dark-background;
+  background-color: black;
   font-size: 1.25rem;
 }
 

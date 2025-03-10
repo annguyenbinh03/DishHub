@@ -169,12 +169,6 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/sample-page',
-        element: lazy(() => import('./views/extra/SamplePage'))
-      },
-
-      {
-        exact: 'true',
         path: '/food-management/food',
         element: lazy(() => import('./views/admin/foodAndIngredients/foodManagement/foodManagement'))
       },

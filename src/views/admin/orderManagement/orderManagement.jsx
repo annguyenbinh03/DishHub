@@ -71,7 +71,7 @@ const OrderManagement = () => {
     };
 
     return (
-        <Container className="my-5">
+        <Container>
             <ToastContainer />
             <h2 className="text-center mb-4">Quản lý Đơn Hàng</h2>
             <Table striped bordered hover responsive className="text-center">

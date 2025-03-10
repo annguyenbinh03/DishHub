@@ -54,7 +54,7 @@ const RequestOrders = () => {
     );
 
     return (
-        <Container className="my-5">
+        <Container>
             <ToastContainer />
             <h2 className="text-center mb-4">Danh sách yêu cầu</h2>
 

@@ -62,9 +62,9 @@ const Breadcrumb = () => {
           <div className="page-block">
             <div className="row align-items-center">
               <div className="col-md-12">
-                <div className="page-header-title">
+                {/* <div className="page-header-title">
                   <h5 className="m-b-10">{title}</h5>
-                </div>
+                </div> */}
                 <ListGroup as="ul" bsPrefix=" " className="breadcrumb">
                   <ListGroup.Item as="li" bsPrefix=" " className="breadcrumb-item">
                     <Link to="/">

@@ -19,10 +19,11 @@ const Support = () => {
   }, [orderId]);
 
   useEffect(() => {
-    axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/request-types')
+    axios
+      .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/request-types')
       .then((response) => {
         if (response.data.isSucess) {
-          const options = response.data.data.map(item => ({
+          const options = response.data.data.map((item) => ({
             value: item.id,
             name: item.name
           }));
@@ -34,7 +35,9 @@ const Support = () => {
 
   const fetchRequestHistory = async (orderId) => {
     try {
-      const response = await axios.get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/requests/history?orderId=${orderId}`);
+      const response = await axios.get(
+        `https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/requests/history?orderId=${orderId}`
+      );
       if (response.data.isSucess) {
         setRequests(response.data.data);
       }
@@ -59,10 +62,9 @@ const Support = () => {
           return;
         }
 
-        const orderResponse = await axios.post(
-          'https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders',
-          { tableId }
-        );
+        const orderResponse = await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders', {
+          tableId
+        });
 
         currentOrderId = orderResponse.data?.data?.orderId;
         if (!currentOrderId) {
@@ -76,19 +78,16 @@ const Support = () => {
       const requestBody = {
         orderId: currentOrderId,
         typeId: parseInt(requestType, 10),
-        note: note,
+        note: note
       };
 
-      const response = await axios.post(
-        'https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/requests',
-        requestBody
-      );
+      const response = await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/requests', requestBody);
 
       if (response.data.isSucess) {
         toast.success('Yêu cầu đã được gửi thành công!');
         setRequestType('');
         setNote('');
-        setRequests(prev => [...prev, response.data.data]);
+        setRequests((prev) => [...prev, response.data.data]);
       } else {
         toast.error('Gửi yêu cầu thất bại!');
       }
@@ -119,25 +118,37 @@ const Support = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {requests.map((req) => (
+                      {requests.slice().reverse().map((req) => (
                         <tr key={req.id}>
                           <td>{orderId}</td>
-                          <td>{requestOptions.find(option => option.value === req.typeId)?.name || 'N/A'}</td>
+                          <td>{requestOptions.find((option) => option.value === req.typeId)?.name || 'N/A'}</td>
                           <td className="text-truncate" style={{ maxWidth: '200px' }}>
                             <OverlayTrigger
                               placement="top"
-                              overlay={
-                                <Tooltip id={`tooltip-${req.id}`}>
-                                  {req.note || 'Không có ghi chú'}
-                                </Tooltip>
-                              }
+                              overlay={<Tooltip id={`tooltip-${req.id}`}>{req.note || 'Không có ghi chú'}</Tooltip>}
                             >
                               <span>{req.note || 'Không có ghi chú'}</span>
                             </OverlayTrigger>
                           </td>
                           <td>
-                            <Badge bg={req.status === 'pending' ? 'warning' : 'success'}>
-                              {req.status === 'pending' ? 'Đang xử lý' : 'Hoàn thành'}
+                            <Badge
+                              bg={
+                                req.status === 'pending'
+                                  ? 'warning'
+                                  : req.status === 'inProgress'
+                                    ? 'primary'
+                                    : req.status === 'completed'
+                                      ? 'success'
+                                      : 'danger'
+                              }
+                            >
+                              {req.status === 'pending'
+                                ? 'Đang chờ'
+                                : req.status === 'inProgress'
+                                  ? 'Đang xử lý'
+                                  : req.status === 'completed'
+                                    ? 'Hoàn thành'
+                                    : 'Đã hủy'}
                             </Badge>
                           </td>
                         </tr>
@@ -163,11 +174,7 @@ const Support = () => {
               <Form>
                 <Form.Group className="mb-3">
                   <Form.Label>Chọn loại yêu cầu:</Form.Label>
-                  <Form.Select 
-                    value={requestType} 
-                    onChange={(e) => setRequestType(e.target.value)}
-                    aria-label="Chọn loại yêu cầu"
-                  >
+                  <Form.Select value={requestType} onChange={(e) => setRequestType(e.target.value)} aria-label="Chọn loại yêu cầu">
                     <option value="">-- Chọn yêu cầu --</option>
                     {requestOptions.map((option) => (
                       <option key={option.value} value={option.value}>
@@ -179,20 +186,16 @@ const Support = () => {
 
                 <Form.Group className="mb-3">
                   <Form.Label>Ghi chú:</Form.Label>
-                  <Form.Control 
+                  <Form.Control
                     as="textarea"
                     rows={3}
-                    value={note} 
+                    value={note}
                     onChange={(e) => setNote(e.target.value)}
                     placeholder="Nhập ghi chú (nếu có)"
                   />
                 </Form.Group>
 
-                <Button 
-                  variant="warning" 
-                  className="w-100 fw-bold"
-                  onClick={handleSubmit}
-                >
+                <Button variant="warning" className="w-100 fw-bold" onClick={handleSubmit}>
                   Gửi yêu cầu
                 </Button>
               </Form>

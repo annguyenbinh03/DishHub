@@ -4,6 +4,55 @@
     object-fit: cover;
     border-radius: 8px; /* Rounded corners */
 }
+
+.details-view {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.details-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.details-row strong {
+    width: 150px;
+}
+
+.details-avatar {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
+
+.custom-modal .modal-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-modal .modal-header {
+    background-color: #343a40;
+    color: white;
+    border-bottom: none;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.custom-modal .modal-footer {
+    border-top: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
 .table-cell-truncate {
     max-width: 150px; /* Giới hạn chiều rộng */
     white-space: nowrap;
@@ -34,6 +83,36 @@
 .table-cell-truncate:hover::after {
     visibility: visible;
     opacity: 1;
+}
+
+.custom-table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.custom-table thead th {
+    background-color: #343a40;
+    color: white;
+    border: none;
+}
+
+.custom-table tbody tr {
+    background-color: #f8f9fa;
+    transition: background-color 0.3s;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.custom-table tbody tr.custom-row {
+    cursor: pointer;
+}
+
+.custom-table tbody td {
+    border: none;
+    padding: 10px;
+    vertical-align: middle;
 }
 
 

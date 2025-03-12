@@ -36,6 +36,16 @@ export const renderRoutes = (routes = []) => (
 const routes = [
   {
     exact: 'true',
+    path: '/test3',
+    element: lazy(() => import('./views/user/testSignalROrder'))
+  },
+  {
+    exact: 'true',
+    path: '/test2',
+    element: lazy(() => import('./views/user/testSignalRRequest'))
+  },
+  {
+    exact: 'true',
     path: '/test',
     element: lazy(() => import('./views/user/test2'))
   },
@@ -167,12 +177,6 @@ const routes = [
         path: '/maps/google-map',
         element: lazy(() => import('./views/maps/GoogleMaps'))
       },
-      {
-        exact: 'true',
-        path: '/sample-page',
-        element: lazy(() => import('./views/extra/SamplePage'))
-      },
-
       {
         exact: 'true',
         path: '/food-management/food',

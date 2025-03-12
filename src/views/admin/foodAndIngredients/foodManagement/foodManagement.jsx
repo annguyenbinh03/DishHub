@@ -28,7 +28,6 @@ const FoodManagement = () => {
     const [searchTerm, setSearchTerm] = useState(''); // State for search term
     const [selectedCategory, setSelectedCategory] = useState(''); // State for selected category
     const [selectedStatus, setSelectedStatus] = useState(''); // State for selected status
-    const [orderId, setOrderId] = useState(''); // State for order ID
 
     useEffect(() => {
         fetchFoods();
@@ -41,7 +40,8 @@ const FoodManagement = () => {
         axios
             .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes?page=1&size=100')
             .then((res) => {
-                setFoods(res.data.data.dishes);
+                const sortedFoods = res.data.data.dishes.sort((a, b) => b.id - a.id); // Sort by ID in descending order
+                setFoods(sortedFoods);
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
@@ -131,15 +131,10 @@ const FoodManagement = () => {
         setSelectedStatus(e.target.value);
     };
 
-    const handleOrderIdChange = (e) => {
-        setOrderId(e.target.value);
-    };
-
     const filteredFoods = foods.filter(food =>
         food.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
         (selectedCategory === '' || food.categoryId === parseInt(selectedCategory)) &&
-        (selectedStatus === '' || food.status === selectedStatus) &&
-        (orderId === '' || food.id.toString() === orderId)
+        (selectedStatus === '' || food.status === selectedStatus)
     );
 
     const uploadImage = async () => {
@@ -183,7 +178,6 @@ const FoodManagement = () => {
             restaurantId: formData.restaurantId,
             ingredients: formData.ingredients
         };
-
         try {
             if (currentFood) {
                 await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes/${currentFood.id}`, createDishDTO);
@@ -221,7 +215,7 @@ const FoodManagement = () => {
 
 
     return (
-        <Container className="my-5 food-management">
+        <Container className="food-management">
             <ToastContainer />
             <h2 className="text-center mb-4">Quản lý món ăn</h2>
             <Form.Control
@@ -230,12 +224,14 @@ const FoodManagement = () => {
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="mb-3"
+                style={{ width: '300px' }} // Add this line to set a custom width
             />
             <Form.Control
                 as="select"
                 value={selectedCategory}
                 onChange={handleCategoryChange}
                 className="mb-3"
+                style={{ width: '300px' }} // Add this line to set a custom width
             >
                 <option value="">All Categories</option>
                 {categories.map(category => (
@@ -249,18 +245,12 @@ const FoodManagement = () => {
                 value={selectedStatus}
                 onChange={handleStatusChange}
                 className="mb-3"
+                style={{ width: '300px' }} // Add this line to set a custom width
             >
                 <option value="">All Status</option>
                 <option value="onsale">On Sale</option>
                 <option value="deleted">Off Sale</option>
             </Form.Control>
-            <Form.Control
-                type="text"
-                placeholder="Filter by Order ID"
-                value={orderId}
-                onChange={handleOrderIdChange}
-                className="mb-3"
-            />
             <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Tạo món mới</Button>
             <Table striped bordered hover responsive className="text-center">
                 <thead className="table-dark">
@@ -274,6 +264,7 @@ const FoodManagement = () => {
                         <th>Trạng thái</th>
                         <th>Nhà hàng</th>
                         <th>Nguyên liệu</th>
+                        <th>Sold Count</th> {/* Add this line */}
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -302,10 +293,10 @@ const FoodManagement = () => {
                                 <td>{formatPrice(food.price)}</td>
                                 <td>
                                     <Badge bg={food.status === 'onsale' ? 'success' : 'danger'}>
-                                        {food.status === 'onsale' ? 'On Sale' : 'Off Sale'}
+                                        {food.status === 'onsale' ? 'On Sale' : 'Deleted'}
                                     </Badge>
                                 </td>
-                                <td>{food.restaurantId}</td>
+                                <td>{food.restaurantName}</td> {/* Change this line */}
                                 <td
                                     title={food.ingredients.map(ingredient => ingredient.name).join(', ')}
                                     className="text-start"
@@ -318,8 +309,7 @@ const FoodManagement = () => {
                                 >
                                     {food.ingredients.map(ingredient => ingredient.name).join(', ')}
                                 </td>
-
-
+                                <td>{food.soldCount}</td> {/* Add this line */}
                                 <td>
                                     <Button variant="warning" size="sm" onClick={() => handleShowModal(food)}>Cập nhật</Button>
                                     <Button variant="danger" size="sm" onClick={() => handleDelete(food.id)}>Xóa</Button>
@@ -328,7 +318,7 @@ const FoodManagement = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="10" className="text-center">No matching data found...</td>
+                            <td colSpan="11" className="text-center">No matching data found...</td> {/* Change colSpan to 11 */}
                         </tr>
                     )}
                 </tbody>
@@ -395,7 +385,7 @@ const FoodManagement = () => {
                                 onChange={handleChange}
                             >
                                 <option value="onsale">On Sale</option>
-                                <option value="offsale">Off Sale</option>
+                                <option value="deleted">Deleted</option>
                             </Form.Control>
                         </Form.Group>
                         <Form.Group className="mb-3">

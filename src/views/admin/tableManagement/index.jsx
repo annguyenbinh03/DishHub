@@ -16,6 +16,9 @@ const TableManagement = () => {
         restaurantId: '',
         isDeleted: false
     });
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedRestaurant, setSelectedRestaurant] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState('');
 
     useEffect(() => {
         fetchTables();
@@ -116,43 +119,84 @@ const TableManagement = () => {
             });
     };
 
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const handleRestaurantChange = (e) => {
+        setSelectedRestaurant(e.target.value);
+    };
+
+    const handleStatusChange = (e) => {
+        setSelectedStatus(e.target.value);
+    };
+
+    const filteredTables = tables.filter((table) => {
+        return (
+            table.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            (selectedRestaurant === '' || table.restaurantId.toString() === selectedRestaurant) &&
+            (selectedStatus === '' || (selectedStatus === 'true' ? table.isDeleted : !table.isDeleted))
+        );
+    });
+
     return (
         <Container className="my-5">
             <ToastContainer />
             <h2 className="text-center mb-4"> Quản lý bàn </h2>
-            <div className='d-flex justify-content-end'>
-            <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Thêm bàn</Button>
-
+            <div className="d-flex justify-content-between mb-3">
+                <div className="d-flex">
+                    <Form.Control
+                        type="text"
+                        placeholder="Tìm kiếm theo tên bàn"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className="me-2"
+                    />
+                    <Form.Select value={selectedRestaurant} onChange={handleRestaurantChange} className="me-2">
+                        <option value="">Lọc theo nhà hàng</option>
+                        {restaurants.map((restaurant) => (
+                            <option key={restaurant.id} value={restaurant.id}>
+                                {restaurant.name}
+                            </option>
+                        ))}
+                    </Form.Select>
+                    <Form.Select value={selectedStatus} onChange={handleStatusChange}>
+                        <option value="">Lọc theo trạng thái</option>
+                        <option value="true">Không hoạt động</option>
+                        <option value="false">Hoạt động</option>
+                    </Form.Select>
+                </div>
+                <Button variant="success" onClick={() => handleShowModal()}>Thêm bàn</Button>
             </div>
-            <Table striped bordered hover responsive className="text-center">   
+            <Table striped bordered hover responsive className="text-center fixed-table">
                 <thead className="table-dark">
                     <tr>
-                        <th>Id</th>
-                        <th>Tên bàn</th>
-                        <th>Mô tả</th>
-                        <th>Nhà hàng</th>
-                        <th>Hình ảnh nhà hàng</th>
-                        <th>Trạng thái</th>
-                        <th>Hành động</th>
+                        <th className="fixed-column-id">Id</th>
+                        <th className="fixed-column">Tên bàn</th>
+                        <th className="fixed-column">Mô tả</th>
+                        <th className="fixed-column">Nhà hàng</th>
+                        <th className="fixed-column">Hình ảnh nhà hàng</th>
+                        <th className="fixed-column">Trạng thái</th>
+                        <th className="fixed-column">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {tables.length > 0 ? (
-                        tables.map((table, index) => (
+                    {filteredTables.length > 0 ? (
+                        filteredTables.map((table, index) => (
                             <tr key={table.id}>
-                                <td>{index + 1}</td>
-                                <td>{table.name}</td>
-                                <td>{table.description}</td>
-                                <td>{table.restaurantName}</td>
-                                <td>
+                                <td className="fixed-column-id">{index + 1}</td>
+                                <td className="fixed-column">{table.name}</td>
+                                <td className="fixed-column">{table.description}</td>
+                                <td className="fixed-column">{table.restaurantName}</td>
+                                <td className="fixed-column">
                                     <img src={table.restaurantImage} alt={table.restaurantName} className="restaurant-img rounded" />
                                 </td>
-                                <td>
+                                <td className="fixed-column">
                                     <Badge bg={table.isDeleted ? 'danger' : 'success'}>
                                         {table.isDeleted ? 'Không hoạt động' : 'Hoạt động'}
                                     </Badge>
                                 </td>
-                                <td>
+                                <td className="fixed-column">
                                     <Button variant="warning" size="sm" onClick={() => handleShowModal(table)}>Sửa</Button>
                                     <Button variant="danger" size="sm" onClick={() => handleDelete(table.id)}>Xóa</Button>
                                 </td>
@@ -160,7 +204,7 @@ const TableManagement = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="7" className="text-center">Đang tải dữ liệu...</td>
+                            <td colSpan="7" className="text-center">Không có dữ liệu.</td>
                         </tr>
                     )}
                 </tbody>

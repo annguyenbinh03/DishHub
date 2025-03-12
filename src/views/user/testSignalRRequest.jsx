@@ -25,6 +25,7 @@ const SignalRTest = () => {
 
     // Nhận thông báo đơn hàng mới
     connection.on("ReceiveNewRequest", (orderDetail) => {
+      console.log(orderDetail);
       setRequests(prev => [orderDetail, ...prev]);
     });
 

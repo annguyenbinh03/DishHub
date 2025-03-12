@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as signalR from "@microsoft/signalr";
 import { Container, Table } from "react-bootstrap";
+import { Bounce, toast } from "react-toastify";
 
 const SignalRTest = () => {
   const [requests, setRequests] = useState([]);
@@ -27,10 +28,31 @@ const SignalRTest = () => {
       setRequests(prev => [orderDetail, ...prev]);
     });
 
+      connection.on('UpdateRequestStatus', (updatedRequest) => {
+          console.log('Update request status: ', updatedRequest);
+          toast(updatedRequest.id + " : " + updatedRequest.status, {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+            transition: Bounce
+          });
+          setRequests((preRequests) =>
+            preRequests.map((request) =>
+              request.id === updatedRequest.id ? { ...request, status: updatedRequest.status } : request
+            )
+          );
+        });
+
     return () => {
       connection.stop();
     };
   }, []);
+
 
   return (
     <Container>

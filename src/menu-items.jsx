@@ -272,6 +272,13 @@ const menuItems = {
           type: 'item',
           icon: 'feather icon-shopping-cart',
           url: '/order-management/order'
+        },
+        {
+          id: 'payment-by-restaurant',
+          title: 'Thanh toán theo nhà hàng',
+          type: 'item',
+          icon: 'feather icon-credit-card',
+          url: '/payment-management/payment-by-restaurant'
         }
       ]
     },

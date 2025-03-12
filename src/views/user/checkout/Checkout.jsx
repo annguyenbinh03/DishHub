@@ -63,15 +63,17 @@ const Checkout = () => {
       <Container className="mt-4 text-center">
         <h2>Hoàn thành đơn đặt hàng của bạn</h2>
         <p>Xem lại các món của bạn và xác nhận đơn đặt hàng</p>
-
+  
         {loading ? (
           <Spinner animation="border" role="status" variant="warning">
             <span className="visually-hidden">Loading...</span>
           </Spinner>
         ) : !orderId ? (
           <h5 className="text-danger mt-4">Bạn chưa có đơn đặt món ăn nào</h5>
-        ) : (
-          order && (
+        ) : order ? (
+          order.dishes.length === 0 ? (
+            <h5 className="text-danger mt-4">Bạn chưa đặt món</h5>
+          ) : (
             <>
               <Table striped bordered hover className="mt-3 text-center">
                 <thead>
@@ -116,9 +118,11 @@ const Checkout = () => {
               </Button>
             </>
           )
+        ) : (
+          <h5 className="text-danger mt-4">Không thể lấy thông tin đơn hàng</h5>
         )}
       </Container>
-
+  
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Thông báo</Modal.Title>

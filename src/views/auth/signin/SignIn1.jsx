@@ -1,37 +1,14 @@
-import React, { useState } from 'react';
-import { Card, Button, Alert, Form } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Card, Button, Alert } from 'react-bootstrap';
+import { NavLink, Link } from 'react-router-dom';
+
 import Breadcrumb from '../../../layouts/AdminLayout/Breadcrumb';
-import { toast } from 'react-toastify';
+
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
+import AuthLogin from './JWTLogin';
 
 const Signin1 = () => {
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate();
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userName, password }),
-      });
-      const data = await response.json();
-      if (response.ok && data.token) {
-        localStorage.setItem('authToken', data.token);
-        toast.success('Đăng nhập thành công!');
-        navigate('/admin/select-restaurant');
-      } else {
-        toast.error('Đăng nhập thất bại!');
-      }
-    } catch (error) {
-      toast.error('Có lỗi xảy ra!');
-    }
-  };
-
   return (
     <React.Fragment>
       <Breadcrumb />
@@ -48,29 +25,19 @@ const Signin1 = () => {
               <div className="mb-4">
                 <i className="feather icon-unlock auth-icon" />
               </div>
-              <Form onSubmit={handleLogin}>
-                <Form.Group controlId="formBasicUserName">
-                  <Form.Label>User Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter user name"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                  />
-                </Form.Group>
-                <Form.Group controlId="formBasicPassword">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </Form.Group>
-                <Button variant="primary" type="submit" className="mt-3">
-                  Đăng nhập
-                </Button>
-              </Form>
+              <AuthLogin />
+              {/* <p className="mb-2 text-muted">
+                Forgot password?{' '}
+                <NavLink to={'#'} className="f-w-400">
+                  Reset
+                </NavLink>
+              </p>
+              <p className="mb-0 text-muted">
+                Don’t have an account?{' '}
+                <NavLink to="/auth/signup-1" className="f-w-400">
+                  Signup
+                </NavLink>
+              </p> */}
             </Card.Body>
           </Card>
         </div>

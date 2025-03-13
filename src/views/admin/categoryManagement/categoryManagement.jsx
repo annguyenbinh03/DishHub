@@ -6,8 +6,10 @@ import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ImagePicker from 'components/ImagePicker';
 import useCloudinaryUpload from 'hooks/useCloudinaryUpload';
+import useAuth from 'hooks/useAuth';
 
 const CategoryManagement = () => {
+    const { auth } = useAuth();
     const [categories, setCategories] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentCategory, setCurrentCategory] = useState(null);
@@ -21,13 +23,17 @@ const CategoryManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
 
+    
+    const config = {
+        headers: { Authorization: `Bearer ${auth.token}` }
+    };
     useEffect(() => {
         fetchCategories();
     }, []);
 
     const fetchCategories = () => {
         axios
-            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/categories')
+            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/categories',config)
             .then((res) => {
                 setCategories(res.data.data);
             })
@@ -92,14 +98,14 @@ const CategoryManagement = () => {
             console.log('Sending data:', updatedFormData); // Log dữ liệu gửi lên
             if (currentCategory) {
                 // Update category
-                const response = await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories/${currentCategory.id}`, updatedFormData);
+                const response = await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories/${currentCategory.id}`, updatedFormData, config);
                 console.log('Update response:', response);
                 fetchCategories();
                 handleCloseModal();
                 toast.success(`Đã cập nhật ${formData.name} thành công!`);
             } else {
                 // Create category
-                const response = await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories', updatedFormData);
+                const response = await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories', updatedFormData, config);
                 console.log('Create response:', response);
                 fetchCategories();
                 handleCloseModal();
@@ -120,7 +126,7 @@ const CategoryManagement = () => {
     };
 
     const handleDelete = (id) => {
-        axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories/${id}`)
+        axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dish-categories/${id}`, config)
             .then(() => {
                 fetchCategories();
                 toast.success('Đã xóa thành công!');

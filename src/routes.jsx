@@ -70,6 +70,11 @@ const routes = [
     element: lazy(() => import('./views/auth/signup/SignUp1'))
   },
   {
+    exact: 'true',
+    path: '/admin/select-restaurant',
+    element: lazy(() => import('./views/admin/selectRestaurant/selectRestaurant'))
+  },
+  {
     path: '/user/*',
     layout: UserLayout,
     routes: [

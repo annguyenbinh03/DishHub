@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Container, Button, Modal, Form, Badge } from 'react-bootstrap';
+import { Table, Container, Button, Modal, Form, Badge, Row, Col } from 'react-bootstrap'; // Import Row and Col
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,6 +12,14 @@ const RequestOrders = () => {
     const [filterStatus, setFilterStatus] = useState('all');
     const [searchTableName, setSearchTableName] = useState(''); // New state for search
     const [filterRestaurant, setFilterRestaurant] = useState('all'); // New state for restaurant filter
+
+    const statusOptions = [
+        { value: 'all', label: 'Tất cả' },
+        { value: 'pending', label: 'Chờ xử lý' },
+        { value: 'inProgress', label: 'Đang xử lý' },
+        { value: 'completed', label: 'Hoàn thành' },
+        { value: 'cancelled', label: 'Đã hủy' }
+    ];
 
     useEffect(() => {
         fetchRequests();
@@ -61,19 +69,30 @@ const RequestOrders = () => {
             {/* Dropdown lọc trạng thái */}
             <Form.Group className="mb-3">
                 <Form.Label><strong>Lọc theo trạng thái:</strong></Form.Label>
-                <Form.Select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-                    <option value="all">Tất cả</option>
-                    <option value="pending">Chờ xử lý</option>
-                    <option value="inProgress">Đang xử lý</option>
-                    <option value="completed">Hoàn thành</option>
-                    <option value="cancelled">Đã hủy</option>
-                </Form.Select>
+                <Row>
+                    {statusOptions.map(option => (
+                        <Col key={option.value} xs="auto">
+                            <Form.Check
+                                type="radio"
+                                label={option.label}
+                                name="statusFilter"
+                                value={option.value}
+                                checked={filterStatus === option.value}
+                                onChange={(e) => setFilterStatus(e.target.value)}
+                            />
+                        </Col>
+                    ))}
+                </Row>
             </Form.Group>
 
             {/* Dropdown lọc nhà hàng */}
             <Form.Group className="mb-3">
                 <Form.Label><strong>Lọc theo nhà hàng:</strong></Form.Label>
-                <Form.Select value={filterRestaurant} onChange={(e) => setFilterRestaurant(e.target.value)}>
+                <Form.Select
+                    value={filterRestaurant}
+                    onChange={(e) => setFilterRestaurant(e.target.value)}
+                    style={{ width: '300px' }} // Set width to 300px
+                >
                     <option value="all">Tất cả</option>
                     <option value="1">Nhà hàng 1</option>
                     <option value="2">Nhà hàng 2</option>
@@ -89,6 +108,7 @@ const RequestOrders = () => {
                     placeholder="Nhập tên bàn"
                     value={searchTableName}
                     onChange={(e) => setSearchTableName(e.target.value)}
+                    style={{ width: '300px' }} // Set width to 300px
                 />
             </Form.Group>
 

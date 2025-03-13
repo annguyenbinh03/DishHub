@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { formatPrice } from 'utils/formatPrice';
+import useAuth from 'hooks/useAuth';
 
 const OrderManagement = () => {
     const [orders, setOrders] = useState([]);
@@ -17,10 +18,17 @@ const OrderManagement = () => {
     useEffect(() => {
         fetchOrders();
     }, []);
+    const { auth } = useAuth();
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${auth.token}`
+        }
+    };
 
     const fetchOrders = () => {
         setLoading(true);
-        axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/orders')
+        axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/orders', config)
             .then((res) => {
                 if (res.data.isSucess) {
                     const sortedOrders = res.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -39,7 +47,7 @@ const OrderManagement = () => {
     };
 
     const fetchOrderDetails = (orderId) => {
-        axios.get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders/${orderId}/details`)
+        axios.get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders/${orderId}/details`, config)
             .then((res) => {
                 if (res.data.isSucess) {
                     setOrderDetails(res.data.data.orderDetails);

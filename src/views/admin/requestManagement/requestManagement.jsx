@@ -3,6 +3,7 @@ import { Table, Container, Button, Modal, Form, Badge, Row, Col } from 'react-bo
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import useAuth from 'hooks/useAuth';
 
 const RequestOrders = () => {
     const [requests, setRequests] = useState([]);
@@ -25,10 +26,18 @@ const RequestOrders = () => {
         fetchRequests();
     }, [filterRestaurant]); // Add filterRestaurant as a dependency
 
+    const { auth } = useAuth();
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${auth.token}`
+        }
+    };
+
     const fetchRequests = () => {
         setLoading(true);
         axios
-            .get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/requests?restaurantId=${filterRestaurant}`)
+            .get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/requests?restaurantId=${filterRestaurant}`, config) // Pass config with token
             .then((res) => {
                 if (res.data.isSucess) {
                     const sortedRequests = res.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

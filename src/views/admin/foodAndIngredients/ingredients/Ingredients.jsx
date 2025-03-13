@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ImagePicker from 'components/ImagePicker'; // Import ImagePicker
 import useCloudinaryUpload from 'hooks/useCloudinaryUpload'; // Import hook for Cloudinary upload
+import useAuth from 'hooks/useAuth';
 
 const Ingredients = () => {
     const [ingredients, setIngredients] = useState([]);
@@ -22,10 +23,18 @@ const Ingredients = () => {
         fetchIngredients();
     }, []);
 
+    const { auth } = useAuth();
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${auth.token}`
+        }
+    };
+
     const fetchIngredients = () => {
         setLoading(true);
         axios
-            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/ingredients')
+            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/ingredients', config) // Pass config with token
             .then((res) => {
                 setIngredients(res.data.data);
             })
@@ -41,7 +50,7 @@ const Ingredients = () => {
     const handleDelete = (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa nguyên liệu này?")) {
             axios
-                .delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/ingredients/${id}`)
+                .delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/ingredients/${id}`, config) // Pass config with token
                 .then(() => {
                     fetchIngredients(); // Tải lại danh sách nguyên liệu sau khi xóa
                     toast.success('Nguyên liệu đã được xóa thành công!');
@@ -122,7 +131,7 @@ const Ingredients = () => {
 
         const method = formData.id ? 'put' : 'post'; // Use PUT for update, POST for create
 
-        axios[method](apiUrl, ingredientData)
+        axios[method](apiUrl, ingredientData, config) // Pass config with token
             .then((res) => {
                 fetchIngredients(); // Reload ingredient list
                 setShowModal(false); // Close the modal

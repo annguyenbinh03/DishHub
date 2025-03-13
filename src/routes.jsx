@@ -51,6 +51,11 @@ const routes = [
   },
   {
     exact: 'true',
+    path: '/unauthorized',
+    element: lazy(() => import('./views/common/Unauthorized'))
+  },
+  {
+    exact: 'true',
     path: '/login',
     element: lazy(() => import('./views/auth/signin/SignIn1'))
   },

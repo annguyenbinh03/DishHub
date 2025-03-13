@@ -10,7 +10,7 @@ const testSignalR = () => {
   useEffect(() => {
     // Tạo kết nối với SignalR Hub
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(`https://localhost:7097/hub/order-details?restaurantId=${restaurantId}`)
+      .withUrl(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/hub/order-details?restaurantId=${restaurantId}`)
       .withAutomaticReconnect()
       .build();
     //https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net

@@ -9,7 +9,7 @@ const SignalRTest = () => {
 
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(` https://localhost:7097/hub/requests?restaurantId=${restaurantId}`)
+      .withUrl(`https://localhost:7097/hub/requests?restaurantId=${restaurantId}`)
       .withAutomaticReconnect()
       .build();
 

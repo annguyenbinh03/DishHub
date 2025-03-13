@@ -16,6 +16,7 @@ const SelectTableChecker = () => {
     if (!storedTableData || storedTableData.date !== today) {
       localStorage.removeItem("selectedTable");
       localStorage.removeItem("tableId");
+      localStorage.removeItem("orderId");
       navigate("/user/table-setting");
     }
   }, [navigate, location.pathname]);

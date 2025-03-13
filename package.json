@@ -11,6 +11,7 @@
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@react-google-maps/api": "^2.19.3",
     "@react-oauth/google": "^0.12.1",

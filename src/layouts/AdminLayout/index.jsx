@@ -9,11 +9,20 @@ import useWindowSize from '../../hooks/useWindowSize';
 import useOutsideClick from '../../hooks/useOutsideClick';
 import { ConfigContext } from '../../contexts/ConfigContext';
 import * as actionType from '../../store/actions';
+import { Navigate, Route, useLocation } from 'react-router-dom';
+import useAuth from 'hooks/useAuth';
+
+const ROLES = {
+  STAFF: '1',
+  MANAGER: '2'
+};
 
 const AdminLayout = ({ children }) => {
   const windowSize = useWindowSize();
   const ref = useRef();
   const configContext = useContext(ConfigContext);
+
+  const { auth, authLoading } = useAuth(); // Lấy authLoading từ context
 
   const { collapseMenu, headerFixedLayout } = configContext.state;
   const { dispatch } = configContext;
@@ -92,11 +101,21 @@ const AdminLayout = ({ children }) => {
     );
   }
 
-  return (
+  if (authLoading) {
+    return <p>Loading...</p>; // Hoặc spinner đẹp hơn
+  }
+
+  const location = useLocation();
+
+  return ROLES.MANAGER === auth?.roleId ? (
     <React.Fragment>
       {common}
       {mainContainer}
     </React.Fragment>
+  ) : auth?.username ? (
+    <Navigate to="/unauthorized" state={{ from: location }} replace />
+  ) : (
+    <Navigate to="/login" state={{ from: location }} replace />
   );
 };
 

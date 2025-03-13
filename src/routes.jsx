@@ -36,8 +36,23 @@ export const renderRoutes = (routes = []) => (
 const routes = [
   {
     exact: 'true',
+    path: '/test3',
+    element: lazy(() => import('./views/user/testSignalROrder'))
+  },
+  {
+    exact: 'true',
+    path: '/test2',
+    element: lazy(() => import('./views/user/testSignalRRequest'))
+  },
+  {
+    exact: 'true',
     path: '/test',
     element: lazy(() => import('./views/user/test2'))
+  },
+  {
+    exact: 'true',
+    path: '/unauthorized',
+    element: lazy(() => import('./views/common/Unauthorized'))
   },
   {
     exact: 'true',
@@ -174,12 +189,6 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/sample-page',
-        element: lazy(() => import('./views/extra/SamplePage'))
-      },
-
-      {
-        exact: 'true',
         path: '/food-management/food',
         element: lazy(() => import('./views/admin/foodAndIngredients/foodManagement/foodManagement'))
       },
@@ -223,6 +232,11 @@ const routes = [
         exact: true,
         path: '/request-type-management',
         element: lazy(() => import('./views/admin/requestTypeManagement/requestTypeManagement'))
+      },
+      {
+        exact: true,
+        path: '/payment-management/payment-by-restaurant',
+        element: lazy(() => import('./views/admin/paymentsByRestaurant/PaymentsByRestaurant'))
       },
       {
         path: '*',

@@ -6,57 +6,60 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { Bounce, toast } from 'react-toastify';
 import { login, loginGoogle } from 'services/authService';
 import { jwtDecode } from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import useAuth from 'hooks/useAuth';
 
 const googleClientId = import.meta.env.VITE_GOOGLE_LOGIN_CLIENTID;
 const JWTLogin = () => {
-
   const navigate = useNavigate();
 
-  const handleGoogleLogin = async (response) =>{
-      // Gửi token này đến backend để xác thực
-      try {
-          const res = await loginGoogle(response.credential);
-          navigateLogin(res.data.token);
-      } catch (error) {
-          console.error("Error verifying Google token", error);
-      }
+  const location = useLocation();
+  const from = location?.state?.from?.pathname || "/";
+  console.log("from" + from)
+  const {setAuth} = useAuth();
+
+  const handleGoogleLogin = async (response) => {
+    // Gửi token này đến backend để xác thực
+    try {
+      const res = await loginGoogle(response.credential);
+      navigateLogin(res.data.token);
+    } catch (error) {
+      console.error('Error verifying Google token', error);
     }
+  };
 
-  const handleLogin = async (values) =>{
-    console.log("Login with:", values.username, values.password);
-      try {
-          const res = await login(values.username, values.password);
-          navigateLogin(res.data.token);
-      } catch (error) {
-          console.error("Error verifying Google token", error);
-      }
-  }
+  const handleLogin = async (values) => {
+    console.log('Login with:', values.username, values.password);
+    try {
+      const res = await login(values.username, values.password);
+      navigateLogin(res.token);
+    } catch (error) {
+      console.error('Invalid username or password', error);
+    }
+  };
 
-  const navigateLogin = (token) =>{
-    console.log(token);
+  const navigateLogin = (token) => {
     const decoded = jwtDecode(token);
-    console.log(decoded);
-    // localStorage.setItem(
-    //   "auth",
-    //   JSON.stringify({
-    //     email,
-    //     roles,
-    //     fullName,
-    //     avarta,
-    //     accessToken,
-    //     id,
-    //     sub,
-    //     logged,
-    //   })
-    // );
+    localStorage.setItem("token", token);
+    const authData = {
+      username: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
+      roleId: decoded.RoleId,
+      token: token
+    };
+    setAuth(authData);
+    console.log(authData);
 
-    if (decoded.RoleId === "1") {
-       navigate("/user", { replace: true });
+    if (from !== "/") {
+      console.log("Navigating to:", from);
+      navigate(from, { replace: true });
     } else {
-       navigate("/app/dashboard/default", { replace: true });
+      if (authData.roleId === '1') {
+        navigate('/user', { replace: true });
+      } else {
+        navigate('/app/dashboard/default', { replace: true });
+      }
     }
-  }
+  };
 
   return (
     <Formik
@@ -69,7 +72,7 @@ const JWTLogin = () => {
         username: Yup.string().max(255).required('username is required'),
         password: Yup.string().max(255).required('Password is required')
       })}
-      onSubmit={handleLogin} 
+      onSubmit={handleLogin}
     >
       {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
         <form noValidate onSubmit={handleSubmit}>
@@ -81,7 +84,7 @@ const JWTLogin = () => {
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.username}
-              placeholder='username'
+              placeholder="username"
             />
             {touched.username && errors.username && <small className="text-danger form-text">{errors.username}</small>}
           </div>
@@ -94,7 +97,7 @@ const JWTLogin = () => {
               onChange={handleChange}
               type="password"
               value={values.password}
-              placeholder='password'
+              placeholder="password"
             />
             {touched.password && errors.password && <small className="text-danger form-text">{errors.password}</small>}
           </div>
@@ -117,11 +120,11 @@ const JWTLogin = () => {
               <Button className="btn-block mb-4" color="primary" disabled={isSubmitting} size="large" type="submit" variant="primary">
                 Signin
               </Button>
-            </Col> 
+            </Col>
           </Row>
-          <Row >
+          <Row>
             <GoogleOAuthProvider clientId={googleClientId}>
-             <GoogleLogin logo_alignment='center' onSuccess={handleGoogleLogin} onError={() => console.error("Login Failed")} />
+              <GoogleLogin logo_alignment="center" onSuccess={handleGoogleLogin} onError={() => console.error('Login Failed')} />
             </GoogleOAuthProvider>
           </Row>
         </form>

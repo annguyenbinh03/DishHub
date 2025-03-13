@@ -36,23 +36,28 @@ const RequestOrders = () => {
 
     const fetchRequests = () => {
         setLoading(true);
-        axios
-            .get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/requests?restaurantId=${filterRestaurant}`, config) // Pass config with token
-            .then((res) => {
-                if (res.data.isSucess) {
-                    const sortedRequests = res.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    setRequests(sortedRequests);
-                } else {
-                    toast.error('Lỗi tải danh sách yêu cầu!');
-                }
-            })
-            .catch((error) => {
-                console.error('Lỗi khi lấy dữ liệu:', error);
-                toast.error('Không thể tải danh sách yêu cầu!');
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        if (filterRestaurant !== 'all') { // Only fetch if a specific restaurant is selected
+            axios
+                .get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/requests?restaurantId=${filterRestaurant}`, config) // Pass config with token
+                .then((res) => {
+                    if (res.data.isSucess) {
+                        const sortedRequests = res.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                        setRequests(sortedRequests);
+                    } else {
+                        toast.error('Lỗi tải danh sách yêu cầu!');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Lỗi khi lấy dữ liệu:', error);
+                    toast.error('Không thể tải danh sách yêu cầu!');
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        } else {
+            setRequests([]);
+            setLoading(false);
+        }
     };
 
     const handleShowModal = (request) => {
@@ -102,7 +107,6 @@ const RequestOrders = () => {
                     onChange={(e) => setFilterRestaurant(e.target.value)}
                     style={{ width: '300px' }} // Set width to 300px
                 >
-                    <option value="all">Tất cả</option>
                     <option value="1">Nhà hàng 1</option>
                     <option value="2">Nhà hàng 2</option>
                     <option value="3">Nhà hàng 3</option>

@@ -3,7 +3,7 @@ import { Table, Container, Button, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import useAuth from 'hooks/useAuth';
 const RequestTypeManagement = () => {
     const [requestTypes, setRequestTypes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -15,10 +15,18 @@ const RequestTypeManagement = () => {
         fetchRequestTypes();
     }, []);
 
+    const { auth } = useAuth();
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${auth.token}`
+        }
+    };
+
     const fetchRequestTypes = () => {
         setLoading(true);
         axios
-            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/request-types')
+            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/request-types', config)
             .then((res) => {
                 if (res.data.isSucess) {
                     setRequestTypes(res.data.data);
@@ -52,7 +60,8 @@ const RequestTypeManagement = () => {
             url: url,
             data: JSON.stringify(newRequestTypeName),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${auth.token}` // Add token here
             }
         })
             .then((res) => {
@@ -84,7 +93,11 @@ const RequestTypeManagement = () => {
 
     const handleDeleteRequestType = (id) => {
         axios
-            .delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/request-types/${id}`)
+            .delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/request-types/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${auth.token}` // Add token here
+                }
+            })
             .then((res) => {
                 if (res.data.isSucess) {
                     toast.success(`Loại yêu cầu ID ${id} đã xóa thành công!`);

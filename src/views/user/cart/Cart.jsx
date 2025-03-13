@@ -3,9 +3,9 @@ import { Offcanvas, Button, ListGroup, Image, Row, Col } from 'react-bootstrap';
 import { BsCartFill, BsXCircle } from 'react-icons/bs';
 import { useCart } from '../../../contexts/CartContext';
 import { formatPrice } from 'utils/formatPrice';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import { createOrder, addOrderDetails } from '../../../services/orderService';
 
 const Cart = () => {
   const [show, setShow] = useState(false);
@@ -14,12 +14,10 @@ const Cart = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  // Tính tổng tiền
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const handleOrder = async () => {
     try {
-      // Kiểm tra giỏ hàng trống
       if (!cartItems || cartItems.length === 0) {
         toast.error('Bạn chưa thêm món ăn vào giỏ hàng!');
         return;
@@ -36,39 +34,26 @@ const Cart = () => {
 
       let orderId = localStorage.getItem('orderId');
 
-      // Nếu chưa có orderId, tạo mới
       if (!orderId) {
-        const orderResponse = await axios.post(
-          'https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders',
-          { tableId: tableId }
-        );
-
-        orderId = orderResponse.data?.data?.orderId;
+        const orderResponse = await createOrder({ tableId });
+        orderId = orderResponse?.data?.orderId;
         if (!orderId) {
           throw new Error('Không lấy được orderId từ API');
         }
-
-        // Lưu orderId vào localStorage để dùng lại
         localStorage.setItem('orderId', orderId);
       }
 
-      // Chuẩn bị payload danh sách món
       const orderDetails = cartItems.map(item => ({
         dishId: item.id,
         quantity: item.quantity
       }));
 
-      // Gửi danh sách món ăn vào orderId hiện có
-      const res = await axios.post(
-        `https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/orders/${orderId}/details`,
-        orderDetails
-      );
+      await addOrderDetails(orderId, orderDetails);
 
       cleanCart();
-      console.log("Phản hồi từ API:", res.data);
       toast.success('Đặt món thành công!');
     } catch (error) {
-      console.error('Lỗi đặt món:', error.response?.status, error.response?.data);
+      console.error('Lỗi đặt món:', error);
       toast.error('Đặt món thất bại, vui lòng thử lại!');
     }
   };
@@ -144,7 +129,7 @@ const Cart = () => {
               variant="warning"
               onClick={handleOrder}
               style={{ fontSize: '1.3rem', padding: '0.75rem' }}
-              disabled={!cartItems || cartItems.length === 0} // Vô hiệu hóa nút nếu giỏ hàng trống
+              disabled={!cartItems || cartItems.length === 0}
             >
               Đặt hàng
             </Button>

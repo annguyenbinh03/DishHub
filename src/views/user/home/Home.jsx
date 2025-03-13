@@ -7,6 +7,8 @@ import { getDishes } from 'services/dishService';
 import { formatPrice } from 'utils/formatPrice';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { get } from 'jquery';
+import { getCategories } from 'services/categoryService';
 
 const Home = () => {
   const [dishes, setDishes] = useState([]);
@@ -20,8 +22,8 @@ const Home = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/categories');
-        setCategories(Array.isArray(response.data?.data) ? response.data.data : []);
+        const response = await getCategories();
+        setCategories(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Lỗi lấy danh mục món ăn:', error);
         setCategories([]);

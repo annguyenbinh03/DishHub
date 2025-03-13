@@ -6,8 +6,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import ImagePicker from 'components/ImagePicker';
 import useCloudinaryUpload from 'hooks/useCloudinaryUpload';
 import './staffManagement.css';
+import useAuth from 'hooks/useAuth';
 
 const UserManagement = () => {
+    const { auth } = useAuth();
     const [users, setUsers] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -19,14 +21,17 @@ const UserManagement = () => {
     const [loading, setLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isViewing, setIsViewing] = useState(false);
-
+    
+    const config = {
+        headers: { Authorization: `Bearer ${auth.token}` }
+    };
     useEffect(() => {
         fetchUsers();
     }, []);
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/users?page=1&size=10');
+            const res = await axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/users?page=1&size=10', config);
             setUsers(res.data.data.users || []);
         } catch (error) {
             toast.error('Lỗi khi fetch dữ liệu!');
@@ -95,10 +100,10 @@ const UserManagement = () => {
             
             const updatedFormData = { ...formData, avatar: uploadedUrl, isDeleted: formData.isDeleted === 'true' };
             if (isEditing) {
-                await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/users/${selectedUser.id}`, updatedFormData);
+                await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/users/${selectedUser.id}`, updatedFormData),  config;
                 toast.success(`Cập nhật ${formData.username} thành công!`);
             } else {
-                await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/users', updatedFormData);
+                await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/users', updatedFormData,  config);
                 toast.success(`Thêm ${formData.username} thành công!`);
             }
             fetchUsers();
@@ -112,7 +117,7 @@ const UserManagement = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/users/${id}`);
+            await axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/users/${id}`, config);
             fetchUsers();
             toast.success('Đã xóa thành công!');
         } catch (error) {

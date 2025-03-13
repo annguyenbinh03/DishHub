@@ -6,8 +6,10 @@ import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ImagePicker from 'components/ImagePicker';
 import useCloudinaryUpload from 'hooks/useCloudinaryUpload';
+import useAuth from 'hooks/useAuth';
 
 const RestaurantManagement = () => {
+    const { auth } = useAuth();
     const [restaurants, setRestaurants] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentRestaurant, setCurrentRestaurant] = useState(null);
@@ -21,13 +23,17 @@ const RestaurantManagement = () => {
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    const config = {
+        headers: { Authorization: `Bearer ${auth.token}` }
+    };
+
     useEffect(() => {
         fetchRestaurants();
     }, []);
 
     const fetchRestaurants = () => {
         axios
-            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants')
+            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants', config)
             .then((res) => {
                 setRestaurants(res.data.data);
             })
@@ -94,14 +100,14 @@ const RestaurantManagement = () => {
             console.log('Sending data:', updatedFormData); // Log dữ liệu gửi lên
             if (currentRestaurant) {
                 // Update restaurant
-                const response = await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants/${currentRestaurant.id}`, updatedFormData);
+                const response = await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants/${currentRestaurant.id}`, updatedFormData, config);
                 console.log('Update response:', response);
                 fetchRestaurants();
                 handleCloseModal();
                 toast.success(`Đã cập nhật ${formData.name} thành công!`);
             } else {
                 // Create restaurant
-                const response = await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants', updatedFormData);
+                const response = await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants', updatedFormData, config);
                 console.log('Create response:', response);
                 fetchRestaurants();
                 handleCloseModal();
@@ -122,7 +128,7 @@ const RestaurantManagement = () => {
     };
 
     const handleDelete = (id) => {
-        axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants/${id}`)
+        axios.delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants/${id}`, config)
             .then(() => {
                 fetchRestaurants();
                 toast.success('Đã xóa thành công!');

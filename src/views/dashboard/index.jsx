@@ -5,14 +5,21 @@ import { Link } from 'react-router-dom';
 import avatar1 from '../../assets/images/user/avatar-1.jpg';
 import avatar2 from '../../assets/images/user/avatar-2.jpg';
 import avatar3 from '../../assets/images/user/avatar-3.jpg';
+import useAuth from 'hooks/useAuth';
 
 const DashDefault = () => {
+  const { auth } = useAuth();
   const [dashSalesData, setDashSalesData] = useState([]);
   const [topDishes, setTopDishes] = useState([]);
   const [tableStatus, setTableStatus] = useState([]);
 
+  const config = {
+    headers: { Authorization: `Bearer ${auth.token}` }
+};
+
+
   useEffect(() => {
-    fetch('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/dashboard/sales-data/1')
+    fetch('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/dashboard/sales-data/1', config)
       .then(response => response.json())
       .then(data => {
         if (data.isSucess) {
@@ -24,7 +31,7 @@ const DashDefault = () => {
         }
       });
 
-    fetch('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/dashboard/top-dishes/1')
+    fetch('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/dashboard/top-dishes/1', config)
       .then(response => response.json())
       .then(data => {
         if (data.isSucess) {
@@ -32,7 +39,7 @@ const DashDefault = () => {
         }
       });
 
-    fetch('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/dashboard/tables/1')
+    fetch('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/dashboard/tables/1', config)
       .then(response => response.json())
       .then(data => {
         if (data.isSucess) {

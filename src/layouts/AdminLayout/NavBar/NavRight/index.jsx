@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card, ListGroup, Dropdown } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Card, ListGroup, Dropdown, Button } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import ChatList from './ChatList';
@@ -9,9 +9,14 @@ import avatar1 from '../../../../assets/images/user/avatar-1.jpg';
 import avatar2 from '../../../../assets/images/user/avatar-2.jpg';
 import avatar3 from '../../../../assets/images/user/avatar-3.jpg';
 import avatar4 from '../../../../assets/images/user/avatar-4.jpg';
+import useAuth from 'hooks/useAuth';
 
 const NavRight = () => {
   const [listOpen, setListOpen] = useState(false);
+
+  const { auth, setAuth } = useAuth() ;
+
+  const navigate = useNavigate();
 
   const notiData = [
     {
@@ -33,6 +38,12 @@ const NavRight = () => {
       activity: 'yesterday'
     }
   ];
+
+  const handleClickLogout = () => {
+    localStorage.removeItem('token');
+    setAuth({});
+    navigate('/login');
+  }
 
   return (
     <React.Fragment>
@@ -123,10 +134,10 @@ const NavRight = () => {
             <Dropdown.Menu align="end" className="profile-notification">
               <div className="pro-head">
                 <img src={avatar1} className="img-radius" alt="User Profile" />
-                <span>John Doe</span>
-                <Link to="#" className="dud-logout" title="Logout">
+                <span>{auth.username}</span>
+                <Button as={Link} className="dud-logout me-3 fs-3" title="Logout" onClick={handleClickLogout}>
                   <i className="feather icon-log-out" />
-                </Link>
+                </Button>
               </div>
               <ListGroup as="ul" bsPrefix=" " variant="flush" className="pro-body">
                 <ListGroup.Item as="li" bsPrefix=" ">

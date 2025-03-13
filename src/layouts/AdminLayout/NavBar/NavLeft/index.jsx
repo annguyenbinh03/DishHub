@@ -17,7 +17,7 @@ const NavLeft = () => {
   }
 
   const [restaurants, setRestaurants] = useState([]);
-  const [selectedRestaurant, setSelectedRestaurant] = useState('');
+  const [selectedRestaurant, setSelectedRestaurant] = useState({});
 
   useEffect(() => {
     fetchRestaurants();
@@ -33,15 +33,38 @@ const NavLeft = () => {
     };
     try {
       const response = await axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants', config);
-      if (response.isSucess) {
-        console.log(response.data);
-        setRestaurants(response.data);
+      if (response.data.isSucess) {
+        const restaurantsData = response.data.data;
+        setRestaurants(restaurantsData);
+        let restaurantId = localStorage.getItem('restaurantId');
+        if (!restaurantId && restaurantsData.length > 0) {
+          // Nếu không có restaurantId, lấy phần tử đầu tiên
+          const firstRestaurant = restaurantsData[0];
+          localStorage.setItem('restaurantId', firstRestaurant.id);
+          setSelectedRestaurant(firstRestaurant);
+        } else {
+          // Nếu đã có restaurantId, tìm restaurant tương ứng
+          const selected = restaurantsData.find((r) => r.id.toString() === restaurantId);
+          if (selected) {
+            setSelectedRestaurant(selected);
+          } else {
+            // Nếu không tìm thấy (VD: nhà hàng bị xóa), chọn phần tử đầu tiên
+            const firstRestaurant = restaurantsData[0];
+            localStorage.setItem('restaurantId', firstRestaurant.id);
+            setSelectedRestaurant(firstRestaurant);
+          }
+        }
       } else {
         toast.error('Lấy danh sách nhà hàng thất bại!');
       }
     } catch (error) {
       toast.error('Có lỗi xảy ra!');
     }
+  };
+
+  const handleChangeRestaurant = (item) => {
+    setSelectedRestaurant(item);
+    localStorage.setItem('restaurantId', item.id);
   };
 
   return (
@@ -79,16 +102,37 @@ const NavLeft = () => {
         <ListGroup.Item as="li" className="nav-item">
           <Dropdown align={'start'}>
             <Dropdown.Toggle variant={'link'} id="dropdown-basic">
-              Dropdown
+              <img
+                src={selectedRestaurant.image || 'https://via.placeholder.com/50'}
+                alt={selectedRestaurant.name}
+                width="40"
+                height="40"
+                className='me-2'
+                style={{ borderRadius: '5px', objectFit: 'cover' }}
+              />
+              <span>{selectedRestaurant.name}</span>
             </Dropdown.Toggle>
             <ul>
               <Dropdown.Menu>
-                <li>
-                  <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                </li>
-                <li>
-                  <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                </li>
+                {restaurants?.map((restaurant) => (
+                  <Dropdown.Item
+                    as="li"
+                    key={restaurant.id}
+                    onClick={() => handleChangeRestaurant(restaurant)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+                    active={selectedRestaurant?.id === restaurant.id}
+                    className='restaurant'
+                  >
+                    <img
+                      src={restaurant.image || 'https://via.placeholder.com/50'}
+                      alt={restaurant.name}
+                      width="40"
+                      height="40"
+                      style={{ borderRadius: '5px', objectFit: 'cover' }}
+                    />
+                    <span>{restaurant.name}</span>
+                  </Dropdown.Item>
+                ))}
               </Dropdown.Menu>
             </ul>
           </Dropdown>

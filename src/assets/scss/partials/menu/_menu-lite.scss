@@ -18,11 +18,13 @@
     font-size: 18px;
     padding: 0;
     border-radius: 10px;
-    .b-title-main{
+
+    .b-title-main {
       background-color: black;
       color: white;
     }
-    .b-title-sub{
+
+    .b-title-sub {
       background-color: orange;
       color: black;
     }
@@ -105,13 +107,18 @@
     }
   }
 
+  .dropdown-menu .active  span{
+    color: black !important;
+  }
+
   .navbar-nav {
     padding-left: 0;
     list-style: none;
     margin-bottom: 0;
     display: inline-block;
 
-    > li {
+
+    >li {
       line-height: $header-height;
       display: inline-block;
       padding: 0 12px;
@@ -175,6 +182,7 @@
 
       .form-control,
       .search-btn {
+
         &:active,
         &:focus,
         &:hover {
@@ -213,6 +221,7 @@
 
         .form-control,
         .search-btn {
+
           &:active,
           &:focus,
           &:hover {
@@ -423,7 +432,7 @@
           &:hover {
             background: transparentize($primary-color, 0.9);
 
-            > a {
+            >a {
               background: transparent;
             }
           }
@@ -566,7 +575,7 @@
       transition: unset;
     }
 
-    + .datta-scroll {
+    +.datta-scroll {
       float: left;
       display: inline-block;
     }
@@ -651,8 +660,8 @@
   .pcoded-inner-navbar {
     flex-direction: column;
 
-    > li {
-      > a {
+    >li {
+      >a {
         .pcoded-badge {
           top: 12px;
         }
@@ -662,7 +671,7 @@
     li {
       position: relative;
 
-      > a {
+      >a {
         text-align: left;
         padding: 7px 15px;
         margin: 5px 0 0;
@@ -674,7 +683,7 @@
           position: relative;
         }
 
-        > .pcoded-micon {
+        >.pcoded-micon {
           font-size: 1rem;
           padding: 4px 7px;
           margin-right: 7px;
@@ -685,7 +694,7 @@
           height: 30px;
           text-align: center;
 
-          + .pcoded-mtext {
+          +.pcoded-mtext {
             position: absolute;
             top: 11px;
           }
@@ -693,7 +702,7 @@
       }
 
       &.pcoded-hasmenu {
-        > a {
+        >a {
           &:after {
             content: '\e844';
             font-family: 'feather';
@@ -707,7 +716,7 @@
         }
 
         .pcoded-hasmenu {
-          > a {
+          >a {
             &:after {
               top: 6px;
             }
@@ -715,7 +724,7 @@
         }
 
         &.pcoded-trigger {
-          > a {
+          >a {
             &:after {
               transform: rotate(90deg);
             }
@@ -727,18 +736,18 @@
         }
 
         &.pcoded-trigger {
-          > .pcoded-submenu {
+          >.pcoded-submenu {
             display: block;
           }
 
-          > a {
+          >a {
             position: relative;
           }
         }
 
         .pcoded-submenu {
           li {
-            > a {
+            >a {
               text-align: left;
               padding: 7px 7px 7px 60px;
               margin: 0;
@@ -756,8 +765,8 @@
             }
 
             .pcoded-submenu {
-              > li {
-                > a {
+              >li {
+                >a {
                   padding: 7px 7px 7px 80px;
 
                   &:before {
@@ -779,7 +788,7 @@
       }
 
       &.disabled {
-        > a {
+        >a {
           cursor: default;
           opacity: 0.5;
         }
@@ -850,7 +859,7 @@
       white-space: nowrap;
       overflow: hidden;
 
-      > label {
+      >label {
         transform: rotateY(-90deg);
         transform-origin: 0 0;
         opacity: 0;
@@ -869,12 +878,12 @@
     }
 
     .pcoded-inner-navbar {
-      > li {
-        > a {
+      >li {
+        >a {
           z-index: 1026;
           padding: 7px 25px;
 
-          > .pcoded-mtext {
+          >.pcoded-mtext {
             transform: rotateY(-90deg);
             transform-origin: 0 0;
             opacity: 0;
@@ -883,7 +892,7 @@
         }
 
         &.pcoded-hasmenu {
-          > a {
+          >a {
             &:after {
               right: 12px;
             }
@@ -891,7 +900,7 @@
         }
       }
 
-      > li {
+      >li {
         &.pcoded-trigger {
           .pcoded-submenu {
             &:after {
@@ -923,12 +932,12 @@
       }
     }
 
-    ~ .pcoded-header {
+    ~.pcoded-header {
       width: calc(100% - #{$Menu-collapsed-width});
     }
 
-    ~ .pcoded-header,
-    ~ .pcoded-main-container {
+    ~.pcoded-header,
+    ~.pcoded-main-container {
       margin-left: $Menu-collapsed-width;
     }
 
@@ -968,7 +977,7 @@
       }
 
       .pcoded-menu-caption {
-        > label {
+        >label {
           transform: rotateY(0deg);
           opacity: 1;
         }
@@ -984,9 +993,9 @@
       }
 
       .pcoded-inner-navbar {
-        > li {
-          > a {
-            > .pcoded-mtext {
+        >li {
+          >a {
+            >.pcoded-mtext {
               transform: rotateY(0deg);
               opacity: 1;
 
@@ -998,14 +1007,14 @@
           }
 
           &.pcoded-hasmenu {
-            > a {
+            >a {
               &:after {
                 transform: rotateX(0deg);
               }
             }
 
             &.pcoded-trigger {
-              > a {
+              >a {
                 &:after {
                   transform: rotateX(0deg) rotate(90deg);
                 }
@@ -1014,7 +1023,7 @@
           }
         }
 
-        > li {
+        >li {
           &.pcoded-trigger {
             .pcoded-submenu {
               &:after {
@@ -1046,18 +1055,20 @@
   }
 
   .pcoded-inner-navbar {
-    li > a {
+    li>a {
+
       &.active,
       &:focus,
       &:hover {
         color: #1dc4e9;
       }
 
-      .pcoded-submenu > li {
+      .pcoded-submenu>li {
+
         &.active,
         &:focus,
         &:hover {
-          > a {
+          >a {
             &:before {
               background: #1dc4e9;
             }
@@ -1066,7 +1077,8 @@
       }
     }
 
-    > li {
+    >li {
+
       &.active,
       &.pcoded-trigger {
         &:after {
@@ -1080,14 +1092,15 @@
           height: calc(100% - 5px);
         }
 
-        > a {
+        >a {
           background: darken($menu-dark-background, 6%);
           color: #fff;
         }
       }
     }
 
-    > .pcoded-menu-caption {
+    >.pcoded-menu-caption {
+
       &.active,
       &.pcoded-trigger {
         &:after {
@@ -1099,10 +1112,12 @@
 }
 
 .pcoded-navbar {
+
   &.mob-open,
   &.navbar-collapsed:hover {
-    ~ .pcoded-header,
-    ~ .pcoded-main-container {
+
+    ~.pcoded-header,
+    ~.pcoded-main-container {
       margin-left: $Menu-collapsed-width;
 
       &:before {
@@ -1161,7 +1176,7 @@
       }
     }
 
-    > .collapse.show {
+    >.collapse.show {
       display: flex;
       background: #fff;
       box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
@@ -1201,7 +1216,7 @@
     }
 
     .navbar-nav {
-      > li {
+      >li {
         &:last-child {
           padding-right: 60px;
         }
@@ -1219,12 +1234,12 @@
       height: 100%;
     }
 
-    ~ .pcoded-header,
-    ~ .pcoded-main-container {
+    ~.pcoded-header,
+    ~.pcoded-main-container {
       margin-left: 0;
     }
 
-    ~ .pcoded-header {
+    ~.pcoded-header {
       width: 100%;
     }
 
@@ -1235,8 +1250,8 @@
     &.mob-open {
       margin-left: 0;
 
-      ~ .pcoded-header,
-      ~ .pcoded-main-container {
+      ~.pcoded-header,
+      ~.pcoded-main-container {
         margin-left: 0;
       }
     }
@@ -1246,11 +1261,11 @@
 @media only screen and (max-width: 575px) {
   .pcoded-header {
     .navbar-nav {
-      > li:first-child {
+      >li:first-child {
         padding-left: 0;
       }
 
-      > li:last-child {
+      >li:last-child {
         padding-right: 20px;
       }
     }
@@ -1324,21 +1339,21 @@
       }
 
       .pcoded-menu-caption {
-        > label {
+        >label {
           transition: none;
         }
       }
 
       .pcoded-inner-navbar {
-        > li {
-          > a {
-            > .pcoded-mtext {
+        >li {
+          >a {
+            >.pcoded-mtext {
               transition: none;
             }
           }
 
           &.pcoded-hasmenu {
-            > a {
+            >a {
               &:after {
                 transition: none;
                 transition-delay: unset;
@@ -1386,11 +1401,11 @@
     line-height: 0.1;
   }
 
-  .pcoded-header .navbar-nav > li {
+  .pcoded-header .navbar-nav>li {
     display: inline-flex;
   }
 
-  .pcoded-header .navbar-nav > li.dropdown {
+  .pcoded-header .navbar-nav>li.dropdown {
     display: inline-block;
   }
 
@@ -1398,7 +1413,7 @@
     top: -2px;
   }
 
-  .pcoded-navbar.navbar-collapsed .pcoded-inner-navbar > li.pcoded-trigger .pcoded-submenu::after {
+  .pcoded-navbar.navbar-collapsed .pcoded-inner-navbar>li.pcoded-trigger .pcoded-submenu::after {
     left: 40px;
   }
 }
@@ -1423,8 +1438,8 @@
 }
 
 .ps__rail-y.ps--clicking .ps__thumb-y,
-.ps__rail-y:focus > .ps__thumb-y,
-.ps__rail-y:hover > .ps__thumb-y {
+.ps__rail-y:focus>.ps__thumb-y,
+.ps__rail-y:hover>.ps__thumb-y {
   background: #222a38;
 }
 

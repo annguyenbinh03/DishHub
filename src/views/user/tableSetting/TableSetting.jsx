@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { get } from 'jquery';
 import { getTables } from 'services/tableService';
+import useAuth from 'hooks/useAuth';
 
 
 const TableSetting = () => {
@@ -12,12 +12,13 @@ const TableSetting = () => {
   const [selectedTable, setSelectedTable] = useState('');
   const [tables, setTables] = useState([]);
   const navigate = useNavigate();
+  const { auth } = useAuth();
 
 
 
 
-  useEffect(() => {
-    getTables()
+  useEffect(() => { 
+    getTables(auth.token)
       .then(data => {
         if (data.isSucess) {
           setRestaurants(data.data);

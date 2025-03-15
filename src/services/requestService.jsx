@@ -1,23 +1,35 @@
 import axiosClient from './axiosClient';
 
 const END_POINTS = {
-  CREATE_REQUEST: "requests",
-  REQUEST_HISTORY: "requests/history",
-  REQUEST_TYPES: "admin/request-types"
+  CREATE_REQUEST: "requests", 
 };
 
-export const createRequest = (data) => {
+export const createRequest = (token, data ) => {
   const url = `${END_POINTS.CREATE_REQUEST}`;
-  return axiosClient.post(url, data);
+  return axiosClient.post(url, data, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }); 
 };
 
-export const fetchRequestHistory = (orderId) => {
-  const url = `${END_POINTS.REQUEST_HISTORY}?orderId=${orderId}`;
-  return axiosClient.get(url);
-};
+export const getRequestHistory = (orderId, token) => {
+  const url = `requests/history?orderId=${orderId}`;
+  return axiosClient.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+}
 
-export const fetchRequestTypes = () => {
-  const url = `${END_POINTS.REQUEST_TYPES}`;
-  return axiosClient.get(url);
-};
+export const getRequestTypes = (token) => {
+  const url = `admin/request-types`;
+  return axiosClient.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+}
+
+
 

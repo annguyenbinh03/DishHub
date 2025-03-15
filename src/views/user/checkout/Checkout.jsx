@@ -4,12 +4,14 @@ import { toast } from 'react-toastify';
 import { getOrderById } from '../../../services/orderService';
 import { createRequest } from '../../../services/requestService';
 import { formatPrice } from 'utils/formatPrice';
+import useAuth from 'hooks/useAuth';
 
 const Checkout = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [orderId, setOrderId] = useState(localStorage.getItem('orderId'));
+  const { auth } = useAuth();
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -19,7 +21,7 @@ const Checkout = () => {
       }
 
       try {
-        const response = await getOrderById(orderId);
+        const response = await getOrderById(orderId, auth.token);
         console.log('API Response:', response); 
         
         if (response.isSucess) {
@@ -42,7 +44,7 @@ const Checkout = () => {
     if (!orderId) return;
 
     try {
-      const response = await createRequest({
+      const response = await createRequest(auth.token, {  
         orderId: parseInt(orderId, 10),
         typeId: 7,
         note: 'Thanh toán'

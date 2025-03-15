@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Table, Form, Button, Badge, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Table,
+  Form,
+  Button,
+  Badge,
+  Card,
+  OverlayTrigger,
+  Tooltip,
+} from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import { createRequest, fetchRequestHistory, fetchRequestTypes } from 'services/requestService';
+import { createRequest, getRequestHistory, getRequestTypes } from 'services/requestService';
 import { createOrder } from 'services/orderService';
+import useAuth from 'hooks/useAuth';
 
 const Support = () => {
   const [requestType, setRequestType] = useState('');
@@ -10,38 +22,45 @@ const Support = () => {
   const [requests, setRequests] = useState([]);
   const [requestOptions, setRequestOptions] = useState([]);
   const [orderId, setOrderId] = useState(() => {
-    return localStorage.getItem('orderId') ? parseInt(localStorage.getItem('orderId'), 10) : null;
+    const stored = localStorage.getItem('orderId');
+    return stored ? parseInt(stored, 10) : null;
   });
+  const { auth } = useAuth();
 
+  // Lấy danh sách loại yêu cầu
   useEffect(() => {
     const fetchTypes = async () => {
       try {
-        const response = await fetchRequestTypes();
+        const response = await getRequestTypes(auth.token);
         if (response.isSucess) {
-          setRequestOptions(response.data.map(item => ({ value: item.id, name: item.name })));
+          setRequestOptions(response.data.map((item) => ({ value: item.id, name: item.name })));
         }
       } catch (error) {
         toast.error('Lỗi tải loại yêu cầu');
       }
     };
     fetchTypes();
-  }, []);
+  }, [auth.token]);
 
+  // Lấy lịch sử yêu cầu nếu có orderId
   useEffect(() => {
     if (orderId) {
-      fetchRequestHistory(orderId).then(response => {
-        if (response.isSucess) {
-          setRequests(response.data);
-        }
-      }).catch(() => toast.error('Lỗi tải lịch sử yêu cầu'));
+      getRequestHistory( orderId, auth.token)
+        .then((response) => {
+          if (response.isSucess) {
+            setRequests(response.data); 
+          }
+        })
+        .catch(() => toast.error('Lỗi tải lịch sử yêu cầu'));
     }
-  }, [orderId]);
+  }, [auth.token, orderId]);
 
   const handleSubmit = async () => {
     if (!requestType) {
       toast.warning('Vui lòng chọn loại yêu cầu!');
       return;
     }
+
     let currentOrderId = orderId;
     const tableId = localStorage.getItem('tableId');
 
@@ -51,18 +70,22 @@ const Support = () => {
           toast.error('Không xác định được bàn!');
           return;
         }
-        const orderResponse = await createOrder({ tableId: parseInt(tableId, 10) });
+        const orderResponse = await createOrder(auth.token, { tableId: parseInt(tableId, 10) });
         if (!orderResponse.isSucess) throw new Error('Tạo order thất bại');
 
         currentOrderId = orderResponse.data.orderId;
         localStorage.setItem('orderId', currentOrderId);
         setOrderId(currentOrderId);
       }
-      
-      const requestResponse = await createRequest({ orderId: currentOrderId, typeId: parseInt(requestType, 10), note });
+
+      const requestResponse = await createRequest(auth.token, {
+        orderId: currentOrderId,
+        typeId: parseInt(requestType, 10),
+        note,
+      });
       if (requestResponse.isSucess) {
         toast.success('Gửi yêu cầu thành công!');
-        setRequests(prev => [requestResponse.data, ...prev]);
+        setRequests((prev) => [requestResponse.data, ...prev]);
         setRequestType('');
         setNote('');
       } else {
@@ -76,6 +99,7 @@ const Support = () => {
   return (
     <Container className="mt-5 py-5">
       <Row>
+        {/* Lịch sử yêu cầu */}
         <Col md={6} className="mb-4">
           <Card className="shadow-sm">
             <Card.Header className="bg-primary text-white">
@@ -94,18 +118,34 @@ const Support = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {requests.map(req => (
+                      {requests.map((req) => (
                         <tr key={req.id}>
                           <td>{orderId}</td>
-                          <td>{requestOptions.find(option => option.value === req.typeId)?.name || 'N/A'}</td>
                           <td>
-                            <OverlayTrigger overlay={<Tooltip>{req.note || 'Không có ghi chú'}</Tooltip>}>
+                            {requestOptions.find((option) => option.value === req.typeId)?.name || 'N/A'}
+                          </td>
+                          <td>
+                            <OverlayTrigger
+                              overlay={<Tooltip>{req.note || 'Không có ghi chú'}</Tooltip>}
+                            >
                               <span>{req.note || 'Không có ghi chú'}</span>
                             </OverlayTrigger>
                           </td>
                           <td>
-                            <Badge bg={req.status === 'completed' ? 'success' : req.status === 'inProgress' ? 'primary' : 'warning'}>
-                              {req.status === 'completed' ? 'Hoàn thành' : req.status === 'inProgress' ? 'Đang xử lý' : 'Đang chờ'}
+                            <Badge
+                              bg={
+                                req.status === 'completed'
+                                  ? 'success'
+                                  : req.status === 'inProgress'
+                                  ? 'primary'
+                                  : 'warning'
+                              }
+                            >
+                              {req.status === 'completed'
+                                ? 'Hoàn thành'
+                                : req.status === 'inProgress'
+                                ? 'Đang xử lý'
+                                : 'Đang chờ'}
                             </Badge>
                           </td>
                         </tr>
@@ -122,6 +162,7 @@ const Support = () => {
           </Card>
         </Col>
 
+        {/* Form gửi yêu cầu */}
         <Col md={6}>
           <Card className="shadow-sm">
             <Card.Header className="bg-light">
@@ -131,18 +172,31 @@ const Support = () => {
               <Form>
                 <Form.Group className="mb-3">
                   <Form.Label>Chọn loại yêu cầu:</Form.Label>
-                  <Form.Select value={requestType} onChange={(e) => setRequestType(e.target.value)}>
+                  <Form.Select
+                    value={requestType}
+                    onChange={(e) => setRequestType(e.target.value)}
+                  >
                     <option value="">-- Chọn yêu cầu --</option>
-                    {requestOptions.map(option => (
-                      <option key={option.value} value={option.value}>{option.name}</option>
+                    {requestOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.name}
+                      </option>
                     ))}
                   </Form.Select>
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Label>Ghi chú:</Form.Label>
-                  <Form.Control as="textarea" rows={3} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Nhập ghi chú (nếu có)" />
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder="Nhập ghi chú (nếu có)"
+                  />
                 </Form.Group>
-                <Button variant="warning" className="w-100 fw-bold" onClick={handleSubmit}>Gửi yêu cầu</Button>
+                <Button variant="warning" className="w-100 fw-bold" onClick={handleSubmit}>
+                  Gửi yêu cầu
+                </Button>
               </Form>
             </Card.Body>
           </Card>

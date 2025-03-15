@@ -6,10 +6,13 @@ import { formatPrice } from 'utils/formatPrice';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { createOrder, addOrderDetails } from '../../../services/orderService';
+import useAuth from 'hooks/useAuth';
+
 
 const Cart = () => {
   const [show, setShow] = useState(false);
   const { cartItems, removeFromCart, updateQuantity, cleanCart } = useCart();
+  const {auth} = useAuth();
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -35,7 +38,7 @@ const Cart = () => {
       let orderId = localStorage.getItem('orderId');
 
       if (!orderId) {
-        const orderResponse = await createOrder({ tableId });
+        const orderResponse = await createOrder(auth.token, { tableId });
         orderId = orderResponse?.data?.orderId;
         if (!orderId) {
           throw new Error('Không lấy được orderId từ API');
@@ -48,7 +51,7 @@ const Cart = () => {
         quantity: item.quantity
       }));
 
-      await addOrderDetails(orderId, orderDetails);
+      await addOrderDetails(orderId, orderDetails, auth.token);
 
       cleanCart();
       toast.success('Đặt món thành công!');

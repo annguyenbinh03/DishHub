@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { get } from 'jquery';
 import { getCategories } from 'services/categoryService';
+import useAuth from 'hooks/useAuth';
 
 const Home = () => {
   const [dishes, setDishes] = useState([]);
@@ -16,13 +17,15 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
-  const [sortOrder, setSortOrder] = useState('default'); // Bộ lọc sắp xếp
+  const [sortOrder, setSortOrder] = useState('default'); 
   const { addToCart } = useCart();
+
+  const { auth } = useAuth();
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await getCategories();
+        const response = await getCategories(auth.token);
         setCategories(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Lỗi lấy danh mục món ăn:', error);
@@ -36,7 +39,7 @@ const Home = () => {
   useEffect(() => {
     const fetchDishes = async () => {
       try {
-        const response = await getDishes();
+        const response = await getDishes(auth.token);
         setDishes(response.data);
       } catch (error) {
         console.error('Lỗi lấy danh sách món ăn:', error);

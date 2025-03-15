@@ -9,15 +9,24 @@ const END_POINTS = {
   GET_DISH_DETAIL: "dishes",
 };
 
-export const getAdminDishes = () => {
+export const getAdminDishes = (token) => {
   const url = `${END_POINTS.GET_DISHES}`;
-  return axiosClient.get(url);
+  return axiosClient.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 };
 
-export const getDishes = () => {
+export const getDishes = (token) => {
   const url = `${END_POINTS.GET_STAFF_DISHES}`;
-  return axiosClient.get(url);
+  return axiosClient.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 };
+
 export const createDish = (dishData) => {
   const formData = new FormData();
   formData.append("name", dishData.name);

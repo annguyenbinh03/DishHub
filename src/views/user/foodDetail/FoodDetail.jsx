@@ -100,8 +100,8 @@ const FoodDetail = () => {
               </Col>
             ))}
           </Row>
-        ) : 
-        <p>Không có thành phần nào</p>}
+        ) :
+          <p>Không có thành phần nào</p>}
       </Row>
 
       <ToastNotification show={toast.show} message={toast.message} onClose={() => setToast({ show: false, message: '' })} />

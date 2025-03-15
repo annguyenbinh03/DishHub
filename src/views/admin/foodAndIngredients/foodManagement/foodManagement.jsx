@@ -6,7 +6,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import ImagePicker from 'components/ImagePicker';
 import useCloudinaryUpload from 'hooks/useCloudinaryUpload';
 import { formatPrice } from 'utils/formatPrice';
+import useAuth from 'hooks/useAuth';
+
 const FoodManagement = () => {
+
     const [foods, setFoods] = useState([]);
     const [categories, setCategories] = useState([]); // Store categories
     const [restaurants, setRestaurants] = useState([]); // Store restaurants
@@ -36,9 +39,16 @@ const FoodManagement = () => {
         fetchIngredients(); // Fetch ingredients when component mounts
     }, []);
 
+    const { auth } = useAuth();
+
+    const config = {
+        headers: {
+            Authorization: `Bearer ${auth.token}`
+        }
+    };
     const fetchFoods = () => {
         axios
-            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes?page=1&size=100')
+            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes?page=1&size=100', config)
             .then((res) => {
                 const sortedFoods = res.data.data.dishes.sort((a, b) => b.id - a.id); // Sort by ID in descending order
                 setFoods(sortedFoods);
@@ -51,7 +61,7 @@ const FoodManagement = () => {
 
     const fetchCategories = () => {
         axios
-            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/categories')
+            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/categories', config)
             .then((res) => {
                 setCategories(res.data.data);
             })
@@ -63,7 +73,7 @@ const FoodManagement = () => {
 
     const fetchRestaurants = () => {
         axios
-            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants')
+            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants', config)
             .then((res) => {
                 setRestaurants(res.data.data);
             })
@@ -76,7 +86,7 @@ const FoodManagement = () => {
     const fetchIngredients = () => {
         // Assuming you have an endpoint or data for ingredients
         axios
-            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/ingredients') // Replace with actual endpoint
+            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/ingredients', config) // Replace with actual endpoint
             .then((res) => {
                 setIngredientsList(res.data.data); // Assuming the response is a list of ingredients
             })
@@ -180,12 +190,12 @@ const FoodManagement = () => {
         };
         try {
             if (currentFood) {
-                await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes/${currentFood.id}`, createDishDTO);
+                await axios.put(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes/${currentFood.id}`, createDishDTO, config); // Add config
                 fetchFoods();
                 handleCloseModal();
                 toast.success(`Successfully updated ${createDishDTO.name}!`);
             } else {
-                await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes', createDishDTO);
+                await axios.post('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes', createDishDTO, config); // Add config
                 fetchFoods();
                 handleCloseModal();
                 toast.success(`Successfully added ${createDishDTO.name}!`);
@@ -201,7 +211,7 @@ const FoodManagement = () => {
     const handleDelete = (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa món ăn này?")) {
             axios
-                .delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes/${id}`)
+                .delete(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/dishes/${id}`, config) // Add config here
                 .then(() => {
                     fetchFoods(); // Tải lại danh sách món ăn sau khi xóa
                     toast.success('Món ăn đã được xóa thành công!');

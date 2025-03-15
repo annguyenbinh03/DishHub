@@ -118,44 +118,44 @@ const menuItems = {
       type: 'group',
       icon: 'icon-pages',
       children: [
-        {
-          id: 'auth',
-          title: 'Authentication',
-          type: 'collapse',
-          icon: 'feather icon-lock',
-          badge: {
-            title: 'New',
-            type: 'label-danger'
-          },
-          children: [
-            {
-              id: 'signup-1',
-              title: 'Sign up',
-              type: 'item',
-              url: '/auth/signup-1',
-              target: true,
-              breadcrumbs: false
-            },
-            {
-              id: 'signin-1',
-              title: 'Sign in',
-              type: 'item',
-              url: '/auth/signin-1',
-              target: true,
-              breadcrumbs: false
-            }
-          ]
-        },
-        {
-          id: 'documentation',
-          title: 'Documentation',
-          type: 'item',
-          icon: 'feather icon-book',
-          classes: 'nav-item',
-          url: 'https://codedthemes.gitbook.io/datta/',
-          target: true,
-          external: true
-        },
+        // {
+        //   id: 'auth',
+        //   title: 'Authentication',
+        //   type: 'collapse',
+        //   icon: 'feather icon-lock',
+        //   badge: {
+        //     title: 'New',
+        //     type: 'label-danger'
+        //   },
+        //   children: [
+        //     {
+        //       id: 'signup-1',
+        //       title: 'Sign up',
+        //       type: 'item',
+        //       url: '/auth/signup-1',
+        //       target: true,
+        //       breadcrumbs: false
+        //     },
+        //     {
+        //       id: 'signin-1',
+        //       title: 'Sign in',
+        //       type: 'item',
+        //       url: '/auth/signin-1',
+        //       target: true,
+        //       breadcrumbs: false
+        //     }
+        //   ]
+        // },
+        // {
+        //   id: 'documentation',
+        //   title: 'Documentation',
+        //   type: 'item',
+        //   icon: 'feather icon-book',
+        //   classes: 'nav-item',
+        //   url: 'https://codedthemes.gitbook.io/datta/',
+        //   target: true,
+        //   external: true
+        // },
         // {
         //   id: 'menu-level',
         //   title: 'Menu Levels',
@@ -202,14 +202,14 @@ const menuItems = {
         //     }
         //   ]
         // },
-        {
-          id: 'disabled-menu',
-          title: 'Disabled Menu',
-          type: 'item',
-          url: '#',
-          classes: 'nav-item disabled',
-          icon: 'feather icon-power'
-        },
+        // {
+        //   id: 'disabled-menu',
+        //   title: 'Disabled Menu',
+        //   type: 'item',
+        //   url: '#',
+        //   classes: 'nav-item disabled',
+        //   icon: 'feather icon-power'
+        // },
         {
           id: 'table-management',
           title: 'Quản lý bàn',

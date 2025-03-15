@@ -2,31 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import useAuth from 'hooks/useAuth';
 
 const SelectRestaurant = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState('');
   const navigate = useNavigate();
 
+  const { auth } = useAuth();
+
   useEffect(() => {
     const fetchRestaurants = async () => {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        toast.error('Bạn chưa đăng nhập!');
-        navigate('/signin'); // Chuyển hướng đến trang đăng nhập nếu chưa có token
-        return;
-      }
-  
+      const config = {
+        headers: {
+          Authorization: `Bearer ${auth.token}`
+        }
+      }  
       try {
         const response = await fetch(
-          'https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/restaurants',
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          'https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants',
+          config
         );
         const data = await response.json();
         if (data.isSucess) {
@@ -57,7 +52,7 @@ const SelectRestaurant = () => {
     if (!selectedRestaurant) return;
 
     const today = new Date().toISOString().split('T')[0];
-    localStorage.setItem('selectedRestaurant', JSON.stringify({ id: selectedRestaurant, date: today }));
+    localStorage.setItem('restaurantId', JSON.stringify({ id: selectedRestaurant, date: today }));
 
     toast.success('Nhà hàng đã được lưu thành công!');
     navigate('/admin/dashboard');

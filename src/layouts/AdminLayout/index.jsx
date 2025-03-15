@@ -27,6 +27,8 @@ const AdminLayout = ({ children }) => {
   const { collapseMenu, headerFixedLayout } = configContext.state;
   const { dispatch } = configContext;
 
+  const location = useLocation();
+
   useEffect(() => {
     if (windowSize.width > 992 && windowSize.width <= 1024) {
       dispatch({ type: actionType.COLLAPSE_MENU });
@@ -104,8 +106,6 @@ const AdminLayout = ({ children }) => {
   if (authLoading) {
     return <p>Loading...</p>; // Hoặc spinner đẹp hơn
   }
-
-  const location = useLocation();
 
   return ROLES.MANAGER === auth?.roleId ? (
     <React.Fragment>

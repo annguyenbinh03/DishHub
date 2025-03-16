@@ -282,7 +282,7 @@ const Home = () => {
                 <Card.Body
                   className="d-flex flex-column"
                   style={{
-                    color: '#fff',
+                    color: '#ffff',
                     padding: '1.5rem', // Tăng khoảng đệm để thoáng hơn
                     background: 'linear-gradient(180deg, #2C2C2C 0%, #1C2526 100%)', // Gradient nhẹ cho nền
                   }}
@@ -302,7 +302,7 @@ const Home = () => {
                     style={{
                       fontFamily: "'Arial', sans-serif", // Font hiện đại
                       fontSize: '0.9rem',
-                      color: '#D3D3D3', // Xám nhạt để dễ đọc
+                      color: '#ffff !important', // Đổi màu chữ thành trắng và thêm !important
                       marginBottom: '1rem',
                     }}
                   >

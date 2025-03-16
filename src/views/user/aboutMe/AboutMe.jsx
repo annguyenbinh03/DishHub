@@ -14,7 +14,7 @@ const AboutMe = () => {
       fluid
       className="text-center py-5"
       style={{
-        background: 'linear-gradient(135deg, #1C2526 0%, #2D3A3A 100%)', // Gradient đen xám
+        background: '#000000', // Màu đen
         color: '#FFFFFF',
         borderBottom: '2px solid #FFD700', // Viền vàng ánh kim
         minHeight: '100vh',
@@ -28,7 +28,7 @@ const AboutMe = () => {
           fontSize: '3rem',
           color: '#FFA500',
           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
-          lineHeight: '1.3',
+          lineHeight: '2.0',
         }}
       >
         Đặc sản bốn phương – Đến là mê, ăn là ghiền!

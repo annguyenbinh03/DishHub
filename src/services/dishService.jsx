@@ -59,8 +59,12 @@ export const deleteDish = (id) => {
   return axiosClient.delete(END_POINTS.DELETE_DISH(id));
 };
 
-export const getDishDetail = (id) => {
+export const getDishDetail = (id, token) => {
   const url = `${END_POINTS.GET_DISH_DETAIL}/${id}`;
-  return axiosClient.get(url);
+  return axiosClient.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 };
 

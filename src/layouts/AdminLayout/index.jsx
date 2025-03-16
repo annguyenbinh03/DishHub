@@ -11,6 +11,7 @@ import { ConfigContext } from '../../contexts/ConfigContext';
 import * as actionType from '../../store/actions';
 import { Navigate, Route, useLocation } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
+import { AdminLayoutContex } from 'contexts/AdminLayoutContex';
 
 const ROLES = {
   STAFF: '1',
@@ -108,10 +109,10 @@ const AdminLayout = ({ children }) => {
   }
 
   return ROLES.MANAGER === auth?.roleId ? (
-    <React.Fragment>
+    <AdminLayoutContex>
       {common}
       {mainContainer}
-    </React.Fragment>
+    </AdminLayoutContex>
   ) : auth?.username ? (
     <Navigate to="/unauthorized" state={{ from: location }} replace />
   ) : (

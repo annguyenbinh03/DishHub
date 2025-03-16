@@ -140,7 +140,7 @@ const RestaurantManagement = () => {
     };
 
     return (
-        <Container className="my-5">
+        <Container>
             <ToastContainer />
             <h2 className="text-center mb-4"> Quản lý nhà hàng </h2>
             <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Thêm nhà hàng</Button>

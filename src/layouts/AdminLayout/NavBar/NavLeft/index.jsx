@@ -7,6 +7,7 @@ import NavSearch from './NavSearch';
 import useAuth from 'hooks/useAuth';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useAdminLayoutContext } from 'contexts/AdminLayoutContex';
 
 const NavLeft = () => {
   const windowSize = useWindowSize();
@@ -16,8 +17,11 @@ const NavLeft = () => {
     navItemClass = [...navItemClass, 'd-none'];
   }
 
+  const { selectedRestaurant, setSelectedRestaurant } = useAdminLayoutContext();
+
   const [restaurants, setRestaurants] = useState([]);
-  const [selectedRestaurant, setSelectedRestaurant] = useState({});
+
+  
 
   useEffect(() => {
     fetchRestaurants();
@@ -32,33 +36,25 @@ const NavLeft = () => {
       }
     };
     try {
-      const response = await axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants', config);
+      const response = await axios.get("https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/restaurants", config);
       if (response.data.isSucess) {
         const restaurantsData = response.data.data;
         setRestaurants(restaurantsData);
-        let restaurantId = localStorage.getItem('restaurantId');
+  
+        let restaurantId = localStorage.getItem("restaurantId");
         if (!restaurantId && restaurantsData.length > 0) {
-          // Nếu không có restaurantId, lấy phần tử đầu tiên
           const firstRestaurant = restaurantsData[0];
-          localStorage.setItem('restaurantId', firstRestaurant.id);
+          localStorage.setItem("restaurantId", firstRestaurant.id);
           setSelectedRestaurant(firstRestaurant);
         } else {
-          // Nếu đã có restaurantId, tìm restaurant tương ứng
           const selected = restaurantsData.find((r) => r.id.toString() === restaurantId);
-          if (selected) {
-            setSelectedRestaurant(selected);
-          } else {
-            // Nếu không tìm thấy (VD: nhà hàng bị xóa), chọn phần tử đầu tiên
-            const firstRestaurant = restaurantsData[0];
-            localStorage.setItem('restaurantId', firstRestaurant.id);
-            setSelectedRestaurant(firstRestaurant);
-          }
+          setSelectedRestaurant(selected || restaurantsData[0]);
         }
       } else {
-        toast.error('Lấy danh sách nhà hàng thất bại!');
+        toast.error("Lấy danh sách nhà hàng thất bại!");
       }
     } catch (error) {
-      toast.error('Có lỗi xảy ra!');
+      toast.error("Có lỗi xảy ra!");
     }
   };
 

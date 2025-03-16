@@ -129,48 +129,56 @@ const Chatbot = () => {
   }, [messages]);
 
   return (
-    <Container fluid className="bg-dark text-white vh-100 d-flex flex-column position-fixed top-0 start-0 w-100 py-5 ">
+    <Container fluid className="bg-dark text-white vh-100 d-flex flex-column position-fixed top-0 start-0 w-100 py-5 mt-5">
       <Row className="justify-content-center">
-        <Col md={8} lg={6}>
-          <div className="text-center mb-3 mt-4 mb-1">
-            <Image src={botGif} alt="Bot Animation" fluid style={{ width: '300px', height: '180px' }} />
+        <Col md={3} lg={3} className="d-flex justify-content-center align-items-center">
+          <div>
+            <div className="text-center mb-3 mt-4 mb-1">
+              <Image src={botGif} alt="Bot Animation" fluid style={{ width: '300px', height: '180px' }} />
+            </div>
+            <div className="d-flex justify-content-center gap-2 mb-1">
+              <Button variant="light" onClick={toggleSound}>
+                {isSoundOn ? <FaVolumeUp /> : <FaVolumeMute />}
+              </Button>
+            </div>
           </div>
-          <div className="d-flex justify-content-end gap-2 mb-1">
-            <Button variant="light" onClick={toggleSound}>
-              {isSoundOn ? <FaVolumeUp /> : <FaVolumeMute />}
-            </Button>
-            <Button variant="light" onClick={startListening} disabled={isListening}>
-              <FaMicrophone color={isListening ? 'red' : 'black'} />
-            </Button>
+        </Col>
+        <Col md={9} lg={9} className="px-5">
+          <div className="pe-5">
+            <div
+              className="chat-box bg-dark flex-grow-1 overflow-auto p-3 border rounded"
+              ref={chatBoxRef}
+              style={{ height: '75vh', background: '#f8f9fa' }}
+            >
+              {messages.map((message, index) => (
+                <div key={index} className={`d-flex mb-2 ${message.sender === 'user' ? 'justify-content-end' : 'justify-content-start'}`}>
+                  <Card
+                    className={`p-2 ${message.sender === 'user' ? 'bg-primary text-white' : 'bg-light text-dark'}`}
+                    style={{ maxWidth: '70%', borderRadius: '10px' }}
+                  >
+                    <pre style={{ whiteSpace: 'pre-wrap' }} className="mb-0">
+                      {message.text}
+                    </pre>
+                  </Card>
+                </div>
+              ))}
+            </div>
+            <InputGroup className="mt-3">
+              <Button className='m-1 ' variant="light" onClick={startListening} disabled={isListening}>
+                <FaMicrophone color={isListening ? 'red' : 'black'} />
+              </Button>
+              <FormControl
+                placeholder="Hãy hỏi bất cứ thứ gì..."
+                className="bg-light text-dark"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              />
+              <Button variant="primary" onClick={handleSend} disabled={loading}>
+                {loading ? <Spinner animation="border" size="sm" /> : <FaPaperPlane />}
+              </Button>
+            </InputGroup>
           </div>
-          <div
-            className="chat-box bg-dark flex-grow-1 overflow-auto p-3 border rounded"
-            ref={chatBoxRef}
-            style={{ height: '50vh', background: '#f8f9fa' }}
-          >
-            {messages.map((message, index) => (
-              <div key={index} className={`d-flex mb-2 ${message.sender === 'user' ? 'justify-content-end' : 'justify-content-start'}`}>
-                <Card
-                  className={`p-2 ${message.sender === 'user' ? 'bg-primary text-white' : 'bg-light text-dark'}`}
-                  style={{ maxWidth: '70%', borderRadius: '10px' }}
-                >
-                  <p className="mb-0">{message.text}</p>
-                </Card>
-              </div>
-            ))}
-          </div>
-          <InputGroup className="mt-3">
-            <FormControl
-              placeholder="Hãy hỏi bất cứ thứ gì..."
-              className="bg-light text-dark"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            />
-            <Button variant="primary" onClick={handleSend} disabled={loading}>
-              {loading ? <Spinner animation="border" size="sm" /> : <FaPaperPlane />}
-            </Button>
-          </InputGroup>
         </Col>
       </Row>
       <audio ref={audioRef} />

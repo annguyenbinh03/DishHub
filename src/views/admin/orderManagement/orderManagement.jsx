@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { formatPrice } from 'utils/formatPrice';
 import useAuth from 'hooks/useAuth';
+import { useAdminLayoutContext } from 'contexts/AdminLayoutContex';
 
 const OrderManagement = () => {
     const [orders, setOrders] = useState([]);
@@ -15,11 +16,15 @@ const OrderManagement = () => {
     const [statusFilter, setStatusFilter] = useState('');
     const [newStatus, setNewStatus] = useState('');
 
-    useEffect(() => {
-        fetchOrders();
-    }, []);
+    const {selectedRestaurant} = useAdminLayoutContext();
     const { auth } = useAuth();
 
+    useEffect(() => {
+        if (selectedRestaurant?.id) {
+            fetchOrders();
+        }
+    }, [selectedRestaurant]);
+ 
     const config = {
         headers: {
             Authorization: `Bearer ${auth.token}`
@@ -28,7 +33,7 @@ const OrderManagement = () => {
 
     const fetchOrders = () => {
         setLoading(true);
-        axios.get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/orders', config)
+        axios.get(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/admin/orders?restaurantId=${selectedRestaurant.id}`, config)
             .then((res) => {
                 if (res.data.isSucess) {
                     const sortedOrders = res.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

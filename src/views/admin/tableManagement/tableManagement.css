@@ -30,3 +30,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.search-input, .status-select {
+    width: 200px;
+}

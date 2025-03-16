@@ -200,7 +200,7 @@ const routes = [
       {
         exact: true,
         path: '/table-management',
-        element: lazy(() => import('./views/admin/tableManagement'))
+        element: lazy(() => import('./views/admin/tableManagement/tableManagement'))
       },
       {
         exact: true,

@@ -22,8 +22,8 @@ const Checkout = () => {
 
       try {
         const response = await getOrderById(orderId, auth.token);
-        console.log('API Response:', response); 
-        
+        console.log('API Response:', response);
+
         if (response.isSucess) {
           setOrder(response.data);
         } else {
@@ -44,7 +44,7 @@ const Checkout = () => {
     if (!orderId) return;
 
     try {
-      const response = await createRequest(auth.token, {  
+      const response = await createRequest(auth.token, {
         orderId: parseInt(orderId, 10),
         typeId: 7,
         note: 'Thanh toán'
@@ -114,13 +114,13 @@ const Checkout = () => {
                 ))}
               </tbody>
             </Table>
-            
+
             <div className="text-end mt-4">
               <h4>
                 Tổng cộng: <span className="text-danger">{formatPrice(order.totalAmount)}</span>
               </h4>
-              <Button 
-                variant="warning" 
+              <Button
+                variant="warning"
                 className="text-white mt-3"
                 onClick={handleCheckout}
               >

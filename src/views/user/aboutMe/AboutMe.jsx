@@ -14,10 +14,15 @@ const AboutMe = () => {
       fluid
       className="text-center py-5"
       style={{
-        background: '#000000', // Màu đen
+        background: '#1c1c1c', // Màu đen toàn màn hình
         color: '#FFFFFF',
         borderBottom: '2px solid #FFD700', // Viền vàng ánh kim
         minHeight: '100vh',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
       }}
     >
       {/* Tiêu đề chính với font chữ sang trọng */}
@@ -28,7 +33,7 @@ const AboutMe = () => {
           fontSize: '3rem',
           color: '#FFA500',
           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
-          lineHeight: '2.0',
+          lineHeight: '3.0',
         }}
       >
         Đặc sản bốn phương – Đến là mê, ăn là ghiền!

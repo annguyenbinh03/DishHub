@@ -97,7 +97,7 @@ const Support = () => {
   };
 
   return (
-    <Container className="mt-5 py-5" style={{ backgroundColor: '#f5f5f5', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.1)' }}>
+    <Container className="mt-5 py-5" style={{ backgroundColor: '#2C2C2C', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.1)' }}>
       <Row>
         {/* Lịch sử yêu cầu */}
         <Col md={6} className="mb-4">
@@ -106,28 +106,28 @@ const Support = () => {
             style={{
               borderRadius: '20px',
               border: 'none',
-              background: 'linear-gradient(135deg, #1c2526 0%, #000000 100%)', // Tông đen sang trọng
+              background: 'linear-gradient(135deg, #1C2526 0%, #1C1C1C 100%)', // Tông đen sang trọng
             }}
           >
             <Card.Header
               style={{
                 borderTopLeftRadius: '20px',
                 borderTopRightRadius: '20px',
-                backgroundColor: '#FFA500', // Changed color to #FFA500
+                backgroundColor: '#FFA500', // Màu cam
                 color: '#ffffff',
                 padding: '1.5rem',
                 textAlign: 'center',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
               }}
             >
-              <h3 className="mb-0" style={{ fontSize: '2rem', fontWeight: '700', textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)' }}>
+              <h3 className="mb-0" style={{ fontSize: '2rem', fontWeight: '700', textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)', color: '#ffffff' }}>
                 Lịch sử yêu cầu
               </h3>
             </Card.Header>
-            <Card.Body style={{ backgroundColor: '#ffffff', padding: '2rem', color: '#000000' }}>
+            <Card.Body style={{ backgroundColor: '#1C2526', padding: '2rem', color: '#fff' }}>
               {orderId ? (
                 requests.length > 0 ? (
-                  <Table responsive hover style={{ color: '#ffffff', borderCollapse: 'separate', borderSpacing: '0 10px' }}>
+                  <Table responsive hover style={{ color: '#fff', borderCollapse: 'separate', borderSpacing: '0 10px' }}>
                     <thead>
                       <tr style={{ backgroundColor: '#2c3e50', color: '#ffd700', fontSize: '1.1rem' }}>
                         <th style={{ padding: '1rem', borderRadius: '10px 0 0 10px' }}>Mã đơn</th>
@@ -141,8 +141,8 @@ const Support = () => {
                         <tr
                           key={req.id}
                           style={{
-                            backgroundColor: '#ffffff',
-                            color: '#000000',
+                            backgroundColor: '#1C2526',
+                            color: '#fff',
                             borderRadius: '10px',
                             marginBottom: '10px',
                             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -188,12 +188,12 @@ const Support = () => {
                     </tbody>
                   </Table>
                 ) : (
-                  <p className="text-center" style={{ fontSize: '1.2rem', color: '#000000' }}>
+                  <p className="text-center" style={{ fontSize: '1.2rem', color: '#fff' }}>
                     Không có lịch sử yêu cầu
                   </p>
                 )
               ) : (
-                <p className="text-center" style={{ fontSize: '1.2rem', color: '#000000' }}>
+                <p className="text-center" style={{ fontSize: '1.2rem', color: '#fff', borderRadius: '10px', padding: '1rem', backgroundColor: '#333' }}>
                   Vui lòng tạo yêu cầu mới
                 </p>
               )}
@@ -208,28 +208,28 @@ const Support = () => {
             style={{
               borderRadius: '20px',
               border: 'none',
-              background: 'linear-gradient(135deg, #ffffff 0%, #f1f1f1 100%)', // Tông trắng nhẹ nhàng
+              background: 'linear-gradient(135deg, #2C2526 0%, #1C2526 100%)', // Tông đen nhạt cho sự nhất quán
             }}
           >
             <Card.Header
               style={{
                 borderTopLeftRadius: '20px',
                 borderTopRightRadius: '20px',
-                backgroundColor: '#FFA500', // Changed color to #FFA500
+                backgroundColor: '#FFA500', // Màu cam
                 color: '#ffffff',
                 padding: '1.5rem',
                 textAlign: 'center',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
               }}
             >
-              <h3 className="mb-0" style={{ fontSize: '2rem', fontWeight: '700', textShadow: '1px 1px 3px rgba(0, 0, 0, 0.3)' }}>
+              <h3 className="mb-0" style={{ fontSize: '2rem', fontWeight: '700', textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)', color: '#ffffff' }}>
                 Gửi yêu cầu mới
               </h3>
             </Card.Header>
-            <Card.Body style={{ padding: '2rem' }}>
+            <Card.Body style={{ padding: '2rem', backgroundColor: '#1C2526' }}>
               <Form>
                 <Form.Group className="mb-4">
-                  <Form.Label style={{ fontSize: '1.2rem', fontWeight: '600', color: '#000000' }}>
+                  <Form.Label style={{ fontSize: '1.2rem', fontWeight: '600', color: '#fff' }}>
                     Chọn loại yêu cầu:
                   </Form.Label>
                   <Form.Select
@@ -238,15 +238,15 @@ const Support = () => {
                     style={{
                       borderRadius: '12px',
                       padding: '12px',
-                      backgroundColor: '#ffffff',
-                      border: '2px solid #ff6200',
+                      backgroundColor: '#333',
+                      border: '2px solid #FF6347',
                       fontSize: '1.1rem',
-                      color: '#000000',
+                      color: '#fff',
                       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                       transition: 'all 0.3s ease',
                     }}
-                    onFocus={(e) => (e.target.style.borderColor = '#ffd700')}
-                    onBlur={(e) => (e.target.style.borderColor = '#ff6200')}
+                    onFocus={(e) => (e.target.style.borderColor = '#FFD700')}
+                    onBlur={(e) => (e.target.style.borderColor = '#FF6347')}
                   >
                     <option value="">-- Chọn yêu cầu --</option>
                     {requestOptions.map((option) => (
@@ -257,7 +257,7 @@ const Support = () => {
                   </Form.Select>
                 </Form.Group>
                 <Form.Group className="mb-4">
-                  <Form.Label style={{ fontSize: '1.2rem', fontWeight: '600', color: '#000000' }}>
+                  <Form.Label style={{ fontSize: '1.2rem', fontWeight: '600', color: '#fff' }}>
                     Ghi chú:
                   </Form.Label>
                   <Form.Control
@@ -269,15 +269,15 @@ const Support = () => {
                     style={{
                       borderRadius: '12px',
                       padding: '12px',
-                      backgroundColor: '#ffffff',
-                      border: '2px solid #ff6200',
+                      backgroundColor: '#333',
+                      border: '2px solid #FF6347',
                       fontSize: '1.1rem',
-                      color: '#000000',
+                      color: '#fff',
                       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                       transition: 'all 0.3s ease',
                     }}
-                    onFocus={(e) => (e.target.style.borderColor = '#ffd700')}
-                    onBlur={(e) => (e.target.style.borderColor = '#ff6200')}
+                    onFocus={(e) => (e.target.style.borderColor = '#FFD700')}
+                    onBlur={(e) => (e.target.style.borderColor = '#FF6347')}
                   />
                 </Form.Group>
                 <Button
@@ -288,14 +288,14 @@ const Support = () => {
                     fontSize: '1.3rem',
                     padding: '15px',
                     borderRadius: '12px',
-                    backgroundColor: '#ff6200',
-                    borderColor: '#ff6200',
-                    color: '#ffffff',
+                    backgroundColor: '#FF6347',
+                    borderColor: '#FF6347',
+                    color: '#fff',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
                     transition: 'all 0.3s ease',
                   }}
-                  onMouseEnter={(e) => (e.target.style.backgroundColor = '#ff6200')}
-                  onMouseLeave={(e) => (e.target.style.backgroundColor = '#FFA500')}
+                  onMouseEnter={(e) => (e.target.style.backgroundColor = '#D4AF37')}
+                  onMouseLeave={(e) => (e.target.style.backgroundColor = '#FF6347')}
                 >
                   Gửi yêu cầu
                 </Button>
@@ -306,6 +306,7 @@ const Support = () => {
       </Row>
     </Container>
   );
+
 };
 
 export default Support;

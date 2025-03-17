@@ -15,7 +15,7 @@ const UserManagement = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [formData, setFormData] = useState({
         username: '', fullName: '', email: '', dob: '', phoneNumber: '',
-        address: '', avatar: '', isDeleted: 'false'
+        address: '', avatar: '', isDeleted: 'false', password: ''
     });
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ const UserManagement = () => {
         setIsViewing(viewOnly);
         setFormData(user ? { ...user, dob: user.dob?.split('T')[0], isDeleted: user.isDeleted ? 'true' : 'false' } : {
             username: '', fullName: '', email: '', dob: '', phoneNumber: '',
-            address: '', avatar: '', isDeleted: 'false'
+            address: '', avatar: '', isDeleted: 'false', password: ''
         });
         setShowModal(true);
     };
@@ -209,11 +209,12 @@ const UserManagement = () => {
                                 { key: 'email', label: 'Email' },
                                 { key: 'dob', label: 'Ngày sinh' },
                                 { key: 'phoneNumber', label: 'Số điện thoại' },
-                                { key: 'address', label: 'Địa chỉ' }
+                                { key: 'address', label: 'Địa chỉ' },
+                                { key: 'password', label: 'Mật khẩu' } // Add password field
                             ].map(({ key, label }) => (
                                 <Form.Group className="mb-3" key={key}>
                                     <Form.Label>{label}</Form.Label>
-                                    <Form.Control type={key === 'dob' ? 'date' : 'text'} name={key} value={formData[key]} onChange={handleChange} readOnly={isViewing} />
+                                    <Form.Control type={key === 'dob' ? 'date' : key === 'password' ? 'password' : 'text'} name={key} value={formData[key]} onChange={handleChange} readOnly={isViewing} />
                                 </Form.Group>
                             ))}
                             <Form.Group className="mb-3">

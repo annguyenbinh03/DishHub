@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Container, Table, Badge, Button, Spinner, Modal } from 'react-bootstrap';
-import { toast } from 'react-toastify';
+import { Bounce, toast } from 'react-toastify';
 import { getOrderById } from '../../../services/orderService';
 import { createRequest } from '../../../services/requestService';
 import { formatPrice } from 'utils/formatPrice';
 import useAuth from 'hooks/useAuth';
+import * as signalR from '@microsoft/signalr';
 
 const Checkout = () => {
   const [order, setOrder] = useState(null);
@@ -13,57 +14,124 @@ const Checkout = () => {
   const [orderId, setOrderId] = useState(localStorage.getItem('orderId'));
   const { auth } = useAuth();
 
+  const handleStatusNoti = (status) =>{
+    if(status === 'confirmed'){
+        return 'đã được nhân viên xác nhận'
+    } else if(status === 'preparing') {
+      return 'đang được chế biến'
+    }else if(status === 'delivered') {
+      return 'đang được giao'
+    }else if(status === 'rejected') {
+      return 'đang bị từ chối'
+    }
+  }
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case "pending":
+        return "Chờ xác nhận";
+      case "confirmed":
+        return "Đã xác nhận";
+      case "preparing":
+        return "Đang chuẩn bị";
+      case "delivered":
+        return "Đã giao";
+      case "rejected":
+        return "Đã hủy";
+      default:
+        return "Không xác định";
+    }
+  };
+
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case "pending":
+        return "secondary"; // Xám - Chờ xác nhận
+      case "confirmed":
+        return "success"; // Xanh lá - Đã xác nhận
+      case "preparing":
+        return "warning"; // Vàng - Đang chuẩn bị
+      case "delivered":
+        return "primary"; // Xanh dương - Đã giao
+      case "rejected":
+        return "danger"; // Đỏ - Đã hủy
+      default:
+        return "dark"; // Mặc định
+    }
+  };
+
   useEffect(() => {
-    const fetchOrder = async () => {
-      if (!orderId) {
-        setLoading(false);
-        return;
-      }
+    if (orderId !== null) {
+      const connection = new signalR.HubConnectionBuilder()
+        .withUrl(`https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/hub/order-details?orderId=${orderId}`)
+        .withAutomaticReconnect()
+        .build();
 
-      try {
-        const response = await getOrderById(orderId, auth.token);
-        console.log('API Response:', response); 
-        
-        if (response.isSucess) {
-          setOrder(response.data);
-        } else {
-          toast.error(response.message || 'Lỗi khi lấy thông tin đơn hàng');
-        }
-      } catch (error) {
-        console.error('Lỗi lấy thông tin đơn hàng:', error);
-        toast.error('Không thể kết nối đến server');
-      } finally {
-        setLoading(false);
-      }
-    };
+      connection
+        .start()
+        .then(() => console.log('Connected to SignalR'))
+        .catch((err) => console.error('Connection failed:', err));
 
-    fetchOrder();
+      connection.on('LoadCurrentDishes', (data) => {
+        console.log('Received LoadCurrentDishes:', data);
+        setOrder(data);
+        setLoading(false);
+      });
+      // Nhận thông báo đơn hàng mới
+      connection.on('ReceiveNewOrder', (orderDetail) => {
+        console.log(orderDetail);
+        setOrder((prev) => [orderDetail, ...prev]);
+      });
+
+      connection.on('UpdateOrderDetailStatus', (updatedOd) => {
+        preOrderDetails.forEach((od) => {
+          if (od.id === updatedOd.id) {
+            toast(`Món ${od.name}` + handleStatusNoti(updatedOd.status), {
+              position: 'top-right',
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: 'light',
+              transition: Bounce
+            });
+          }
+        });
+        setOrder((preOrderDetails) => preOrderDetails.map((od) => (od.id === updatedOd.id ? { ...od, status: updatedOd.status } : od)));
+      });
+
+      return () => {
+        console.log('SignalR connection closed');
+        connection.stop();
+      };
+    }
   }, [orderId]);
 
   const handleCheckout = async () => {
     if (!orderId) return;
 
     try {
-      const response = await createRequest(auth.token, {  
+      const response = await createRequest(auth.token, {
         orderId: parseInt(orderId, 10),
         typeId: 7,
         note: 'Thanh toán'
       });
-
-      // Sửa chỗ này
-      if (response.isSucess) {
-        setShowModal(true);
-        localStorage.removeItem('orderId');
-        setOrderId(null);
-        toast.success('Yêu cầu thanh toán thành công!');
-      } else {
-        toast.error(response.message || 'Thanh toán thất bại');
-      }
+      setShowModal(true)
     } catch (error) {
       console.error('Lỗi thanh toán:', error);
       toast.error('Lỗi kết nối hệ thống');
     }
   };
+
+  const handleTotalMoney = useMemo(() => {
+    var totalMoney = 0;
+    order?.map((item) => {
+      totalMoney += item.price * item.quantity;
+    });
+    return totalMoney;
+  }, [order]);
 
   return (
     <Container className="mt-5 py-5">
@@ -75,7 +143,7 @@ const Checkout = () => {
           <Spinner animation="border" variant="warning" />
         ) : !orderId ? (
           <h5 className="text-danger mt-4">Chưa có đơn hàng</h5>
-        ) : order?.dishes?.length > 0 ? (
+        ) : order?.length > 0 ? (
           <>
             <Table striped bordered hover className="mt-3">
               <thead>
@@ -89,42 +157,36 @@ const Checkout = () => {
                 </tr>
               </thead>
               <tbody>
-                {order.dishes.map((item, index) => (
-                  <tr key={item.id + index}>
+                {order.map((item, index) => (
+                  <tr key={index}>
                     <td>{index + 1}</td>
                     <td>
                       <div className="d-flex align-items-center">
                         <img
-                          src={item.image}
-                          alt={item.name}
+                          src={item.dishImage}
+                          alt={item.dishImage}
                           style={{ width: 50, height: 50, objectFit: 'cover', marginRight: 10 }}
                         />
-                        {item.name}
+                        {item.dishName}
                       </div>
                     </td>
                     <td>{item.quantity}</td>
                     <td>{formatPrice(item.price)}</td>
                     <td>{formatPrice(item.price * item.quantity)}</td>
                     <td>
-                      <Badge bg={item.status === 'pending' ? 'warning' : 'success'}>
-                        {item.status === 'pending' ? 'Chờ xử lý' : 'Hoàn thành'}
-                      </Badge>
+                    <Badge pill bg={getStatusVariant(item.status)}>{getStatusText(item.status)}</Badge>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </Table>
-            
+
             <div className="text-end mt-4">
               <h4>
-                Tổng cộng: <span className="text-danger">{formatPrice(order.totalAmount)}</span>
+                Tổng cộng: <span className="text-danger">{formatPrice(handleTotalMoney)}</span>
               </h4>
-              <Button 
-                variant="warning" 
-                className="text-white mt-3"
-                onClick={handleCheckout}
-              >
-                Xác nhận thanh toán
+              <Button variant="warning" className="text-white mt-3" onClick={handleCheckout}>
+                Yêu cầu thanh toán
               </Button>
             </div>
           </>
@@ -137,9 +199,7 @@ const Checkout = () => {
         <Modal.Header closeButton>
           <Modal.Title>Thông báo</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Nhân viên sẽ đến thanh toán trong giây lát. Vui lòng chờ tại chỗ!
-        </Modal.Body>
+        <Modal.Body>Nhân viên sẽ đến thanh toán trong giây lát. Vui lòng chờ tại chỗ!</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Đóng

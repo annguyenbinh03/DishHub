@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Card, Table, Tabs, Tab } from 'react-bootstrap';
+import { Row, Col, Card, Table, Dropdown, DropdownButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import avatar1 from '../../assets/images/user/avatar-1.jpg';
@@ -12,6 +12,7 @@ const DashDefault = () => {
   const [dashSalesData, setDashSalesData] = useState([]);
   const [topDishes, setTopDishes] = useState([]);
   const [tableStatus, setTableStatus] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('topDailyDishes');
 
   const config = {
     headers: { Authorization: `Bearer ${auth.token}` }
@@ -64,6 +65,10 @@ const DashDefault = () => {
         }
       });
   }, []);
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
 
   const tabContent = (
     <React.Fragment>
@@ -204,13 +209,43 @@ const DashDefault = () => {
           </div>
           <div>
             <Card className="Top-Dishes widget-focus-lg">
-              <Card.Header>
+              <Card.Header className="d-flex justify-content-between align-items-center">
                 <Card.Title as="h5">Món Ăn Bán Chạy Nhất</Card.Title>
+                <DropdownButton
+                  id="dropdown-basic-button"
+                  title={
+                    <>
+                      {selectedCategory === 'topDailyDishes' && <i className="fa fa-calendar-day me-2" />}
+                      {selectedCategory === 'topMonthlyDishes' && <i className="fa fa-calendar-alt me-2" />}
+                      {selectedCategory === 'topYearlyDishes' && <i className="fa fa-calendar me-2" />}
+                      {selectedCategory === 'topAllTimeDishes' && <i className="fa fa-infinity me-2" />}
+                      {selectedCategory === 'topDailyDishes' && 'Daily'}
+                      {selectedCategory === 'topMonthlyDishes' && 'Monthly'}
+                      {selectedCategory === 'topYearlyDishes' && 'Yearly'}
+                      {selectedCategory === 'topAllTimeDishes' && 'All Time'}
+                    </>
+                  }
+                  variant="secondary"
+                  className="dropdown-custom"
+                >
+                  <Dropdown.Item onClick={() => handleCategoryChange('topDailyDishes')}>
+                    <i className="fa fa-calendar-day me-2" /> Daily
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleCategoryChange('topMonthlyDishes')}>
+                    <i className="fa fa-calendar-alt me-2" /> Monthly
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleCategoryChange('topYearlyDishes')}>
+                    <i className="fa fa-calendar me-2" /> Yearly
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleCategoryChange('topAllTimeDishes')}>
+                    <i className="fa fa-infinity me-2" /> All Time
+                  </Dropdown.Item>
+                </DropdownButton>
               </Card.Header>
               <Card.Body className="px-0 py-2">
                 <Table responsive hover className="top-dishes">
                   <tbody>
-                    {topDishes.map((dish, index) => (
+                    {topDishes[selectedCategory]?.map((dish, index) => (
                       <tr key={index} className="unread">
                         <td>
                           <img className="rounded-circle" style={{ width: '40px' }} src={dish.image} alt={dish.name} />
@@ -223,7 +258,7 @@ const DashDefault = () => {
                           <h6 className="text-muted">{dish.price.toLocaleString()} VNĐ</h6>
                         </td>
                         <td>
-                          <h6 className="text-muted">Sold: {dish.soldCount}</h6>
+                          <h6 className="text-muted">Sold: {dish.sold}</h6>
                         </td>
                       </tr>
                     ))}

@@ -53,6 +53,15 @@ const Home = () => {
     fetchDishes();
   }, []);
 
+  useEffect(() => {
+    document.body.style.backgroundColor = '#1c1c1c';
+    document.body.style.color = '#fff';
+    return () => {
+      document.body.style.backgroundColor = '';
+      document.body.style.color = '';
+    };
+  }, []);
+
   const categoriesTab = [
     { label: 'Tất cả', value: 'all' },
     ...categories.map((cat) => ({

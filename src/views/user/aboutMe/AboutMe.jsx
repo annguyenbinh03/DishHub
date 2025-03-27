@@ -1,12 +1,11 @@
 import React from 'react';
 import { Container, Row, Col, Button, Image } from 'react-bootstrap';
 import { BsRobot, BsClock, BsStickyFill } from 'react-icons/bs';
-import menuImage from '../../../assets/images/menuTinhTe.webp';
-import aiImage from '../../../assets/images/troLyAi.webp';
-import orderImage from '../../../assets/images/goiMonNhanh.webp';
+
 
 
 import { Link } from 'react-router-dom';
+import Banner from 'components/Banner/Banner';
 
 const AboutMe = () => {
   return (
@@ -14,10 +13,15 @@ const AboutMe = () => {
       fluid
       className="text-center py-5"
       style={{
-        background: '#000000', // Màu đen
+        background: '#1c1c1c', // Màu đen toàn màn hình
         color: '#FFFFFF',
         borderBottom: '2px solid #FFD700', // Viền vàng ánh kim
-        minHeight: '100vh',
+        minHeight: '150vh',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
       }}
     >
       {/* Tiêu đề chính với font chữ sang trọng */}
@@ -28,7 +32,7 @@ const AboutMe = () => {
           fontSize: '3rem',
           color: '#FFA500',
           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
-          lineHeight: '2.0',
+          lineHeight: '3.0',
         }}
       >
         Đặc sản bốn phương – Đến là mê, ăn là ghiền!
@@ -76,188 +80,7 @@ const AboutMe = () => {
         Xem thực đơn →
       </Button>
 
-      {/* Các mục đặc trưng */}
-      <Row className="mt-5 justify-content-center">
-        <Col md={4} className="text-center mb-4">
-          <div
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '15px',
-              padding: '2rem',
-              boxShadow: '0 6px 20px rgba(0, 0, 0, 0.2)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-10px)';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.2)';
-            }}
-          >
-            <BsStickyFill size={50} color="#FFA500" />
-            <h5
-              className="mt-3"
-              style={{
-                fontFamily: "'Arial', serif",
-                color: '#1C2526',
-                fontSize: '1.5rem',
-                lineHeight: '1.3',
-              }}
-            >
-              Menu tinh tế
-            </h5>
-            <p
-              className="text-muted"
-              style={{
-                fontFamily: "'Arial', sans-serif",
-                color: '#6B7280',
-                lineHeight: '1.5',
-              }}
-            >
-              Khám phá sự đa dạng của chúng tôi và các món ăn được làm với niềm đam mê
-            </p>
-            <Image
-              src={menuImage}
-              fluid
-              rounded
-              style={{
-                border: '2px solid #FFD700',
-                maxHeight: '200px',
-                objectFit: 'cover',
-                transition: 'transform 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-              }}
-            />
-          </div>
-        </Col>
-
-        <Col md={4} className="text-center mb-4">
-          <div
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '15px',
-              padding: '2rem',
-              boxShadow: '0 6px 20px rgba(0, 0, 0, 0.2)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-10px)';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.2)';
-            }}
-          >
-            <BsRobot size={50} color="#FFA500" />
-            <h5
-              className="mt-3"
-              style={{
-                fontFamily: "'Arial', serif",
-                color: '#1C2526',
-                fontSize: '1.5rem',
-                lineHeight: '1.3',
-              }}
-            >
-              Trợ lí AI
-            </h5>
-            <p
-              className="text-muted"
-              style={{
-                fontFamily: "'Arial', sans-serif",
-                color: '#6B7280',
-                lineHeight: '1.5',
-              }}
-            >
-              Nhận các đề xuất và câu trả lời ngay lập tức cho các câu hỏi ăn uống của bạn
-            </p>
-            <Image
-              src={aiImage}
-              fluid
-              rounded
-              style={{
-                border: '2px solid #FFD700',
-                maxHeight: '200px',
-                objectFit: 'cover',
-                transition: 'transform 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-              }}
-            />
-          </div>
-        </Col>
-
-        <Col md={4} className="text-center mb-4">
-          <div
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '15px',
-              padding: '2rem',
-              boxShadow: '0 6px 20px rgba(0, 0, 0, 0.2)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-10px)';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.2)';
-            }}
-          >
-            <BsClock size={50} color="#FFA500" />
-            <h5
-              className="mt-3"
-              style={{
-                fontFamily: "'Arial', serif",
-                color: '#1C2526',
-                fontSize: '1.5rem',
-                lineHeight: '1.3',
-              }}
-            >
-              Gọi món nhanh
-            </h5>
-            <p
-              className="text-muted"
-              style={{
-                fontFamily: "'Arial', sans-serif",
-                color: '#6B7280',
-                lineHeight: '1.5',
-              }}
-            >
-              Quá trình đặt hàng đơn giản, nhanh chóng và tiện lợi cho bữa ăn của bạn
-            </p>
-            <Image
-              src={orderImage}
-              fluid
-              rounded
-              style={{
-                border: '2px solid #FFD700',
-                maxHeight: '200px',
-                objectFit: 'cover',
-                transition: 'transform 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-              }}
-            />
-          </div>
-        </Col>
-      </Row>
+      <Banner />
     </Container>
   );
 

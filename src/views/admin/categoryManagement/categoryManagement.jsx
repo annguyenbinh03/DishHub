@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Badge, Container, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
-import './categoryManagement.css'; 
+import './categoryManagement.css';
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ImagePicker from 'components/ImagePicker';
@@ -23,7 +23,7 @@ const CategoryManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
 
-    
+
     const config = {
         headers: { Authorization: `Bearer ${auth.token}` }
     };
@@ -33,7 +33,7 @@ const CategoryManagement = () => {
 
     const fetchCategories = () => {
         axios
-            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/categories',config)
+            .get('https://dishub-dxacd4dyevg9h3en.southeastasia-01.azurewebsites.net/api/categories', config)
             .then((res) => {
                 setCategories(res.data.data);
             })
@@ -67,18 +67,18 @@ const CategoryManagement = () => {
 
         try {
             let uploadedUrl = formData.image; // Use existing image URL if no new file is selected
-    
+
             // Kiểm tra xem file có tồn tại không
             if (file) {
                 // Upload file lên Cloudinary
                 const uploadResult = await useCloudinaryUpload(file);
-    
+
                 if (!uploadResult || !uploadResult) {
                     throw new Error('Upload thất bại!');
                 }
-    
+
                 uploadedUrl = uploadResult;
-    
+
                 // Hiển thị thông báo thành công
                 toast.success(`Upload thành công!`, {
                     position: 'top-right',
@@ -177,7 +177,6 @@ const CategoryManagement = () => {
                 <thead className="table-dark">
                     <tr>
                         <th className="fixed-column-id">Id</th>
-                        <th className="fixed-column">Hình ảnh</th>
                         <th className="fixed-column">Tên danh mục</th>
                         <th className="fixed-column">Trạng thái</th>
                         <th className="fixed-column">Hành động</th>
@@ -188,9 +187,6 @@ const CategoryManagement = () => {
                         filteredCategories.map((category, index) => (
                             <tr key={category.id}>
                                 <td className="fixed-column-id">{index + 1}</td>
-                                <td className="fixed-column">
-                                    <img src={category.image} alt={category.name} className="category-img rounded" />
-                                </td>
                                 <td className="fixed-column">{category.name}</td>
                                 <td className="fixed-column">
                                     <Badge bg={category.isDeleted ? 'danger' : 'success'}>
@@ -205,7 +201,7 @@ const CategoryManagement = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="5" className="text-center">Đang tải dữ liệu...</td>
+                            <td colSpan="4" className="text-center">Đang tải dữ liệu...</td>
                         </tr>
                     )}
                 </tbody>

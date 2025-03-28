@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import botSmile from '../../../assets/animation/tinywow_smile_72887038.gif';
 import botTalking from '../../../assets/animation/tinywow_talking_72887143.gif';
+import useOrder from 'hooks/useOrder';
 
 const ELEVENLABS_API_KEY = 'sk_1710ec4d0e428d2e87c14c1ec923f401351b4f0d3a2c489e';
 const VOICE_ID = 'rCmVtv8cYU60uhlsOo1M';
@@ -62,6 +63,7 @@ const Chatbot = () => {
   const audioRef = useRef(new Audio());
   const [botGif, setBotGif] = useState(botSmile);
   const recognitionRef = useRef(null);
+   const {orderId, createOrderId, clearOrderId} = useOrder();
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window) {
@@ -100,10 +102,15 @@ const Chatbot = () => {
     setInput('');
     setLoading(true);
 
+    var currentOrderId = orderId;
+    if(orderId == -1){
+      currentOrderId = await createOrderId();
+      if (!currentOrderId) throw new Error('Tạo order thất bại');
+    }
     try {
       const res = await axios.post(
         API_URL,
-        { message: input },
+        { message: input, orderId: currentOrderId },
         {
           headers: { 'Content-Type': 'application/json' }
         }

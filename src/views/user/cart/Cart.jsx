@@ -7,12 +7,15 @@ import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { createOrder, addOrderDetails } from '../../../services/orderService';
 import useAuth from 'hooks/useAuth';
+import useOrder from 'hooks/useOrder';
 
 
 const Cart = () => {
   const [show, setShow] = useState(false);
   const { cartItems, removeFromCart, updateQuantity, cleanCart } = useCart();
   const { auth } = useAuth();
+
+  const {orderId, createOrderId, clearOrderId} = useOrder();
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -25,45 +28,32 @@ const Cart = () => {
         toast.error('Bạn chưa thêm món ăn vào giỏ hàng!');
         return;
       }
-
-      let tableId = localStorage.getItem('tableId');
-
-      if (!tableId) {
-        toast.error('Chưa chọn bàn, vui lòng chọn bàn trước khi đặt món.');
-        return;
+      console.log(orderId);
+      if(orderId == -1){
+         const newOrderId = await createOrderId();
+         console.log(newOrderId);
+         if(newOrderId){
+          const orderDetails = cartItems.map(item => ({
+            dishId: item.id,
+            quantity: item.quantity
+          }));
+    
+          await addOrderDetails(newOrderId, orderDetails, auth.token);
+    
+          cleanCart();
+          toast.success('Đặt món thành công!');
+         }
+      }else{
+        const orderDetails = cartItems.map(item => ({
+          dishId: item.id,
+          quantity: item.quantity
+        }));
+  
+        await addOrderDetails(orderId, orderDetails, auth.token);
+  
+        cleanCart();
+        toast.success('Đặt món thành công!');
       }
-
-      console.log('Mã bàn:', tableId);
-
-      let orderId = localStorage.getItem('orderId');
-
-      if (!orderId) {
-        try {
-          const orderResponse = await createOrder(auth.token, { tableId });
-          console.log("orderResponse", orderResponse);
-
-          orderId = orderResponse?.data?.orderId;
-
-          if (!orderId) {
-        throw new Error('Không lấy được orderId từ API');
-          }
-
-          localStorage.setItem('orderId', orderId);
-        } catch (error) {
-          toast.error('Không thể tạo đơn hàng, vui lòng thử lại!');
-          return;
-        }
-      }
-
-      const orderDetails = cartItems.map(item => ({
-        dishId: item.id,
-        quantity: item.quantity
-      }));
-
-      await addOrderDetails(orderId, orderDetails, auth.token);
-
-      cleanCart();
-      toast.success('Đặt món thành công!');
     } catch (error) {
       console.error('Lỗi đặt món:', error);
       toast.error('Đặt món thất bại, vui lòng thử lại!');

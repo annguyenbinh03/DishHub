@@ -15,17 +15,15 @@ import { toast } from 'react-toastify';
 import { createRequest, getRequestHistory, getRequestTypes } from 'services/requestService';
 import { createOrder } from 'services/orderService';
 import useAuth from 'hooks/useAuth';
+import useOrder from 'hooks/useOrder';
 
 const Support = () => {
   const [requestType, setRequestType] = useState('');
   const [note, setNote] = useState('');
   const [requests, setRequests] = useState([]);
   const [requestOptions, setRequestOptions] = useState([]);
-  const [orderId, setOrderId] = useState(() => {
-    const stored = localStorage.getItem('orderId');
-    return stored ? parseInt(stored, 10) : null;
-  });
   const { auth } = useAuth();
+  const {orderId, createOrderId, clearOrderId} = useOrder();
 
   // Lấy danh sách loại yêu cầu
   useEffect(() => {
@@ -65,17 +63,13 @@ const Support = () => {
     const tableId = localStorage.getItem('tableId');
 
     try {
-      if (!currentOrderId) {
+      if (currentOrderId == -1) { //chua co orderId
         if (!tableId) {
           toast.error('Không xác định được bàn!');
           return;
         }
-        const orderResponse = await createOrder(auth.token, { tableId: parseInt(tableId, 10) });
-        if (!orderResponse.isSucess) throw new Error('Tạo order thất bại');
-
-        currentOrderId = orderResponse.data.orderId;
-        localStorage.setItem('orderId', currentOrderId);
-        setOrderId(currentOrderId);
+        currentOrderId = await createOrderId();
+        if (!currentOrderId) throw new Error('Tạo order thất bại');
       }
 
       const requestResponse = await createRequest(auth.token, {

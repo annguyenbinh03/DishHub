@@ -4,6 +4,7 @@ import { Container } from 'react-bootstrap';
 import Header from './Header/Header';
 import { Navigate, useLocation } from 'react-router-dom';
 import useAuth from 'hooks/useAuth';
+import useOrder from 'hooks/useOrder';
 
 const ROLES = {
   STAFF: '1',
@@ -12,11 +13,13 @@ const ROLES = {
 
 const UserLayout = ({ children }) => {
   const { auth, authLoading } = useAuth(); // Lấy authLoading từ context
-  if (authLoading) {
-    return <p>Loading...</p>; // Hoặc spinner đẹp hơn
-  }
+  const { orderId } = useOrder();
 
   const location = useLocation();
+
+  if (authLoading || orderId == 0) {
+    return <p>Loading...</p>; // Hoặc spinner đẹp hơn
+  }
 
   return ROLES.STAFF === auth?.roleId ? (
     <React.Fragment>

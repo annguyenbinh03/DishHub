@@ -75,6 +75,11 @@ const routes = [
     element: lazy(() => import('./views/admin/selectRestaurant/selectRestaurant'))
   },
   {
+    exact: 'true',
+    path: 'pay-success',
+    element: lazy(() => import('./views/user/paySuccess/PaySuccess'))
+  },
+  {
     path: '/user/*',
     layout: UserLayout,
     routes: [
@@ -123,11 +128,6 @@ const routes = [
       ,
     
     ]
-  },
-  {
-    exact: 'true',
-    path: 'pay-success',
-    element: lazy(() => import('./views/user/paySuccess/PaySuccess'))
   },
   {
     path: '*',

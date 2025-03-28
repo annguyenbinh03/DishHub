@@ -283,7 +283,9 @@ const DashDefault = () => {
                         <h6 className="mb-1">{table.tableName}</h6>
                       </td>
                       <td>
-                        <h6 className={`text-${table.status === 'available' ? 'c-green' : 'c-red'}`}>{table.status}</h6>
+                        <h6 className={`text-${table.status === 'available' ? 'c-green' : 'c-red'}`}>
+                          {table.status === 'available' ? 'Bàn trống' : 'Đã có khách'}
+                        </h6>
                       </td>
                     </tr>
                   ))}

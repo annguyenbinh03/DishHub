@@ -66,9 +66,21 @@ const Checkout = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#1c1c1c', minHeight: '100vh' }}>
-      <Container className="mt-5 py-5" style={{ color: '#fff', position: 'relative' }}>
-        <Container className="mt-4 text-center" style={{ position: 'relative', zIndex: 1 }}>
+ <Container
+      fluid
+      className="text-center py-5"
+      style={{
+        background: '#1c1c1c', // Màu đen toàn màn hình
+        color: '#FFFFFF',
+        borderBottom: '2px solid #FFD700', // Viền vàng ánh kim
+        minHeight: '150vh',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+      }}
+    >        <Container className="mt-4 text-center" style={{ position: 'relative', zIndex: 1 }}>
           <h2 style={{ color: '#FFA500', fontFamily: 'Arial, serif' }}>Hoàn thành đơn đặt hàng của bạn</h2>
           <p style={{ color: '#fff' }}>Xem lại các món của bạn và xác nhận đơn đặt hàng</p>
 
@@ -139,7 +151,7 @@ const Checkout = () => {
                     transition: 'all 0.3s ease',
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#D4AF37'; // Vàng ánh kim khi hover
+                    e.target.style.backgroundColor = '#FFA500'; // Vàng ánh kim khi hover
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.backgroundColor = '#FF6347'; // Màu cam khi không hover
@@ -169,7 +181,6 @@ const Checkout = () => {
           </Modal.Footer>
         </Modal>
       </Container>
-    </div>
   );
 
 };

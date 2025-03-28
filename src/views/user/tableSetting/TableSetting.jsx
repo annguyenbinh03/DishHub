@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { getTables } from 'services/tableService';
 import useAuth from 'hooks/useAuth';
 
-
 const TableSetting = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState('');
@@ -13,9 +12,6 @@ const TableSetting = () => {
   const [tables, setTables] = useState([]);
   const navigate = useNavigate();
   const { auth } = useAuth();
-
-
-
 
   useEffect(() => { 
     getTables(auth.token)
@@ -25,22 +21,18 @@ const TableSetting = () => {
         }
       });
   
-    // Kiểm tra và xóa dữ liệu cũ
     const storedTableData = JSON.parse(localStorage.getItem('selectedTable'));
     if (storedTableData) {
       const today = new Date().toISOString().split('T')[0];
       if (storedTableData.date !== today) {
-        // Xóa cả hai key liên quan nếu hết hạn
         localStorage.removeItem('selectedTable');
         localStorage.removeItem('tableId');
       } else {
-        // Đảm bảo đồng bộ cả hai key
         setSelectedTable(storedTableData.id); 
         localStorage.setItem('tableId', storedTableData.id);
       }
     }
   }, []);
-
 
   const handleRestaurantChange = (e) => {
     const restaurantId = e.target.value;
@@ -52,7 +44,6 @@ const TableSetting = () => {
 
   const handleConfirm = () => {
     if (!selectedTable) return;
-
     const today = new Date().toISOString().split('T')[0];
     localStorage.setItem('selectedTable', JSON.stringify({ id: selectedTable, date: today }));
     localStorage.setItem('tableId', selectedTable);
@@ -61,13 +52,11 @@ const TableSetting = () => {
     navigate('/user/about-me');   
   };
 
-
   return (
     <Container fluid className="text-center my-5">
       <h1 className="fw-bold">Cài đặt bàn</h1>
       <div className="p-4 bg-white text-dark border border-dark rounded">
         <Form className="d-flex flex-column gap-3">
-          {/* Chọn nhà hàng */}
           <Form.Group className="d-flex justify-content-between align-items-center">
             <Form.Label className="mb-0 me-2">Chọn nhà hàng:</Form.Label>
             <Form.Select className="w-50" value={selectedRestaurant} onChange={handleRestaurantChange}>
@@ -78,18 +67,27 @@ const TableSetting = () => {
             </Form.Select>
           </Form.Group>
 
-          {/* Chọn bàn */}
           <Form.Group className="d-flex justify-content-between align-items-center">
             <Form.Label className="mb-0 me-2">Chọn bàn:</Form.Label>
-            <Form.Select className="w-50" value={selectedTable} onChange={(e) => setSelectedTable(e.target.value)}>
+            <Form.Select 
+              className="w-50"
+              value={selectedTable} 
+              onChange={(e) => setSelectedTable(e.target.value)}
+            >
               <option value="">-- Chọn bàn --</option>
               {tables.map((table) => (
-                <option key={table.id} value={table.id}>{table.name}</option>
+                <option 
+                  key={table.id} 
+                  value={table.id} 
+                  disabled={table.status === 'occupied'}
+                  style={{ color: table.status === 'occupied' ? 'red' : 'green' }}
+                >
+                  {table.name} ({table.status === 'occupied' ? 'Đã có người' : 'Trống'})
+                </option>
               ))}
             </Form.Select>
           </Form.Group>
 
-          {/* Nút xác nhận */}
           <Button variant="primary" onClick={handleConfirm} disabled={!selectedTable}>Xác nhận</Button>
         </Form>
       </div>

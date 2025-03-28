@@ -97,6 +97,21 @@ const Support = () => {
   };
 
   return (
+     <Container
+          fluid
+          className="text-center py-5"
+          style={{
+            background: '#1c1c1c', // Màu đen toàn màn hình
+            color: '#FFFFFF',
+            borderBottom: '2px solid #FFD700', // Viền vàng ánh kim
+            minHeight: '150vh',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+          }}
+        >
     <Container className="mt-5 py-5" style={{ backgroundColor: '#2C2C2C', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.1)' }}>
       <Row>
         {/* Lịch sử yêu cầu */}
@@ -304,6 +319,7 @@ const Support = () => {
           </Card>
         </Col>
       </Row>
+    </Container>
     </Container>
   );
 

@@ -36,7 +36,7 @@ const FoodDetail = () => {
   const handleAddToCart = (dish, e) => {
     e.preventDefault();
     try {
-      addToCart(dish);
+      addToCart(dish, quantity); // Pass the selected quantity
       setToast({ show: true, message: `Đã thêm ${dish.name} vào giỏ hàng!`, variant: 'success' });
     } catch (error) {
       setToast({ show: true, message: 'Lỗi khi thêm vào giỏ hàng!', variant: 'error' });

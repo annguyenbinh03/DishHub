@@ -38,12 +38,21 @@ const Cart = () => {
       let orderId = localStorage.getItem('orderId');
 
       if (!orderId) {
-        const orderResponse = await createOrder(auth.token, { tableId });
-        orderId = orderResponse?.data?.orderId;
-        if (!orderId) {
-          throw new Error('Không lấy được orderId từ API');
+        try {
+          const orderResponse = await createOrder(auth.token, { tableId });
+          console.log("orderResponse", orderResponse);
+
+          orderId = orderResponse?.data?.orderId;
+
+          if (!orderId) {
+        throw new Error('Không lấy được orderId từ API');
+          }
+
+          localStorage.setItem('orderId', orderId);
+        } catch (error) {
+          toast.error('Không thể tạo đơn hàng, vui lòng thử lại!');
+          return;
         }
-        localStorage.setItem('orderId', orderId);
       }
 
       const orderDetails = cartItems.map(item => ({
@@ -88,7 +97,7 @@ const Cart = () => {
         <Offcanvas.Header
           closeButton
           style={{
-            borderBottom: '1px solid #FFA500',
+            borderBottom: '1px solidrgb(255, 166, 0)',
             padding: '1.5rem',
             backgroundColor: '#1c2526',
           }}

@@ -133,7 +133,6 @@ const UserManagement = () => {
                 <thead className="table-dark">
                     <tr>
                         <th>#</th>
-                        <th>Avatar</th>
                         <th>Tên đăng nhập</th>
                         <th>Họ và tên</th>
                         <th>Số điện thoại</th>
@@ -146,7 +145,6 @@ const UserManagement = () => {
                     {users.length ? users.map((user, index) => (
                         <tr key={user.id} onClick={() => handleShowModal(user, true)} style={{ cursor: 'pointer' }}>
                             <td className="table-cell-truncate" data-fulltext={index + 1}>{index + 1}</td>
-                            <td className="table-cell-truncate" data-fulltext={user.avatar}><img src={user.avatar} alt={user.username} className="user-avatar rounded" /></td>
                             <td className="table-cell-truncate" data-fulltext={user.username}>{user.username}</td>
                             <td className="table-cell-truncate" data-fulltext={user.fullName}>{user.fullName}</td>
                             <td className="table-cell-truncate" data-fulltext={user.phoneNumber}>{user.phoneNumber}</td>

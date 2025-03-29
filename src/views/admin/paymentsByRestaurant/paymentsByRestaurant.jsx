@@ -49,14 +49,14 @@ const PaymentsByRestaurant = () => {
         <Container>
             <ToastContainer />
             <h2 className="text-center mb-4">Thanh toán theo nhà hàng</h2>
-            <Form.Group controlId="restaurantId" className="mb-3" style={{ maxWidth: '300px' }}>
+            {/* <Form.Group controlId="restaurantId" className="mb-3" style={{ maxWidth: '300px' }}>
                 <Form.Label>ID Nhà hàng</Form.Label>
                 <Form.Control
                     type="number"
                     value={restaurantId}
                     onChange={(e) => setRestaurantId(e.target.value)}
                 />
-            </Form.Group>
+            </Form.Group> */}
             <Table striped bordered hover responsive className="text-center">
                 <thead className="table-dark">
                     <tr>

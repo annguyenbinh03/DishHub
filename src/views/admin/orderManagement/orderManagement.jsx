@@ -162,7 +162,7 @@ const OrderManagement = () => {
                                                 <td>{dish.dishName}</td>
                                                 <td>{dish.quantity}</td>
                                                 <td>{formatPrice(dish.price)}</td>
-                                                <td>{dish.status}</td>
+                                                <td>{dish.status === 'delivered' ? 'Đã giao' : dish.status }</td>
                                             </tr>
                                         ))}
                                     </tbody>

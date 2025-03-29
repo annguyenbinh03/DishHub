@@ -152,7 +152,6 @@ const FoodManagement = () => {
             try {
                 const uploadedUrl = await useCloudinaryUpload(file);
                 if (uploadedUrl) {
-                    toast.success(`Upload successful! ${uploadedUrl}`);
                     return uploadedUrl;
                 } else {
                     throw new Error('Upload failed!');
@@ -228,7 +227,9 @@ const FoodManagement = () => {
         <Container className="food-management">
             <ToastContainer />
             <h2 className="text-center mb-4">Quản lý món ăn</h2>
-            <Form.Control
+            <div className='d-flex justify-content-between'>
+                    <div className='d-flex'>
+                    <Form.Control
                 type="text"
                 placeholder="Search by name"
                 value={searchTerm}
@@ -261,7 +262,13 @@ const FoodManagement = () => {
                 <option value="onsale">On Sale</option>
                 <option value="deleted">Off Sale</option>
             </Form.Control>
-            <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Tạo món mới</Button>
+           
+                    </div>
+                    <div>
+                    <Button variant="success" className="mb-3" onClick={() => handleShowModal()}>Tạo món mới</Button>
+                    </div>
+            </div>
+           
             <Table striped bordered hover responsive className="text-center">
                 <thead className="table-dark">
                     <tr>
@@ -269,11 +276,10 @@ const FoodManagement = () => {
                         <th>Ảnh</th>
                         <th>Tên món ăn</th>
                         <th>Mô tả</th>
-                        <th>Loại</th>
                         <th>Giá</th>
                         <th>Trạng thái</th>
                         <th>Nhà hàng</th>
-                        <th>Nguyên liệu</th>
+                        {/* <th>Nguyên liệu</th> */}
                         <th>Sold Count</th> {/* Add this line */}
                         <th>Actions</th>
                     </tr>
@@ -299,7 +305,6 @@ const FoodManagement = () => {
                                 </td>
 
 
-                                <td>{food.categoryId}</td>
                                 <td>{formatPrice(food.price)}</td>
                                 <td>
                                     <Badge bg={food.status === 'onsale' ? 'success' : 'danger'}>
@@ -307,7 +312,7 @@ const FoodManagement = () => {
                                     </Badge>
                                 </td>
                                 <td>{food.restaurantName}</td> {/* Change this line */}
-                                <td
+                                {/* <td
                                     title={food.ingredients.map(ingredient => ingredient.name).join(', ')}
                                     className="text-start"
                                     style={{
@@ -318,7 +323,7 @@ const FoodManagement = () => {
                                     }}
                                 >
                                     {food.ingredients.map(ingredient => ingredient.name).join(', ')}
-                                </td>
+                                </td> */}
                                 <td>{food.soldCount}</td> {/* Add this line */}
                                 <td>
                                     <Button variant="warning" size="sm" onClick={() => handleShowModal(food)}>Cập nhật</Button>

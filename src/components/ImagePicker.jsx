@@ -37,7 +37,14 @@ const ImagePicker = ({ setFile, exsitedUrl = null }) => {
           </div>
         ) : (
           <div className="mt-1">
-          <img src={exsitedUrl} alt="Preview" width="100%" style={{maxWidth:'300px', maxHeight:'300px'}}/>
+            {
+              exsitedUrl ? (
+                <img src={exsitedUrl} alt="Preview" width="100%" style={{maxWidth:'300px', maxHeight:'300px'}}/>
+              ) : (
+                  <></>
+              )
+            }
+        
         </div>
         )}
     </div>

@@ -113,7 +113,7 @@ const menuItems = {
     // },
     {
       id: 'pages',
-      title: 'Pages',
+      title: 'Management',
       type: 'group',
       icon: 'icon-pages',
       children: [

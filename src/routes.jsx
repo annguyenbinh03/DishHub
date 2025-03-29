@@ -76,7 +76,7 @@ const routes = [
   },
   {
     exact: 'true',
-    path: 'pay-success',
+    path: '/pay-success',
     element: lazy(() => import('./views/user/paySuccess/PaySuccess'))
   },
   {
@@ -124,9 +124,12 @@ const routes = [
         exact: 'true',
         path: 'chatbot',
         element: lazy(() => import('./views/user/chat/Chatbot'))
-      }
-      ,
-    
+      } ,
+      {
+        exact: 'true',
+        path: 'payment-info',
+        element: lazy(() => import('./views/user/paymentInfo/paymentInfo'))
+      },
     ]
   },
   {

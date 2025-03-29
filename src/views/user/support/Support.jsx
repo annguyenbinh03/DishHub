@@ -109,7 +109,7 @@ const Support = () => {
     <Container className="mt-5 py-5" style={{ backgroundColor: '#2C2C2C', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.1)' }}>
       <Row>
         {/* Lịch sử yêu cầu */}
-        <Col md={6} className="mb-4">
+        <Col md={7} className="mb-4 rounded">
           <Card
             className="shadow-lg"
             style={{
@@ -133,7 +133,7 @@ const Support = () => {
                 Lịch sử yêu cầu
               </h3>
             </Card.Header>
-            <Card.Body style={{ backgroundColor: '#1C2526', padding: '2rem', color: '#fff' }}>
+            <Card.Body className='rounded' style={{ backgroundColor: '#1C2526', padding: '2rem', color: '#fff' }}>
               {orderId ? (
                 requests.length > 0 ? (
                   <Table responsive hover style={{ color: '#fff', borderCollapse: 'separate', borderSpacing: '0 10px' }}>
@@ -211,7 +211,7 @@ const Support = () => {
         </Col>
 
         {/* Form gửi yêu cầu */}
-        <Col md={6}>
+        <Col md={5} className='rounded'>
           <Card
             className="shadow-lg"
             style={{
@@ -235,7 +235,7 @@ const Support = () => {
                 Gửi yêu cầu mới
               </h3>
             </Card.Header>
-            <Card.Body style={{ padding: '2rem', backgroundColor: '#1C2526' }}>
+            <Card.Body className='rounded' style={{ padding: '2rem', backgroundColor: '#1C2526' }}>
               <Form>
                 <Form.Group className="mb-4">
                   <Form.Label style={{ fontSize: '1.2rem', fontWeight: '600', color: '#fff' }}>

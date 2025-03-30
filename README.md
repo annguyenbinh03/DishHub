@@ -11,7 +11,7 @@ DishHub is an AI-driven food recommendation system designed to enhance the dinin
 
 - **Framework:** React (Vite)  
 - **State Management:** React Context
-- **UI Library:** Bootstrap, React-Bootstrap  
+- **UI Library:** React-Bootstrap  
 - **Form Handling & Validation:** Formik, Yup  
 - **Routing:** React Router  
 - **API Requests:** Axios  
